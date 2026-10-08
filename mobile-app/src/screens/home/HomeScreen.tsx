@@ -75,6 +75,7 @@ export function HomeScreen() {
         <ProductSection
           title="Seeds Section"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/seeds')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -82,6 +83,7 @@ export function HomeScreen() {
         <ProductSection
           title="Fertilizers"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/fertilizers')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -89,6 +91,7 @@ export function HomeScreen() {
         <ProductSection
           title="Pesticides"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/pesticides')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -96,6 +99,7 @@ export function HomeScreen() {
         <ProductSection
           title="Equipment and Tools"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/equipments')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
