@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     height: 120,
-    backgroundColor: COLORS.surfaceLight,
+    backgroundColor: COLORS.background,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
