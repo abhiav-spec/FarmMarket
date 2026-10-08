@@ -19,7 +19,7 @@ export const EQUIPMENT_PRODUCTS: ProductItem[] = [
   },
   {
     id: 'eq-2',
-    name: 'tapas pehelwaan 101',
+    name: 'tapas pehalwaan 101',
     specs: '1L',
     pricePaise: 46665,
     originalPricePaise: 54600,
