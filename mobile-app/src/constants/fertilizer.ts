@@ -10,7 +10,7 @@ export const FERTILIZER_PRODUCTS: ProductItem[] = [
   {
     id: 'fert-1',
     name: 'Compo Expert Zitrilon 15 W...',
-    specs: '500g',
+    specs: '50kg',
     pricePaise: 110000,
     originalPricePaise: 200000,
     discountPercentage: 45,

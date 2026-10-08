@@ -14,7 +14,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps) {
-  const priceRupees = (product.pricePaise / 100).toFixed(2);
+  const priceRupees =
+    product.pricePaise % 100 === 0
+      ? (product.pricePaise / 100).toString()
+      : (product.pricePaise / 100).toFixed(2);
   const originalPriceRupees = (product.originalPricePaise / 100).toFixed(0);
 
   return (

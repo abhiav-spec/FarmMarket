@@ -5,6 +5,6 @@ export const APP_CONFIG = {
 
 export const CATEGORY_STRINGS = {
   searchPlaceholder: 'Search seeds, fertilizers, equipment...',
-  addToCart: 'Add to Cart',
+  addToCart: 'Add To Card',
   discountSuffix: '% off',
 } as const;
