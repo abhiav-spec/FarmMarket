@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: 140,
+    height: 150,
     backgroundColor: COLORS.background,
     borderRadius: RADIUS.md,
     alignItems: 'center',
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   image: {
-    width: '98%',
-    height: '98%',
+    width: '100%',
+    height: '100%',
   },
   details: {
     paddingHorizontal: SPACING.xs,
