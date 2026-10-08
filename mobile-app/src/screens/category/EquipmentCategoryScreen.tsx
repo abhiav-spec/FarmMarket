@@ -17,12 +17,11 @@ import {
   EQUIPMENT_BANNER,
   EQUIPMENT_PRODUCTS,
 } from '@/constants/equipment';
-import { COLORS, SPACING, useResponsive } from '@/theme';
+import { COLORS, SPACING } from '@/theme';
 import type { ProductItem } from '@/types/product';
 
 export function EquipmentCategoryScreen() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { isSmall } = useResponsive();
 
   const filteredProducts = EQUIPMENT_PRODUCTS.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
