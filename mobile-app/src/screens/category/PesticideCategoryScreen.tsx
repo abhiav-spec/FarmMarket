@@ -99,5 +99,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
+    maxWidth: '48%',
   },
 });
