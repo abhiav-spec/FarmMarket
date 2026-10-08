@@ -56,6 +56,7 @@ export function HomeScreen() {
             } else if (category.id === 'seeds') {
               router.push('/category/seeds');
             }
+          }}
         />
         <CropAdvisorBanner />
         <CategorySection

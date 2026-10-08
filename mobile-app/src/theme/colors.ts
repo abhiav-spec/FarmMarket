@@ -10,13 +10,9 @@ export const COLORS = {
   purple: '#6B21A8',
   purpleLight: '#FAF5FF',
   purpleBorder: '#C084FC',
-
-  purple: '#6A00FF',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',
   purpleButtonBorder: '#CBB0FF',
-  purpleBorder: '#A491BF',
-  purpleLight: '#F5EEFF',
 
   stepperGreen: '#009411',
   paymentOffer: '#E2FFD3',

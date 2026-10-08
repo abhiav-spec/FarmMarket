@@ -43,8 +43,11 @@ export function SeedsCategoryScreen() {
           <View style={styles.headerArea}>
             <HomeHeader
               location={APP_CONFIG.defaultLocation}
+              walletBalance={500}
+              onLocationPress={() => {}}
               onNotificationPress={() => {}}
-              onProfilePress={() => {}}
+              onWalletPress={() => {}}
+              onCartPress={() => {}}
             />
 
             <HomeSearchBar
