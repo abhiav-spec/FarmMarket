@@ -7,7 +7,7 @@ export const COLORS = {
   primary: '#8B5E3C',
   secondary: '#A67C52',
   orange: '#C47A44',
-  purple: '#6B21A8',
+  purple: '#6A00FF',
   purpleLight: '#FAF5FF',
   purpleBorder: '#C084FC',
   purpleSurface: '#FAF6FF',
@@ -29,6 +29,7 @@ export const COLORS = {
   reviewGreen: '#0C7810',
 
   categoryBackground: '#E9EBF8',
+
   text: {
     primary: '#1A1A1A',
     black: '#000000',

@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 
 import {
   CategoryHeroBanner,
@@ -25,7 +20,7 @@ export function EquipmentCategoryScreen() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = EQUIPMENT_PRODUCTS.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleProductPress = (product: ProductItem) => {
