@@ -7,7 +7,8 @@ import {
   HomeSearchBar,
   ProductCard,
 } from '@/components';
-import { APP_CONFIG, CATEGORY_STRINGS } from '@/constants/categoryStrings';
+import { CATEGORY_STRINGS } from '@/constants/categoryStrings';
+import { HOME_HEADER_DATA } from '@/constants/home';
 import {
   PESTICIDE_BANNER,
   PESTICIDE_PRODUCTS,
@@ -42,8 +43,8 @@ export function PesticideCategoryScreen() {
         ListHeaderComponent={
           <View style={styles.headerArea}>
             <HomeHeader
-              location={APP_CONFIG.defaultLocation}
-              walletBalance={500}
+              location={HOME_HEADER_DATA.location}
+              walletBalance={HOME_HEADER_DATA.walletBalance}
               onLocationPress={() => {}}
               onNotificationPress={() => {}}
               onWalletPress={() => {}}
@@ -56,6 +57,7 @@ export function PesticideCategoryScreen() {
               placeholder={CATEGORY_STRINGS.searchPlaceholder}
               onVoicePress={() => {}}
               onScanPress={() => {}}
+              onWishlistPress={() => {}}
             />
 
             <CategoryHeroBanner
