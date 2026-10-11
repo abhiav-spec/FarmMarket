@@ -1,104 +1,87 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import { AppText } from '@/components/common/AppText';
+import { COLORS } from '@/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { profileHeaderStyles as styles } from './profileHeaderStyles';
 
 type ProfileHeaderProps = {
+  name: string;
+  phone: string;
+  location: string;
+  onBackPress: () => void;
   onEditPress: () => void;
 };
 
-export function ProfileHeader({ onEditPress }: ProfileHeaderProps) {
+export function ProfileHeader({
+  name,
+  phone,
+  location,
+  onBackPress,
+  onEditPress,
+}: ProfileHeaderProps) {
   return (
     <View style={styles.header}>
+      {/* Decorative background shapes */}
+      <View pointerEvents="none" style={styles.decorations}>
+        <View style={styles.shapeOne} />
+        <View style={styles.shapeTwo} />
+        <View style={styles.shapeThree} />
+        <View style={styles.shapeFour} />
+        <View style={styles.shapeFive} />
+      </View>
+
+      {/* Navigation and edit action */}
       <View style={styles.topRow}>
-        <Text style={styles.heading}>My Profile</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+          onPress={onBackPress}
+          hitSlop={10}
+          style={styles.backButton}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={32}
+
+            color={COLORS.text.inverse}
+          />
+        </Pressable>
 
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Edit profile"
           onPress={onEditPress}
+          hitSlop={10}
           style={styles.editButton}
         >
-          <Text style={styles.editText}>Edit Profile</Text>
+          <Image
+            source={require('../../../assets/icons/profile/edit-profile.png')}
+            resizeMode="contain"
+            style={styles.editIcon}
+          />
+
+          <AppText variant="category" color={COLORS.text.inverse}>
+            Edit Profile
+          </AppText>
         </Pressable>
       </View>
 
-      <View style={styles.profileRow}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>?</Text>
-        </View>
+      {/* Profile information */}
+      <View style={styles.details}>
+        <AppText variant="title" color={COLORS.text.inverse}>
+          {name}
+        </AppText>
 
-        <View style={styles.details}>
-          <Text style={styles.name}>Your Profile</Text>
-          <Text style={styles.detail}>Add your personal details</Text>
-          <Text style={styles.detail}>Location not added</Text>
-        </View>
+        <AppText variant="caption" color={COLORS.text.inverse}>
+          {phone}
+        </AppText>
+
+        <AppText variant="caption" color={COLORS.text.inverse}>
+          {location}
+        </AppText>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    backgroundColor: COLORS.purple,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.xxl,
-    borderBottomLeftRadius: RADIUS.xl,
-    borderBottomRightRadius: RADIUS.xl,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  heading: {
-    color: COLORS.text.inverse,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.xl,
-  },
-  editButton: {
-    borderWidth: 1,
-    borderColor: COLORS.text.inverse,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-  },
-  editText: {
-    color: COLORS.text.inverse,
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xs,
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
-    marginTop: SPACING.xl,
-  },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.purpleLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    color: COLORS.purple,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.xxl,
-  },
-  details: {
-    flex: 1,
-    gap: SPACING.xs,
-  },
-  name: {
-    color: COLORS.text.inverse,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.lg,
-  },
-  detail: {
-    color: COLORS.text.inverse,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.xs,
-  },
-});

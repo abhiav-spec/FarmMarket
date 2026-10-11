@@ -24,7 +24,11 @@ export function ProfileScreen() {
         contentContainerStyle={styles.content}
       >
         <ProfileHeader
-          onEditPress={() => showNotConnectedMessage('Edit Profile')}
+          name="Jagadeesh"
+          phone="+91 12345 67890"
+          location="Bengaluru, Karnataka"
+          onBackPress={() => {}}
+          onEditPress={() => {}}
         />
 
         <ProfileQuickActions
