@@ -93,9 +93,17 @@ function CropAdvisorInput({
   );
 }
 
+export interface CropAdvisorFormData {
+  cropName: string;
+  issue: string;
+  description: string;
+  photos: { uri: string }[];
+  videos: { uri: string }[];
+}
+
 export interface CropAdvisorFormScreenProps {
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (data: CropAdvisorFormData) => void;
 }
 
 interface ScreenHeaderProps {
@@ -327,7 +335,13 @@ export function CropAdvisorFormScreen({ onBack, onSubmit }: CropAdvisorFormScree
       return;
     }
 
-    onSubmit();
+    onSubmit({
+      cropName: cropName.trim(),
+      issue: issue.trim(),
+      description: description.trim(),
+      photos: photos.map((p) => ({ uri: p.uri })),
+      videos: videos.map((v) => ({ uri: v.uri })),
+    });
   };
 
   return (

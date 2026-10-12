@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { router } from 'expo-router';
 import {
   Image,
   Pressable,
@@ -164,7 +163,7 @@ export function CropAdvisorSuccessScreen({ phoneNumber: phoneNumberProp, onBack,
 
         <AppButton
           title={COPY.done}
-          onPress={() => router.replace('/(main)')}
+          onPress={onDone}
           fullWidth
           size="small"
           style={styles.doneButton}
