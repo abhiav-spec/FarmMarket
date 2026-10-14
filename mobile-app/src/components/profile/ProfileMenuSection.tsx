@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import type { ProfileMenuSectionConfig } from '@/constants/profile';
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import { COLORS, FONT_FAMILY, FONT_SIZE, SPACING } from '@/theme';
 
 import { ProfileMenuItem } from './ProfileMenuItem';
 
@@ -16,14 +16,16 @@ export function ProfileMenuSection({ section }: ProfileMenuSectionProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>{section.title}</Text>
+      {section.title ? (
+        <Text style={styles.heading}>{section.title}</Text>
+      ) : null}
 
-      {section.items.map((item, index) => (
+      {section.items.map((item) => (
         <ProfileMenuItem
           key={item.id}
           title={item.title}
           subtitle={item.subtitle}
-          showDivider={index < section.items.length - 1}
+          icon={item.icon}
           onPress={() => {
             if (item.route === '/help-centre') {
               router.push(item.route);
@@ -38,18 +40,12 @@ export function ProfileMenuSection({ section }: ProfileMenuSectionProps) {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: SPACING.lg,
-    marginTop: SPACING.xl,
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    backgroundColor: COLORS.surface,
+    marginTop: SPACING.md,
   },
   heading: {
     color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.md,
-    marginBottom: SPACING.xs,
+    marginBottom: SPACING.sm,
   },
 });

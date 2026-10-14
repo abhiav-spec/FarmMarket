@@ -4,7 +4,6 @@ import { Alert, SafeAreaView, ScrollView } from 'react-native';
 import { PROFILE_MENU_SECTIONS } from '@/constants/profile';
 import {
   ProfileHeader,
-  ProfileLogoutButton,
   ProfileMenuSection,
   ProfileQuickActions,
   ProfileReferralBanner,
@@ -16,6 +15,14 @@ export function ProfileScreen() {
   const showNotConnectedMessage = (feature: string) => {
     Alert.alert(feature, 'This feature is not connected yet.');
   };
+
+  const accountSection = PROFILE_MENU_SECTIONS.find(
+    (section) => section.id === 'account',
+  );
+
+  const settingsSection = PROFILE_MENU_SECTIONS.find(
+    (section) => section.id === 'settings',
+  );
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -36,17 +43,17 @@ export function ProfileScreen() {
           onWalletPress={() => showNotConnectedMessage('Wallet')}
         />
 
-        {PROFILE_MENU_SECTIONS.map((section) => (
-          <ProfileMenuSection key={section.id} section={section} />
-        ))}
+        {accountSection ? (
+          <ProfileMenuSection section={accountSection} />
+        ) : null}
 
         <ProfileReferralBanner
           onPress={() => showNotConnectedMessage('Refer & Earn')}
         />
 
-        <ProfileLogoutButton
-          onPress={() => showNotConnectedMessage('Logout')}
-        />
+        {settingsSection ? (
+          <ProfileMenuSection section={settingsSection} />
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

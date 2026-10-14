@@ -1,7 +1,11 @@
+export type ProfileMenuIcon =
+  'address' | 'history' | 'support' | 'review' | 'setting' | 'logout';
+
 export type ProfileMenuItemConfig = {
   id: string;
   title: string;
   subtitle: string;
+  icon: ProfileMenuIcon;
   route?: '/help-centre';
 };
 
@@ -18,35 +22,46 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
     items: [
       {
         id: 'addresses',
-        title: 'Saved Addresses',
-        subtitle: 'Manage your delivery addresses',
+        title: 'Save Address',
+        subtitle: 'Manage your delivery address',
+        icon: 'address',
       },
       {
         id: 'advisory',
         title: 'Crop Advisory History',
-        subtitle: 'View your previous advisories',
+        subtitle: 'View your past consultation',
+        icon: 'history',
       },
       {
         id: 'support',
         title: 'Help & Support',
-        subtitle: 'Get assistance with your orders',
+        subtitle: "We're here to help you",
+        icon: 'support',
         route: '/help-centre',
+      },
+      {
+        id: 'feedback',
+        title: 'Write to us',
+        subtitle: 'Share your feedback and suggestions',
+        icon: 'review',
       },
     ],
   },
   {
-    id: 'more',
-    title: 'More',
+    id: 'settings',
+    title: '',
     items: [
-      {
-        id: 'feedback',
-        title: 'Write to Us',
-        subtitle: 'Share your feedback',
-      },
       {
         id: 'settings',
         title: 'Account Settings',
-        subtitle: 'Manage your account preferences',
+        subtitle: 'Privacy, Security and more',
+        icon: 'setting',
+      },
+      {
+        id: 'logout',
+        title: 'Logout',
+        subtitle: 'Sign out from your account',
+        icon: 'logout',
       },
     ],
   },
