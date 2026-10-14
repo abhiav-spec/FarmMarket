@@ -1,14 +1,18 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 type ProfileQuickActionsProps = {
+  wishlistCount?: number;
+  walletBalance?: number;
   onWishlistPress: () => void;
   onWalletPress: () => void;
 };
 
 export function ProfileQuickActions({
+  wishlistCount,
+  walletBalance,
   onWishlistPress,
   onWalletPress,
 }: ProfileQuickActionsProps) {
@@ -16,26 +20,52 @@ export function ProfileQuickActions({
     <View style={styles.container}>
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel="Open wishlist"
         onPress={onWishlistPress}
         style={styles.card}
       >
         <View style={styles.iconBox}>
-          <Text style={styles.symbol}>♡</Text>
+          <Image
+            source={require('../../../assets/icons/profile/wishlist.png')}
+            resizeMode="contain"
+            style={styles.icon}
+          />
         </View>
-        <Text style={styles.title}>Wishlist</Text>
-        <Text style={styles.subtitle}>Your saved products</Text>
+
+        <View style={styles.details}>
+          <Text style={styles.title}>Wishlist</Text>
+
+          <Text style={styles.value}>
+            {wishlistCount === undefined
+              ? 'View wishlist'
+              : `${wishlistCount} ${wishlistCount === 1 ? 'Product' : 'Products'}`}
+          </Text>
+        </View>
       </Pressable>
 
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel="Open wallet"
         onPress={onWalletPress}
         style={styles.card}
       >
         <View style={styles.iconBox}>
-          <Text style={styles.symbol}>₹</Text>
+          <Image
+            source={require('../../../assets/icons/profile/wallet.png')}
+            resizeMode="contain"
+            style={styles.icon}
+          />
         </View>
-        <Text style={styles.title}>Wallet</Text>
-        <Text style={styles.subtitle}>Your wallet balance</Text>
+
+        <View style={styles.details}>
+          <Text style={styles.title}>Wallet</Text>
+
+          <Text style={styles.value}>
+            {walletBalance === undefined
+              ? 'View wallet'
+              : `₹${walletBalance.toLocaleString('en-IN')}`}
+          </Text>
+        </View>
       </Pressable>
     </View>
   );
@@ -44,41 +74,50 @@ export function ProfileQuickActions({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: SPACING.md,
+    gap: SPACING.lg,
     paddingHorizontal: SPACING.lg,
     marginTop: SPACING.lg,
   },
+
   card: {
     flex: 1,
-    padding: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.lg,
-    backgroundColor: COLORS.surface,
+    minHeight: 100,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    padding: SPACING.sm,
+    borderRadius: RADIUS.xl,
+    backgroundColor: COLORS.purpleLight,
   },
+
   iconBox: {
-    width: 38,
-    height: 38,
+    width: 64,
+    height: 64,
     borderRadius: RADIUS.md,
-    backgroundColor: COLORS.purpleSurface,
+    backgroundColor: COLORS.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: SPACING.sm,
   },
-  symbol: {
-    color: COLORS.purple,
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xl,
+
+  icon: {
+    width: 44,
+    height: 44,
   },
+
+  details: {
+    flex: 1,
+    gap: SPACING.xs,
+  },
+
   title: {
     color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
   },
-  subtitle: {
-    color: COLORS.text.secondary,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.xs,
-    marginTop: SPACING.xs,
+
+  value: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: FONT_SIZE.sm,
   },
 });
