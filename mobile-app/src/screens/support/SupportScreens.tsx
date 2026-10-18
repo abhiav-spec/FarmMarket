@@ -79,6 +79,7 @@ export function HelpUploadScreen() {
   const [selectedMedia, setSelectedMedia] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [details, setDetails] = useState('');
+  const [detailsFocused, setDetailsFocused] = useState(false);
   const canProceed = selectedMedia.length > 0 && details.trim().length > 0;
 
   useEffect(() => {
@@ -159,7 +160,7 @@ export function HelpUploadScreen() {
         <Text style={styles.description}>
           Please provide more information about the issue (optional)
         </Text>
-        <View style={styles.textBox}>
+        <View style={[styles.textBox, detailsFocused && styles.textBoxFocused]}>
           <TextInput
             placeholder="Description of your issue"
             placeholderTextColor={colors.placeholder}
@@ -171,6 +172,8 @@ export function HelpUploadScreen() {
             maxLength={5000}
             value={details}
             onChangeText={setDetails}
+            onFocus={() => setDetailsFocused(true)}
+            onBlur={() => setDetailsFocused(false)}
             style={[styles.input, { outlineWidth: 0, outlineColor: 'transparent', backgroundColor: 'transparent' }]}
           />
           <Text style={styles.counter}>{details.length}/5000</Text>
@@ -412,6 +415,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     padding: spacing.sm,
     justifyContent: 'space-between',
+  },
+  textBoxFocused: {
+    borderColor: colors.purple,
   },
   input: {
     color: colors.black,
