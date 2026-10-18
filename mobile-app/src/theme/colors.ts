@@ -1,6 +1,8 @@
 export const COLORS = {
   background: '#FFFFFF',
   surface: '#FFFFFF',
+  surfaceLight: '#FAFAFA',
+  shadow: '#000000',
 
   primary: '#8B5E3C',
   secondary: '#A67C52',
@@ -28,6 +30,7 @@ export const COLORS = {
   reviewGreen: '#0C7810',
 
   categoryBackground: '#E9EBF8',
+
   text: {
     primary: '#1A1A1A',
     black: '#000000',
@@ -43,7 +46,7 @@ export const COLORS = {
   border: '#E5E5E5',
   cardBorder: '#D9D9D9',
   originalPrice: '#BEBEBE',
-  border: '#A491BF',
+  categoryborder: '#A491BF',
   divider: '#EEEEEE',
 
   success: '#009411',
