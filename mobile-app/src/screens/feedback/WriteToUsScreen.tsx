@@ -132,7 +132,9 @@ export function WriteToUsScreen() {
           <Text style={styles.characterCount}>{message.length}/1000</Text>
         </View>
       </ScrollView>
-
+      <Text style={styles.description}>
+        Your message will be reviewed by our support team.
+      </Text>
       <View style={styles.footer}>
         <AppButton
           title="Send Message"

@@ -6,36 +6,12 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  header: {
-    height: 58,
-    backgroundColor: COLORS.purpleSurface,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.lg,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-  },
-  backArrow: {
-    fontSize: 36,
-    color: COLORS.text.primary,
-    lineHeight: 40,
-  },
-  headerTitle: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.lg,
-    color: COLORS.text.primary,
-  },
-  headerSpacer: {
-    width: 40,
-  },
+
   scrollContent: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xl,
   },
+
   heading: {
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.xl,
@@ -53,6 +29,7 @@ export const styles = StyleSheet.create({
     marginTop: SPACING.md,
     marginBottom: SPACING.xxl,
   },
+
   label: {
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.md,
@@ -60,40 +37,7 @@ export const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     marginBottom: SPACING.md,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: SPACING.xs,
-  },
-  ratingOption: {
-    flex: 1,
-    minHeight: 86,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: SPACING.sm,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.surface,
-  },
-  ratingSelected: {
-    borderColor: COLORS.purple,
-    backgroundColor: COLORS.purpleSurface,
-  },
-  ratingEmoji: {
-    fontSize: 25,
-    marginBottom: SPACING.xs,
-  },
-  ratingLabel: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: 10,
-    color: COLORS.text.secondary,
-    textAlign: 'center',
-  },
-  ratingLabelSelected: {
-    fontFamily: FONT_FAMILY.bold,
-    color: COLORS.purple,
-  },
+
   dropdown: {
     minHeight: 54,
     backgroundColor: COLORS.purpleSurface,
@@ -120,6 +64,7 @@ export const styles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+
   messageContainer: {
     width: '100%',
   },
@@ -132,8 +77,16 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: COLORS.surface,
   },
+
   messageInputWrapper: {
     position: 'relative',
+  },
+
+  messageInput: {
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.xl,
+    textAlignVertical: 'top',
   },
 
   characterCount: {
@@ -144,12 +97,6 @@ export const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     color: COLORS.text.muted,
   },
-  messageInput: {
-    paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.xl,
-    textAlignVertical: 'top',
-  },
 
   errorText: {
     color: COLORS.error,
@@ -157,6 +104,7 @@ export const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     marginTop: SPACING.xs,
   },
+
   footer: {
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.md,
@@ -165,28 +113,33 @@ export const styles = StyleSheet.create({
     borderTopColor: COLORS.border,
     backgroundColor: COLORS.background,
   },
+
+  sendMessageButton: {
+    backgroundColor: COLORS.purple,
+    borderRadius: RADIUS.md,
+    height: 56,
+  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: COLORS.overlay,
     justifyContent: 'center',
     padding: SPACING.lg,
   },
-  sendMessageButton: {
-    backgroundColor: COLORS.purple,
-    borderRadius: RADIUS.md,
-    height: 56,
-  },
+
   modalCard: {
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
     padding: SPACING.lg,
   },
+
   modalTitle: {
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.lg,
     color: COLORS.text.primary,
     marginBottom: SPACING.md,
   },
+
   subjectOption: {
     minHeight: 48,
     flexDirection: 'row',
@@ -195,15 +148,18 @@ export const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: COLORS.border,
   },
+
   subjectText: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.md,
     color: COLORS.text.primary,
   },
+
   selectedSubjectText: {
     color: COLORS.purple,
     fontFamily: FONT_FAMILY.bold,
   },
+
   checkmark: {
     color: COLORS.purple,
     fontSize: FONT_SIZE.lg,
@@ -213,42 +169,61 @@ export const styles = StyleSheet.create({
   successScreen: {
     flex: 1,
     backgroundColor: COLORS.background,
-    justifyContent: 'space-between',
   },
+
   successContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
+    overflow: 'visible',
   },
+
   successIllustration: {
     width: '100%',
-    maxWidth: 320,
-    height: 280,
+
+    height: 250,
     marginBottom: SPACING.xl,
   },
+
   successTitle: {
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.xl,
-    color: COLORS.text.primary,
+    color: COLORS.purple,
     textAlign: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.xs,
   },
+
   successDescription: {
     fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.text.secondary,
-    lineHeight: 24,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.text.primary,
+    lineHeight: 22,
     textAlign: 'center',
   },
+
   successFooter: {
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    paddingTop: SPACING.xs,
+    paddingBottom: SPACING.xxxl,
+    backgroundColor: COLORS.background,
   },
-  requiredIndicator: {
-    color: COLORS.error,
-    fontSize: FONT_SIZE.sm,
+
+  returnHomeButton: {
+    height: 48,
+    width: '100%',
+    backgroundColor: COLORS.purpleSurface,
+    borderWidth: 2,
+    borderColor: COLORS.purple,
+    borderRadius: RADIUS.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  returnHomeButtonText: {
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.purple,
+    textAlign: 'center',
   },
 });
