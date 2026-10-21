@@ -39,15 +39,19 @@ export const styles = StyleSheet.create({
   heading: {
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.xl,
-    color: COLORS.text.primary,
-    marginTop: SPACING.md,
+    color: COLORS.purple,
+    textAlign: 'center',
+    marginTop: SPACING.xl,
   },
+
   description: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.secondary,
-    marginTop: SPACING.sm,
-    marginBottom: SPACING.xl,
+    color: COLORS.text.primary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.xxl,
   },
   label: {
     fontFamily: FONT_FAMILY.bold,
@@ -92,25 +96,29 @@ export const styles = StyleSheet.create({
   },
   dropdown: {
     minHeight: 52,
+    backgroundColor: COLORS.purpleSurface,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.purpleBorder,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+
   dropdownText: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.md,
     color: COLORS.text.primary,
   },
+
   placeholderText: {
-    color: COLORS.text.muted,
+    color: COLORS.text.primary,
   },
+
   dropdownArrow: {
     fontSize: 22,
-    color: COLORS.text.secondary,
+    color: COLORS.text.primary,
   },
   messageContainer: {
     width: '100%',
@@ -217,5 +225,9 @@ export const styles = StyleSheet.create({
     paddingVertical: SPACING.lg,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
+  },
+  requiredIndicator: {
+    color: COLORS.error,
+    fontSize: FONT_SIZE.sm,
   },
 });

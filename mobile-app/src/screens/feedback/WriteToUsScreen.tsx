@@ -9,19 +9,11 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FeedbackHeader } from '@/components/common/FeedbackHeader';
-import { AppButton } from '@/components/ui/AppButton';
+import { FeedbackRatingSelector } from '@/components/feedback/FeedbackRatingSelector';
 import { AppInput } from '@/components/forms/AppInput';
-import { COLORS } from '@/theme';
+import { AppButton } from '@/components/ui/AppButton';
 
 import { styles } from './styles';
-
-const RATINGS = [
-  { value: 1, emoji: '😞', label: 'Very bad' },
-  { value: 2, emoji: '🙁', label: 'Bad' },
-  { value: 3, emoji: '😐', label: 'Okay' },
-  { value: 4, emoji: '😊', label: 'Good' },
-  { value: 5, emoji: '😍', label: 'Excellent' },
-];
 
 const SUBJECTS = [
   'Product quality',
@@ -70,59 +62,39 @@ export function WriteToUsScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.scrollContent}
       >
-        <Text style={styles.heading}>We value your feedback</Text>
+        <Text style={styles.heading}>Share your feedback and suggestions</Text>
+
         <Text style={styles.description}>
-          Tell us about your experience with FarmMarket.
+          Share your feedback, suggestions, or report an issue. We&apos;re
+          always looking for ways to improve your experience.
         </Text>
 
-        <Text style={styles.label}>How was your experience? *</Text>
-
-        <View style={styles.ratingRow}>
-          {RATINGS.map((item) => {
-            const selected = rating === item.value;
-
-            return (
-              <Pressable
-                key={item.value}
-                accessibilityRole="button"
-                accessibilityLabel={item.label}
-                accessibilityState={{ selected }}
-                onPress={() => {
-                  setRating(item.value);
-                  setErrors((previous) => ({ ...previous, rating: '' }));
-                }}
-                style={[styles.ratingOption, selected && styles.ratingSelected]}
-              >
-                <Text style={styles.ratingEmoji}>{item.emoji}</Text>
-                <Text
-                  style={[
-                    styles.ratingLabel,
-                    selected && styles.ratingLabelSelected,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+        <FeedbackRatingSelector
+          value={rating}
+          onChange={(value) => {
+            setRating(value);
+            setErrors((previous) => ({ ...previous, rating: '' }));
+          }}
+        />
 
         {errors.rating ? (
           <Text style={styles.errorText}>{errors.rating}</Text>
         ) : null}
 
-        <Text style={styles.label}>Subject *</Text>
+        <Text style={styles.label}>Subject</Text>
 
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Select a topic"
           onPress={() => setSubjectModalVisible(true)}
           style={styles.dropdown}
         >
           <Text
             style={[styles.dropdownText, !subject && styles.placeholderText]}
           >
-            {subject || 'Select a subject'}
+            {subject || 'Select a topic'}
           </Text>
+
           <Text style={styles.dropdownArrow}>⌄</Text>
         </Pressable>
 
@@ -130,17 +102,18 @@ export function WriteToUsScreen() {
           <Text style={styles.errorText}>{errors.subject}</Text>
         ) : null}
 
-        <Text style={styles.label}>Your message *</Text>
+        <Text style={styles.label}>Message</Text>
 
         <AppInput
           value={message}
           onChangeText={(value) => {
             setMessage(value);
+
             if (value.trim()) {
               setErrors((previous) => ({ ...previous, message: '' }));
             }
           }}
-          placeholder="Tell us what you think..."
+          placeholder="Describe your experience or issue in detail so we can assist you better"
           multiline
           maxLength={1000}
           textAlignVertical="top"
@@ -175,11 +148,13 @@ export function WriteToUsScreen() {
             style={styles.modalCard}
             onPress={(event) => event.stopPropagation()}
           >
-            <Text style={styles.modalTitle}>Select a subject</Text>
+            <Text style={styles.modalTitle}>Select a topic</Text>
 
             {SUBJECTS.map((item) => (
               <Pressable
                 key={item}
+                accessibilityRole="button"
+                accessibilityState={{ selected: subject === item }}
                 style={styles.subjectOption}
                 onPress={() => {
                   setSubject(item);
@@ -195,6 +170,7 @@ export function WriteToUsScreen() {
                 >
                   {item}
                 </Text>
+
                 {subject === item ? (
                   <Text style={styles.checkmark}>✓</Text>
                 ) : null}

@@ -321,3 +321,9 @@ export const FEEDBACK_HEADER_LAYOUT = {
   arrowHeight: 32,
   rightSpacerWidth: 40,
 } as const;
+export const FEEDBACK_RATING_LAYOUT = {
+  maxCardWidth: 70,
+  imageSize: 36,
+  selectedBorderWidth: 2,
+  borderWidth: 1,
+} as const;
