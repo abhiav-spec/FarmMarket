@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Image,
   Modal,
   Pressable,
   SafeAreaView,
@@ -95,7 +96,11 @@ export function WriteToUsScreen() {
             {subject || 'Select a topic'}
           </Text>
 
-          <Text style={styles.dropdownArrow}>⌄</Text>
+          <Image
+            source={require('../../../assets/icons/dropdown-chevron.png')}
+            style={styles.dropdownChevron}
+            resizeMode="contain"
+          />
         </Pressable>
 
         {errors.subject ? (
@@ -104,25 +109,28 @@ export function WriteToUsScreen() {
 
         <Text style={styles.label}>Message</Text>
 
-        <AppInput
-          value={message}
-          onChangeText={(value) => {
-            setMessage(value);
+        <View style={styles.messageInputWrapper}>
+          <AppInput
+            value={message}
+            onChangeText={(value) => {
+              setMessage(value);
 
-            if (value.trim()) {
-              setErrors((previous) => ({ ...previous, message: '' }));
-            }
-          }}
-          placeholder="Describe your experience or issue in detail so we can assist you better"
-          multiline
-          maxLength={1000}
-          textAlignVertical="top"
-          inputStyle={styles.messageInput}
-          containerStyle={styles.messageContainer}
-          error={errors.message}
-        />
+              if (value.trim()) {
+                setErrors((previous) => ({ ...previous, message: '' }));
+              }
+            }}
+            placeholder="Describe your experience or issue in detail so we can assist you better"
+            multiline
+            maxLength={1000}
+            textAlignVertical="top"
+            inputStyle={styles.messageInput}
+            inputContainerStyle={styles.messageInputContainer}
+            containerStyle={styles.messageContainer}
+            error={errors.message}
+          />
 
-        <Text style={styles.characterCount}>{message.length}/1000</Text>
+          <Text style={styles.characterCount}>{message.length}/1000</Text>
+        </View>
       </ScrollView>
 
       <View style={styles.footer}>
@@ -131,6 +139,7 @@ export function WriteToUsScreen() {
           onPress={handleSubmit}
           fullWidth
           size="large"
+          style={styles.sendMessageButton}
         />
       </View>
 

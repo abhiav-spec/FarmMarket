@@ -95,19 +95,19 @@ export const styles = StyleSheet.create({
     color: COLORS.purple,
   },
   dropdown: {
-    minHeight: 52,
+    minHeight: 54,
     backgroundColor: COLORS.purpleSurface,
     borderWidth: 1,
-    borderColor: COLORS.purpleBorder,
+    borderColor: COLORS.purpleBorder1,
     borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
 
   dropdownText: {
-    fontFamily: FONT_FAMILY.regular,
+    fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
     color: COLORS.text.primary,
   },
@@ -116,25 +116,41 @@ export const styles = StyleSheet.create({
     color: COLORS.text.primary,
   },
 
-  dropdownArrow: {
-    fontSize: 22,
-    color: COLORS.text.primary,
+  dropdownChevron: {
+    width: 24,
+    height: 24,
   },
   messageContainer: {
     width: '100%',
   },
-  messageInput: {
-    minHeight: 150,
-    paddingTop: SPACING.md,
-    textAlignVertical: 'top',
+
+  messageInputContainer: {
+    minHeight: 120,
+    alignItems: 'stretch',
+    borderColor: COLORS.purpleBorder1,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    backgroundColor: COLORS.surface,
   },
+  messageInputWrapper: {
+    position: 'relative',
+  },
+
   characterCount: {
-    textAlign: 'right',
-    marginTop: SPACING.xs,
+    position: 'absolute',
+    right: SPACING.md,
+    bottom: SPACING.md,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     color: COLORS.text.muted,
   },
+  messageInput: {
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.xl,
+    textAlignVertical: 'top',
+  },
+
   errorText: {
     color: COLORS.error,
     fontFamily: FONT_FAMILY.regular,
@@ -154,6 +170,11 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.overlay,
     justifyContent: 'center',
     padding: SPACING.lg,
+  },
+  sendMessageButton: {
+    backgroundColor: COLORS.purple,
+    borderRadius: RADIUS.md,
+    height: 56,
   },
   modalCard: {
     backgroundColor: COLORS.surface,
