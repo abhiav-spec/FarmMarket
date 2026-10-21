@@ -6,7 +6,7 @@ export type ProfileMenuItemConfig = {
   title: string;
   subtitle: string;
   icon: ProfileMenuIcon;
-  route?: '/help-centre';
+  route?: '/help-centre' | '/write-to-us';
 };
 
 export type ProfileMenuSectionConfig = {
@@ -44,6 +44,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'Write to us',
         subtitle: 'Share your feedback and suggestions',
         icon: 'review',
+        route: '/write-to-us',
       },
     ],
   },
