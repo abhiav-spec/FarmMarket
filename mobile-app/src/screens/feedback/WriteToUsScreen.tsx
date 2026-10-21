@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { FeedbackHeader } from '@/components/common/FeedbackHeader';
 import { AppButton } from '@/components/ui/AppButton';
 import { AppInput } from '@/components/forms/AppInput';
 import { COLORS } from '@/theme';
@@ -63,19 +63,7 @@ export function WriteToUsScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.header}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backArrow}>‹</Text>
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Write to Us</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+      <FeedbackHeader title="Write to us" onBackPress={() => router.back()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
