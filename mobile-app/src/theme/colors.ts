@@ -28,7 +28,7 @@ export const COLORS = {
   productDetailBorder: '#6A6A6A',
   productVideo: '#D9D9D9',
   reviewGreen: '#0C7810',
-
+  copycode: '#ECE3FF',
   categoryBackground: '#E9EBF8',
 
   text: {

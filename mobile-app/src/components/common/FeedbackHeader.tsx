@@ -15,9 +15,18 @@ import {
 interface FeedbackHeaderProps {
   title: string;
   onBackPress: () => void;
+  rightIconSource?: number;
+  onRightPress?: () => void;
+  rightAccessibilityLabel?: string;
 }
 
-export function FeedbackHeader({ title, onBackPress }: FeedbackHeaderProps) {
+export function FeedbackHeader({
+  title,
+  onBackPress,
+  rightIconSource,
+  onRightPress,
+  rightAccessibilityLabel = 'More information',
+}: FeedbackHeaderProps) {
   return (
     <View style={styles.container}>
       <Pressable
@@ -25,7 +34,7 @@ export function FeedbackHeader({ title, onBackPress }: FeedbackHeaderProps) {
         accessibilityLabel="Go back"
         hitSlop={UI.hitSlop}
         onPress={onBackPress}
-        style={styles.backButton}
+        style={styles.actionButton}
       >
         <Image
           source={require('../../../assets/icons/back-arrow.png')}
@@ -35,9 +44,28 @@ export function FeedbackHeader({ title, onBackPress }: FeedbackHeaderProps) {
         />
       </Pressable>
 
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} numberOfLines={1}>
+        {title}
+      </Text>
 
-      <View style={styles.rightSpacer} />
+      {rightIconSource && onRightPress ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={rightAccessibilityLabel}
+          hitSlop={UI.hitSlop}
+          onPress={onRightPress}
+          style={styles.rightAction}
+        >
+          <Image
+            source={rightIconSource}
+            style={styles.rightIcon}
+            resizeMode="contain"
+            accessibilityLabel={rightAccessibilityLabel}
+          />
+        </Pressable>
+      ) : (
+        <View style={styles.rightSpacer} />
+      )}
     </View>
   );
 }
@@ -55,9 +83,10 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: RADIUS.header,
     borderBottomRightRadius: RADIUS.header,
   },
-  backButton: {
+  actionButton: {
     width: FEEDBACK_HEADER_LAYOUT.backButtonWidth,
     height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    alignItems: 'flex-start',
     justifyContent: 'center',
     zIndex: 1,
   },
@@ -76,5 +105,16 @@ const styles = StyleSheet.create({
   },
   rightSpacer: {
     width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
+  },
+  rightAction: {
+    width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
+    height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  rightIcon: {
+    width: ICON_SIZES.lg,
+    height: ICON_SIZES.lg,
   },
 });
