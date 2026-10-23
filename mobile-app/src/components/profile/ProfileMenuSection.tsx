@@ -27,7 +27,7 @@ export function ProfileMenuSection({ section }: ProfileMenuSectionProps) {
           subtitle={item.subtitle}
           icon={item.icon}
           onPress={() => {
-            if (item.route === '/help-centre') {
+            if (item.route) {
               router.push(item.route);
             }
           }}
