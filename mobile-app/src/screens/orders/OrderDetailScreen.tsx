@@ -40,7 +40,12 @@ export function OrderDetailScreen() {
             </View>
             <View style={styles.caretSlot}>
               <Pressable
-                onPress={() => router.push({ pathname: '/(main)/product' as never, params: { product: order.product } })}
+                onPress={() =>
+                  router.push({
+                    pathname: '/cart',
+                    params: { step: 'product' },
+                  })
+                }
                 hitSlop={spacing.sm}
                 accessibilityLabel="Open product"
               >
