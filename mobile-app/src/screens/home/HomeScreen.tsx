@@ -52,7 +52,7 @@ export function HomeScreen() {
           onCategoryPress={(category) => {
             if (category.id === 'farming-tools') {
               router.push('/category/equipments');
-            } else if (category.id === 'pesticides') {
+            } else if (category.id === 'pesticides' || category.id === 'fungicides') {
               router.push('/category/pesticides');
             } else if (category.id === 'fertilizers') {
               router.push('/category/fertilizers');
