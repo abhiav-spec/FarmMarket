@@ -12,6 +12,7 @@ import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
 import { CartProvider } from '@/context/CartContext';
+import { ReviewProvider } from '@/context/ReviewContext';
 import { MOCK_CART_CONFIG, MOCK_CART_ITEMS } from '@/data/mockProducts';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,8 +38,10 @@ export default function RootLayout() {
   }
 
   return (
-    <CartProvider initialItems={MOCK_CART_ITEMS} config={MOCK_CART_CONFIG}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </CartProvider>
+    <ReviewProvider>
+      <CartProvider initialItems={MOCK_CART_ITEMS} config={MOCK_CART_CONFIG}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </CartProvider>
+    </ReviewProvider>
   );
 }
