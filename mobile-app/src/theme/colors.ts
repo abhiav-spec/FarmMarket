@@ -14,7 +14,7 @@ export const COLORS = {
   purpleButtonBorder: '#CBB0FF',
   purpleBorder: '#A491BF',
   purpleLight: '#F5EEFF',
-
+  purpleBorder1: '#E2CEFF',
   stepperGreen: '#009411',
   paymentOffer: '#E2FFD3',
   walletSurface: '#F5EEFF',
