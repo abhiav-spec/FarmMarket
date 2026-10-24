@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
-import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export interface AuthHeaderProps {
   title?: string;
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xl,
     lineHeight: 26,
     letterSpacing: 0,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     textAlign: 'center',
   },
 });

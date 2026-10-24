@@ -91,11 +91,6 @@ export function OnboardingScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Slide counter, e.g. 01/03 */}
-        <AppText style={styles.counter}>
-          {`${String(currentIndex + 1).padStart(2, '0')}/${String(ONBOARDING_ITEMS.length).padStart(2, '0')}`}
-        </AppText>
-
         {/* Illustration, positioned and cropped per slide as in Figma */}
         <WelcomeImage
           source={currentItem.image}
@@ -164,23 +159,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Figma (874-tall frame): counter 67 → image 112–509 → title 559 →
+  // Figma (874-tall frame): image 112–509 → title 559 →
   // description 659 → dots/button row 793–825
   container: {
     flex: 1,
     paddingHorizontal: AUTH_LAYOUT.imageLeft,
     paddingBottom: Platform.OS === 'ios' ? 15 : 49,
   },
-  counter: {
-    marginTop: 67,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 16.8,
-    letterSpacing: 0.25,
-    color: AUTH_COLORS.black,
-  },
   imageWindow: {
-    marginTop: 28.2, // 112 - (67 + 16.8)
+    marginTop: AUTH_LAYOUT.imageTop,
     width: AUTH_LAYOUT.imageWidth,
     height: AUTH_LAYOUT.imageHeight,
     alignSelf: 'flex-start',
@@ -197,7 +184,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.xxxl,
     lineHeight: 41.6,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     marginBottom: 16.8, // 659 - (559 + 2 × 41.6)
   },
   description: {
@@ -205,7 +192,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
   },
   bottomRow: {
     marginTop: 'auto',
@@ -224,7 +211,7 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 27,
-    backgroundColor: AUTH_COLORS.black,
+    backgroundColor: COLORS.text.black,
   },
   inactiveDot: {
     width: 12,

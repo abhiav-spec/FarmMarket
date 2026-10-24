@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { AppText } from '@/components/common/AppText';
-import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export interface PillButtonProps {
   title?: string;
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     marginHorizontal: -AUTH_LAYOUT.arrowBleed,
   },
   title: {
-    color: '#000000',
+    color: COLORS.text.black,
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,

@@ -303,14 +303,14 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     marginBottom: 16.2,
   },
   input: {
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     paddingVertical: 0,
     paddingBottom: 4.2,
   },
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
   },
   placeholderText: {
     color: AUTH_COLORS.placeholder,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   },
   selectionItemSelectedText: {
     fontFamily: FONT_FAMILY.semiBold,
-    color: '#7B4CE2',
+    color: AUTH_COLORS.purple,
   },
   emptyText: {
     fontFamily: FONT_FAMILY.regular,

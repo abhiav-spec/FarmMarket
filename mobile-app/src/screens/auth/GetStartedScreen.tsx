@@ -9,7 +9,7 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function GetStartedScreen() {
   const router = useRouter();
@@ -59,11 +59,11 @@ export function GetStartedScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
   },
   container: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   backgroundImage: {
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: AUTH_TYPOGRAPHY.welcomeTitle.fontSize,
     lineHeight: AUTH_TYPOGRAPHY.welcomeTitle.lineHeight,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     textAlign: 'center',
     letterSpacing: 0,
   },
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: AUTH_COLORS.textBody,
+    color: COLORS.text.dark,
     textAlign: 'center',
     letterSpacing: 0,
   },
