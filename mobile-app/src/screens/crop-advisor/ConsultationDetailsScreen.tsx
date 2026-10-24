@@ -1,31 +1,26 @@
-import React from 'react';
-import { router, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
-import { AppIcon, AppText } from '@/components';
+import { AppText } from '@/components';
+import { CropAdvisorHeader } from './CropAdvisorHeader';
+import { MediaPreviewModal, PreviewItem, VideoThumb } from './MediaPreview';
 import { useCropAdvisor } from '@/context/CropAdvisorContext';
-import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES, SPACING } from '@/theme';
+import { COLORS, FONT_FAMILY, FONT_SIZE, SPACING } from '@/theme';
 
 export function ConsultationDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getConsultation } = useCropAdvisor();
+  const { getConsultation, ready } = useCropAdvisor();
+  const [preview, setPreview] = useState<PreviewItem | null>(null);
   const c = id ? getConsultation(id) : undefined;
 
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
-        <Pressable hitSlop={10} onPress={() => router.back()} style={styles.back}>
-          <AppIcon name="back" size="lg" color={COLORS.text.primary} />
-        </Pressable>
-        <AppText variant="bodyMedium" style={styles.headerTitle}>
-          Consultation Details
-        </AppText>
-      </View>
+      <CropAdvisorHeader title="Consultation Details" />
 
       {!c ? (
         <AppText variant="body" style={styles.empty}>
-          Consultation not found.
+          {ready ? 'Consultation not found.' : 'Loading...'}
         </AppText>
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
@@ -50,7 +45,9 @@ export function ConsultationDetailsScreen() {
           </AppText>
           <View style={styles.photoRow}>
             {c.photos.map((p, i) => (
-              <Image key={`${p.uri}-${i}`} source={{ uri: p.uri }} style={styles.photo} />
+              <Pressable key={`${p.uri}-${i}`} onPress={() => setPreview({ uri: p.uri, type: 'image' })}>
+                <Image source={{ uri: p.uri }} style={styles.photo} />
+              </Pressable>
             ))}
           </View>
 
@@ -60,32 +57,21 @@ export function ConsultationDetailsScreen() {
                 Video ({c.videos.length})
               </AppText>
               {c.videos.map((v, i) => (
-                <View key={`${v.uri}-${i}`} style={styles.video}>
-                  <Ionicons name="play-circle" size={56} color={COLORS.text.inverse} />
-                </View>
+                <Pressable key={`${v.uri}-${i}`} style={styles.video} onPress={() => setPreview({ uri: v.uri, type: 'video' })}>
+                  <VideoThumb uri={v.uri} />
+                </Pressable>
               ))}
             </>
           ) : null}
         </ScrollView>
       )}
+      <MediaPreviewModal item={preview} onClose={() => setPreview(null)} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  header: {
-    height: SIZES.headerHeight,
-    backgroundColor: COLORS.cropAdvisorBackground,
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.cropAdvisor,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  back: { position: 'absolute', left: SPACING.lg, bottom: 16 },
-  headerTitle: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.md },
   content: { padding: SPACING.lg, gap: 12, paddingBottom: SPACING.xxl },
   empty: { textAlign: 'center', marginTop: 40, color: COLORS.text.muted },
   idCard: {
@@ -105,7 +91,6 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 14,
     backgroundColor: COLORS.text.dark,
-    alignItems: 'center',
-    justifyContent: 'center',
+    overflow: 'hidden',
   },
 });

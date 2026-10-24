@@ -3,9 +3,10 @@ import { router } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { AppIcon, AppText } from '@/components';
+import { AppText } from '@/components';
+import { CropAdvisorHeader } from './CropAdvisorHeader';
 import { useCropAdvisor } from '@/context/CropAdvisorContext';
-import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES, SPACING } from '@/theme';
+import { COLORS, FONT_FAMILY, FONT_SIZE, SPACING } from '@/theme';
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -14,7 +15,7 @@ function formatDate(iso: string) {
 }
 
 export function CropAdvisorHistoryScreen() {
-  const { consultations } = useCropAdvisor();
+  const { consultations, ready } = useCropAdvisor();
   const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
@@ -27,14 +28,7 @@ export function CropAdvisorHistoryScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.header}>
-        <Pressable hitSlop={10} onPress={() => router.back()} style={styles.back}>
-          <AppIcon name="back" size="lg" color={COLORS.text.primary} />
-        </Pressable>
-        <AppText variant="bodyMedium" style={styles.headerTitle}>
-          Crop Advisor History
-        </AppText>
-      </View>
+      <CropAdvisorHeader title="Crop Advisor History" />
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.search}>
@@ -50,7 +44,7 @@ export function CropAdvisorHistoryScreen() {
 
         {filtered.length === 0 ? (
           <AppText variant="body" style={styles.empty}>
-            {consultations.length === 0 ? 'No consultations yet.' : 'No matching consultations.'}
+            {!ready ? 'Loading...' : consultations.length === 0 ? 'No consultations yet.' : 'No matching consultations.'}
           </AppText>
         ) : (
           filtered.map((c) => (
@@ -60,8 +54,8 @@ export function CropAdvisorHistoryScreen() {
                 <AppText variant="bodyMedium" numberOfLines={1} style={styles.title}>
                   {c.issue || c.cropName}
                 </AppText>
-                <View style={styles.badge}>
-                  <AppText variant="body" style={styles.badgeText}>
+                <View style={[styles.badge, c.status === 'In-progress' && styles.badgeProgress]}>
+                  <AppText variant="body" style={[styles.badgeText, c.status === 'In-progress' && styles.badgeTextProgress]}>
                     {c.status}
                   </AppText>
                 </View>
@@ -93,18 +87,6 @@ export function CropAdvisorHistoryScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  header: {
-    height: SIZES.headerHeight,
-    backgroundColor: COLORS.cropAdvisorBackground,
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.cropAdvisor,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  back: { position: 'absolute', left: SPACING.lg, bottom: 16 },
-  headerTitle: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.md },
   content: { padding: SPACING.lg, gap: 20 },
   search: {
     flexDirection: 'row',
@@ -134,6 +116,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 2,
   },
+  badgeProgress: { backgroundColor: '#FFF1D6' },
+  badgeTextProgress: { color: '#B26A00' },
   badgeText: { color: COLORS.reviewGreen, fontSize: 11 },
   desc: { fontSize: 11, lineHeight: 16, color: COLORS.text.primary },
   footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

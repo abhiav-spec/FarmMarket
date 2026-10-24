@@ -9,6 +9,7 @@ import {
   StatusBar,
   StyleProp,
   StyleSheet,
+  Modal,
   TextInput,
   TextStyle,
   View,
@@ -16,6 +17,7 @@ import {
 
 import * as ImagePicker from 'expo-image-picker';
 import { AppButton, AppIcon, AppText } from '@/components';
+import { MediaPreviewModal, PreviewItem, VideoThumb } from './MediaPreview';
 
 import {
   COLORS,
@@ -57,6 +59,26 @@ interface CropAdvisorInputProps {
   placeholder?: string;
 }
 
+function RequiredFieldsModal({ missing, onClose }: { missing: string[] | null; onClose: () => void }) {
+  return (
+    <Modal visible={!!missing} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={styles.alertBackdrop}>
+        <View style={styles.alertCard}>
+          <AppText variant="bodyMedium" style={styles.alertTitle}>
+            Please fill in the required details
+          </AppText>
+          {(missing ?? []).map((m) => (
+            <AppText key={m} variant="body" style={styles.alertItem}>
+              • {m}
+            </AppText>
+          ))}
+          <AppButton title="OK" onPress={onClose} fullWidth />
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 function CropAdvisorInput({
   label,
   value,
@@ -84,7 +106,7 @@ function CropAdvisorInput({
         onBlur={() => setFocused(false)}
         style={[
           styles.formInput,
-          focused && styles.formInputFocused,
+          (focused || value.trim().length > 0) && styles.formInputFocused,
           multiline && styles.formTextArea,
           style,
         ]}
@@ -103,7 +125,7 @@ export interface CropAdvisorFormData {
 
 export interface CropAdvisorFormScreenProps {
   onBack: () => void;
-  onSubmit: (data: CropAdvisorFormData) => void;
+  onSubmit: (data: CropAdvisorFormData) => void | Promise<void>;
 }
 
 interface ScreenHeaderProps {
@@ -136,6 +158,7 @@ interface MediaSlotProps {
   asset?: ImagePicker.ImagePickerAsset;
   onPress: () => void;
   onRemove?: () => void;
+  onPreview?: () => void;
 }
 
 function MediaSlot({
@@ -143,6 +166,7 @@ function MediaSlot({
   asset,
   onPress,
   onRemove,
+  onPreview,
 }: MediaSlotProps) {
   const isPhoto = kind === 'photo';
 
@@ -156,7 +180,7 @@ function MediaSlot({
           pressed && styles.mediaSlotPressed,
           asset && styles.mediaSlotSelected,
         ]}
-        onPress={onPress}
+        onPress={!isPhoto && asset && onPreview ? onPreview : onPress}
       >
         {asset ? (
           isPhoto ? (
@@ -166,18 +190,7 @@ function MediaSlot({
               resizeMode="cover"
             />
           ) : (
-            <View style={styles.selectedVideoPreview}>
-              <View style={styles.videoCheck}>
-                <AppIcon name="check" size="sm" color={COLORS.text.inverse} />
-              </View>
-              <AppText
-                variant="bodyMedium"
-                align="center"
-                style={styles.selectedVideoText}
-              >
-                Video selected
-              </AppText>
-            </View>
+            <VideoThumb uri={asset.uri} />
           )
         ) : (
           <>
@@ -210,6 +223,7 @@ export function CropAdvisorFormScreen({ onBack, onSubmit }: CropAdvisorFormScree
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [videos, setVideos] = useState<ImagePicker.ImagePickerAsset[]>([]);
+  const [preview, setPreview] = useState<PreviewItem | null>(null);
 
   const pickMedia = async (kind: MediaKind, replaceIndex?: number) => {
     const currentItems = kind === 'photo' ? photos : videos;
@@ -303,30 +317,18 @@ export function CropAdvisorFormScreen({ onBack, onSubmit }: CropAdvisorFormScree
     }
   };
 
+  const [missing, setMissing] = useState<string[] | null>(null);
+
   const validateForm = () => {
-    if (!cropName.trim()) {
-      Alert.alert('Crop name required', 'Please enter the crop name before submitting the request.');
+    const list: string[] = [];
+    if (!cropName.trim()) list.push('Crop Name');
+    if (!issue.trim()) list.push('Issue');
+    if (!description.trim()) list.push('Describe the problem');
+    if (photos.length === 0) list.push('At least one photo');
+    if (list.length > 0) {
+      setMissing(list);
       return false;
     }
-
-    if (!issue.trim()) {
-      Alert.alert('Issue required', 'Please enter the crop issue before submitting the request.');
-      return false;
-    }
-
-    if (!description.trim()) {
-      Alert.alert('Description required', 'Please describe the crop problem before submitting the request.');
-      return false;
-    }
-
-    if (photos.length === 0) {
-      Alert.alert(
-        'Photo required',
-        'Please upload at least one image of the crop problem before submitting your request.',
-      );
-      return false;
-    }
-
     return true;
   };
 
@@ -407,6 +409,7 @@ export function CropAdvisorFormScreen({ onBack, onSubmit }: CropAdvisorFormScree
                 asset={asset}
                 onPress={() => pickMedia('video', asset ? index : undefined)}
                 onRemove={asset ? () => removeMedia('video', index) : undefined}
+                onPreview={asset ? () => setPreview({ uri: asset.uri, type: 'video' }) : undefined}
               />
             ))}
           </View>
@@ -418,6 +421,8 @@ export function CropAdvisorFormScreen({ onBack, onSubmit }: CropAdvisorFormScree
             style={styles.formButton}
           />
         </ScrollView>
+        <RequiredFieldsModal missing={missing} onClose={() => setMissing(null)} />
+        <MediaPreviewModal item={preview} onClose={() => setPreview(null)} />
       </KeyboardAvoidingView>
     </View>
   );
@@ -477,8 +482,9 @@ const styles = StyleSheet.create({
   formInput: {
     height: 44,
     width: '100%',
-    borderWidth: 1,
-    borderColor: COLORS.cropAdvisorBorder,
+    borderWidth: 1.5,
+    borderColor: COLORS.cropAdvisor,
+    ...({ outlineStyle: 'none', outlineWidth: 0 } as object),
     borderRadius: RADIUS.xs,
     backgroundColor: COLORS.surface,
     paddingHorizontal: 12,
@@ -489,9 +495,27 @@ const styles = StyleSheet.create({
     color: COLORS.text.primary,
   },
 
+  alertBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  alertCard: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: COLORS.cropAdvisor,
+    padding: 20,
+    gap: 10,
+  },
+  alertTitle: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.md, color: COLORS.text.black },
+  alertItem: { fontSize: FONT_SIZE.sm, color: COLORS.text.primary },
   formInputFocused: {
     borderColor: COLORS.cropAdvisor,
-    borderWidth: 1.5,
   },
 
   formTextArea: {

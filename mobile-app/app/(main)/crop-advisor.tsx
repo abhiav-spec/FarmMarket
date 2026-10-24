@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { useCropAdvisor } from '@/context/CropAdvisorContext';
@@ -19,9 +20,14 @@ export default function CropAdvisorRoute() {
     return (
       <CropAdvisorFormScreen
         onBack={() => setScreen('intro')}
-        onSubmit={(data) => {
-          addConsultation(data);
-          setScreen('success');
+        onSubmit={async (data) => {
+          try {
+            await addConsultation(data);
+            setScreen('success');
+          } catch {
+            if (typeof window !== 'undefined' && window.alert) window.alert('Your request could not be saved. Please try again.');
+            else Alert.alert('Could not save', 'Your request could not be saved. Please try again.');
+          }
         }}
       />
     );
