@@ -7,7 +7,8 @@ export const COLORS = {
   primary: '#8B5E3C',
   secondary: '#A67C52',
   orange: '#C47A44',
-
+  support: '#4A00B1',
+  supportcall: '#E7D7FF',
   purple: '#6A00FF',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',

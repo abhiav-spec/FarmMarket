@@ -1,1 +1,1 @@
-export { NotificationSettingsScreen as default } from '@/screens/profile/AccountSettingsScreens';
+export { NotificationSettingsScreen as default } from '@/screens/profile/NotificationSettingsScreen';
