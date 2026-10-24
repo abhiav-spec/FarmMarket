@@ -32,31 +32,40 @@ export const INITIAL_NOTIFICATION_SETTINGS: Record<NotificationId, boolean> = {
 
 export const PRIVACY_POLICY_SECTIONS = [
   {
-    title: 'Information We Collect',
-    body: 'FarmMarket may collect information you provide when using the app, including account details, contact information, delivery details and preferences.',
+    title: 'Information we collect',
+    subtitle: 'What data we collect and why',
+    body: `We collect information you provide directly such as
+your name, mobile number, address, and order details.
+We also collect device, location and usage information.`,
   },
   {
-    title: 'How We Use Your Information',
-    body: 'Information may be used to manage your account, process orders, provide crop advisory services, respond to support requests and improve the app.',
+    title: 'How we use your data',
+    subtitle: 'How your data is used',
+    body: `We use your data to process orders, 
+provide crop advisory, improve our services and 
+send important updates and offers.`,
   },
   {
-    title: 'Information Sharing',
-    body: 'Information may be shared with service providers when necessary to deliver requested services or meet applicable legal obligations.',
+    title: 'Data sharing',
+    subtitle: 'When and why we share data',
+    body: `We do not sell your data. We share your information
+only with trusted service partners for order delivery, 
+payments and analytics.`,
   },
   {
-    title: 'Data Security',
-    body: 'We take reasonable steps to protect information. No digital system can guarantee absolute security.',
+    title: 'Your rights & choices',
+    subtitle: 'Your privacy rights and control',
+    body: `You can access, update or delete your personal
+information. You can also opt-out of marketing communications.`,
   },
   {
-    title: 'Your Choices',
-    body: 'You can review available account settings and contact support with questions or requests concerning your information.',
-  },
-  {
-    title: 'Contact Us',
-    body: 'Contact FarmMarket support if you have questions about this policy.',
+    title: 'Data security',
+    subtitle: 'How we protect your data',
+    body: `We use industry-standard security measures to
+protect your data from unauthorized access, 
+alteration or loss.`,
   },
 ] as const;
-
 export const TERMS_AND_CONDITIONS_SECTIONS = [
   {
     title: 'Acceptance of Terms',
