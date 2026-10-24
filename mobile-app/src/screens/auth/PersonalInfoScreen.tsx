@@ -18,7 +18,7 @@ import { AuthHeader } from '@/components/auth/AuthHeader';
 import { PillButton } from '@/components/auth/PillButton';
 import { STATES, districtsOf } from '@/data/geography';
 import { LANGUAGES } from '@/data/languages';
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SIZES, SPACING } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 type ModalType = 'language' | 'state' | 'district' | null;
 
@@ -132,7 +132,7 @@ export function PersonalInfoScreen() {
             <TextInput
               style={styles.input}
               placeholder="What should we call you?"
-              placeholderTextColor={COLORS.auth.placeholder}
+              placeholderTextColor={AUTH_COLORS.placeholder}
               value={name}
               onChangeText={setName}
             />
@@ -303,14 +303,14 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     marginBottom: 16.2,
   },
   input: {
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     paddingVertical: 0,
     paddingBottom: 4.2,
   },
@@ -324,14 +324,14 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   placeholderText: {
-    color: COLORS.auth.placeholder,
+    color: AUTH_COLORS.placeholder,
   },
   underline: {
     height: 1,
-    backgroundColor: COLORS.auth.inputLine,
+    backgroundColor: AUTH_COLORS.inputLine,
   },
   bottomSection: {
     alignItems: 'center',
@@ -340,9 +340,9 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 10 : 44,
   },
   button: {
-    width: SIZES.continueButtonWidth,
-    height: SIZES.authButtonHeight,
-    borderRadius: SIZES.authButtonRadius,
+    width: AUTH_LAYOUT.continueButtonWidth,
+    height: AUTH_LAYOUT.buttonHeight,
+    borderRadius: AUTH_LAYOUT.buttonRadius,
   },
   modalOverlay: {
     flex: 1,

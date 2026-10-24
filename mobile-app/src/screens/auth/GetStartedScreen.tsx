@@ -9,7 +9,7 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { COLORS, FONT_FAMILY, FONT_SIZE, LINE_HEIGHT, SIZES } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function GetStartedScreen() {
   const router = useRouter();
@@ -59,11 +59,11 @@ export function GetStartedScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
   },
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
   },
   backgroundImage: {
@@ -83,9 +83,9 @@ const styles = StyleSheet.create({
     width: 231,
     height: 36,
     fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.display,
-    lineHeight: LINE_HEIGHT.display,
-    color: COLORS.black,
+    fontSize: AUTH_TYPOGRAPHY.welcomeTitle.fontSize,
+    lineHeight: AUTH_TYPOGRAPHY.welcomeTitle.lineHeight,
+    color: AUTH_COLORS.black,
     textAlign: 'center',
     letterSpacing: 0,
   },
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
-    color: COLORS.text.body,
+    color: AUTH_COLORS.textBody,
     textAlign: 'center',
     letterSpacing: 0,
   },
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    width: SIZES.getStartedButtonWidth,
-    height: SIZES.authButtonHeight,
+    width: AUTH_LAYOUT.getStartedButtonWidth,
+    height: AUTH_LAYOUT.buttonHeight,
   },
 });
 

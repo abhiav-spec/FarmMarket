@@ -6,36 +6,15 @@ export const COLORS = {
   secondary: '#A67C52',
   orange: '#C47A44',
 
-  purple: {
-    primary: '#7B4CE2',
-    light: '#DBC1FE',
-    lightFill: 'rgba(219, 193, 254, 0.4)',
-    active: '#7B4CE2',
-    border: '#DBC1FE',
-  },
-
-  black: '#000000',
-  white: '#FFFFFF',
-
   text: {
     primary: '#1A1A1A',
     secondary: '#666666',
     muted: '#999999',
     inverse: '#FFFFFF',
-    dark: '#000000',
-    body: '#333333',
   },
 
   border: '#E5E5E5',
   divider: '#EEEEEE',
-
-  // Auth / onboarding values taken from Figma
-  auth: {
-    inputLine: 'rgba(0, 0, 0, 0.2)',
-    placeholder: '#CCCCCC',
-    resendLink: '#009411',
-    dotInactive: '#F5F378',
-  },
 
   success: '#2E7D32',
   warning: '#F59E0B',

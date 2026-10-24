@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function MobileNumberScreen() {
   const router = useRouter();
@@ -96,8 +96,8 @@ export function MobileNumberScreen() {
                 maxLength={10}
                 value={phone}
                 onChangeText={(value) => setPhone(value.replace(/\D/g, '').slice(0, 10))}
-                cursorColor={COLORS.purple.primary}
-                selectionColor={COLORS.purple.light}
+                cursorColor={AUTH_COLORS.purple}
+                selectionColor={AUTH_COLORS.purpleLight}
                 placeholder=""
                 autoFocus
               />
@@ -131,12 +131,12 @@ export function MobileNumberScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
     width: '100%',
     maxWidth: 402,
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   },
   headerSurface: {
     width: '100%',
-    maxWidth: SIZES.authHeaderSurfaceWidth,
-    height: SIZES.authHeaderSurfaceHeight,
+    maxWidth: AUTH_LAYOUT.headerSurfaceWidth,
+    height: AUTH_LAYOUT.headerSurfaceHeight,
     position: 'relative',
   },
   headerSurfaceBg: {
@@ -160,15 +160,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     top: 83,
-    width: SIZES.authBackArrowSize,
-    height: SIZES.authBackArrowSize,
+    width: AUTH_LAYOUT.backArrowSize,
+    height: AUTH_LAYOUT.backArrowSize,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
   },
   backArrow: {
-    width: SIZES.authBackArrowSize,
-    height: SIZES.authBackArrowSize,
+    width: AUTH_LAYOUT.backArrowSize,
+    height: AUTH_LAYOUT.backArrowSize,
   },
   headerTitle: {
     position: 'absolute',
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xl,
     lineHeight: 26,
     letterSpacing: 0,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     textAlign: 'center',
   },
   contentContainer: {
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
     letterSpacing: 0,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   inputRow: {
     flexDirection: 'row',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
     lineHeight: 21,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     paddingBottom: 4,
   },
   phoneSection: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 21,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     paddingVertical: 0,
     paddingBottom: 4,
     paddingHorizontal: 0,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   underline: {
     height: 1,
-    backgroundColor: COLORS.auth.inputLine,
+    backgroundColor: AUTH_COLORS.inputLine,
     width: '100%',
   },
   securityText: {
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xs,
     lineHeight: 15.6,
     letterSpacing: 0,
-    color: COLORS.text.body,
+    color: AUTH_COLORS.textBody,
   },
   buttonWrapper: {
     position: 'absolute',

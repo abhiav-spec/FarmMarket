@@ -3,17 +3,6 @@ export const SIZES = {
   smallButtonHeight: 40,
   inputHeight: 48,
 
-  authButtonHeight: 45,
-  authButtonRadius: 40,
-  authButtonGap: 31,
-  authArrowWidth: 30,
-  authArrowHeight: 15,
-  authHeaderSurfaceHeight: 123,
-  authHeaderSurfaceWidth: 405,
-  authBackArrowSize: 30,
-  getStartedButtonWidth: 271,
-  continueButtonWidth: 253,
-
   iconButton: 48,
   smallIconButton: 40,
 
@@ -22,40 +11,4 @@ export const SIZES = {
   avatarSmall: 32,
   avatarMedium: 40,
   avatarLarge: 56,
-
-  welcomeImageWidth: 370,
-  welcomeImageHeight: 397,
-  welcomeImageTop: 112,
-  welcomeImageLeft: 16,
-  welcomeImageAngle: 0,
-  welcomeImageOpacity: 1,
-  welcomeImage: {
-    width: 370,
-    height: 397,
-    top: 112,
-    left: 16,
-    angle: 0,
-    opacity: 1,
-  },
-
-  advisoryImageWidth: 370,
-  advisoryImageHeight: 397,
-  onboardingImageWidth: 370,
-  onboardingImageHeight: 397,
-  onboardingImageTop: 112,
-  onboardingImageLeft: 16,
-  advisoryImage: {
-    width: 370,
-    height: 397,
-    top: 112,
-    left: 16,
-    opacity: 1,
-  },
-  onboardingImage: {
-    width: 370,
-    height: 397,
-    top: 112,
-    left: 16,
-    opacity: 1,
-  },
 } as const;

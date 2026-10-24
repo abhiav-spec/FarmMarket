@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { WelcomeImage } from '@/components/auth/WelcomeImage';
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SIZES, SPACING } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 interface OnboardingItem {
   id: string;
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   // description 659 → dots/button row 793–825
   container: {
     flex: 1,
-    paddingHorizontal: SIZES.onboardingImageLeft,
+    paddingHorizontal: AUTH_LAYOUT.imageLeft,
     paddingBottom: Platform.OS === 'ios' ? 15 : 49,
   },
   counter: {
@@ -177,12 +177,12 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     lineHeight: 16.8,
     letterSpacing: 0.25,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   imageWindow: {
     marginTop: 28.2, // 112 - (67 + 16.8)
-    width: SIZES.onboardingImageWidth,
-    height: SIZES.onboardingImageHeight,
+    width: AUTH_LAYOUT.imageWidth,
+    height: AUTH_LAYOUT.imageHeight,
     alignSelf: 'flex-start',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.xxxl,
     lineHeight: 41.6,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     marginBottom: 16.8, // 659 - (559 + 2 × 41.6)
   },
   description: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   bottomRow: {
     marginTop: 'auto',
@@ -224,23 +224,23 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 27,
-    backgroundColor: COLORS.black,
+    backgroundColor: AUTH_COLORS.black,
   },
   inactiveDot: {
     width: 12,
-    backgroundColor: COLORS.auth.dotInactive,
+    backgroundColor: AUTH_COLORS.dotInactive,
   },
   arrowButton: {
     width: 60,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.purple.lightFill,
+    backgroundColor: AUTH_COLORS.buttonFill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   arrowIcon: {
-    width: SIZES.authArrowWidth,
-    height: SIZES.authArrowHeight,
+    width: AUTH_LAYOUT.arrowWidth,
+    height: AUTH_LAYOUT.arrowHeight,
   },
   arrowButtonPressed: {
     opacity: 0.8,

@@ -13,7 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { PillButton } from '@/components/auth/PillButton';
-import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function OtpScreen() {
   const router = useRouter();
@@ -187,12 +187,12 @@ export function OtpScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
     width: '100%',
     maxWidth: 402,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18.2, // 130% of 14px
     letterSpacing: 0,
-    color: COLORS.text.body,
+    color: AUTH_COLORS.textBody,
     textAlign: 'center',
   },
   phoneSpan: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18.2,
     letterSpacing: 0,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   otpInputContainer: {
     position: 'absolute',
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.15)',
-    backgroundColor: COLORS.white,
+    backgroundColor: AUTH_COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     height: '100%',
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: 20,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     textAlign: 'center',
     textAlignVertical: 'center',
     padding: 0,
@@ -279,40 +279,40 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.xs,
     lineHeight: 15.6,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     marginBottom: 4.4, // next line starts at 428 in Figma
   },
   timerText: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
   },
   resendHighlight: {
-    color: COLORS.auth.resendLink,
+    color: AUTH_COLORS.resendLink,
     fontFamily: FONT_FAMILY.medium,
   },
   resendActiveText: {
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: COLORS.auth.resendLink,
+    color: AUTH_COLORS.resendLink,
   },
   buttonWrapper: {
     position: 'absolute',
     left: 75,
     top: 474,
-    width: SIZES.continueButtonWidth,
-    height: SIZES.authButtonHeight,
-    borderRadius: SIZES.authButtonHeight / 2,
+    width: AUTH_LAYOUT.continueButtonWidth,
+    height: AUTH_LAYOUT.buttonHeight,
+    borderRadius: AUTH_LAYOUT.buttonHeight / 2,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
   },
   button: {
-    width: SIZES.continueButtonWidth,
-    height: SIZES.authButtonHeight,
-    borderRadius: SIZES.authButtonHeight / 2,
-    backgroundColor: COLORS.purple.lightFill,
+    width: AUTH_LAYOUT.continueButtonWidth,
+    height: AUTH_LAYOUT.buttonHeight,
+    borderRadius: AUTH_LAYOUT.buttonHeight / 2,
+    backgroundColor: AUTH_COLORS.buttonFill,
   },
 });

@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { SIZES } from '@/theme';
+import { AUTH_LAYOUT } from '@/theme';
 
 export interface WelcomeImageProps {
   source: ImageSourcePropType;
@@ -21,19 +21,19 @@ export interface WelcomeImageProps {
 }
 
 export const WELCOME_IMAGE_DIMENSIONS = {
-  width: SIZES.welcomeImageWidth,
-  height: SIZES.welcomeImageHeight,
-  top: SIZES.welcomeImageTop,
-  left: SIZES.welcomeImageLeft,
-  angle: `${SIZES.welcomeImageAngle}deg`,
-  opacity: SIZES.welcomeImageOpacity,
+  width: AUTH_LAYOUT.imageWidth,
+  height: AUTH_LAYOUT.imageHeight,
+  top: AUTH_LAYOUT.imageTop,
+  left: AUTH_LAYOUT.imageLeft,
+  angle: `${AUTH_LAYOUT.imageAngle}deg`,
+  opacity: AUTH_LAYOUT.imageOpacity,
 } as const;
 
 export const WELCOME_IMAGE_STYLE = {
-  width: SIZES.welcomeImageWidth,
-  height: SIZES.welcomeImageHeight,
-  opacity: SIZES.welcomeImageOpacity,
-  transform: [{ rotate: `${SIZES.welcomeImageAngle}deg` }],
+  width: AUTH_LAYOUT.imageWidth,
+  height: AUTH_LAYOUT.imageHeight,
+  opacity: AUTH_LAYOUT.imageOpacity,
+  transform: [{ rotate: `${AUTH_LAYOUT.imageAngle}deg` }],
 } as const;
 
 export function WelcomeImage({
@@ -66,24 +66,24 @@ export function WelcomeImage({
 
 const styles = StyleSheet.create({
   container: {
-    width: SIZES.welcomeImageWidth,
-    height: SIZES.welcomeImageHeight,
-    opacity: SIZES.welcomeImageOpacity,
-    transform: [{ rotate: `${SIZES.welcomeImageAngle}deg` }],
+    width: AUTH_LAYOUT.imageWidth,
+    height: AUTH_LAYOUT.imageHeight,
+    opacity: AUTH_LAYOUT.imageOpacity,
+    transform: [{ rotate: `${AUTH_LAYOUT.imageAngle}deg` }],
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
   },
   positioned: {
     position: 'absolute',
-    top: SIZES.welcomeImageTop,
-    left: SIZES.welcomeImageLeft,
+    top: AUTH_LAYOUT.imageTop,
+    left: AUTH_LAYOUT.imageLeft,
   },
   image: {
-    width: SIZES.welcomeImageWidth,
-    height: SIZES.welcomeImageHeight,
-    opacity: SIZES.welcomeImageOpacity,
-    transform: [{ rotate: `${SIZES.welcomeImageAngle}deg` }],
+    width: AUTH_LAYOUT.imageWidth,
+    height: AUTH_LAYOUT.imageHeight,
+    opacity: AUTH_LAYOUT.imageOpacity,
+    transform: [{ rotate: `${AUTH_LAYOUT.imageAngle}deg` }],
   },
 });
 

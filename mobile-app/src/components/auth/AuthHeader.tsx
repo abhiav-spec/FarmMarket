@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
-import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export interface AuthHeaderProps {
   title?: string;
@@ -72,8 +72,8 @@ export function AuthHeader({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    maxWidth: SIZES.authHeaderSurfaceWidth,
-    height: SIZES.authHeaderSurfaceHeight,
+    maxWidth: AUTH_LAYOUT.headerSurfaceWidth,
+    height: AUTH_LAYOUT.headerSurfaceHeight,
     position: 'relative',
   },
   headerSurfaceBg: {
@@ -88,15 +88,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     top: 83,
-    width: SIZES.authBackArrowSize,
-    height: SIZES.authBackArrowSize,
+    width: AUTH_LAYOUT.backArrowSize,
+    height: AUTH_LAYOUT.backArrowSize,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
   },
   backArrow: {
-    width: SIZES.authBackArrowSize,
-    height: SIZES.authBackArrowSize,
+    width: AUTH_LAYOUT.backArrowSize,
+    height: AUTH_LAYOUT.backArrowSize,
   },
   title: {
     position: 'absolute',
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xl,
     lineHeight: 26,
     letterSpacing: 0,
-    color: COLORS.black,
+    color: AUTH_COLORS.black,
     textAlign: 'center',
   },
 });

@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { AppText } from '@/components/common/AppText';
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SIZES } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export interface PillButtonProps {
   title?: string;
@@ -84,9 +84,9 @@ export function PillButton({
 
 const styles = StyleSheet.create({
   button: {
-    height: SIZES.authButtonHeight,
-    backgroundColor: COLORS.purple.lightFill,
-    borderRadius: RADIUS.buttonPill,
+    height: AUTH_LAYOUT.buttonHeight,
+    backgroundColor: AUTH_COLORS.buttonFill,
+    borderRadius: AUTH_LAYOUT.buttonRadius,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 60,
@@ -105,11 +105,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SIZES.authButtonGap,
+    gap: AUTH_LAYOUT.buttonGap,
   },
   arrowIcon: {
-    width: SIZES.authArrowWidth,
-    height: SIZES.authArrowHeight,
+    width: AUTH_LAYOUT.arrowWidth,
+    height: AUTH_LAYOUT.arrowHeight,
   },
   title: {
     color: '#000000',

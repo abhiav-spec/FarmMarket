@@ -10,7 +10,6 @@ export const RADIUS = {
   xxl: 20,
   xxxl: 24,
   huge: 32,
-  buttonPill: 40,
   headerCompact: 38,
   header: 40,
   headerAlt: 40,
