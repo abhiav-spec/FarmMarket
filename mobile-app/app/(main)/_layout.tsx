@@ -1,5 +1,33 @@
+import { Image, StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
-import { colors } from '../../themes';
+
+import { colors, fonts, spacing, type } from '../../themes';
+
+const TAB_ICONS = {
+  home: require('../../assets/icons/bottom-tabs/home.png'),
+  advisor: require('../../assets/icons/bottom-tabs/advisor.png'),
+  orders: require('../../assets/icons/bottom-tabs/orders.png'),
+  profile: require('../../assets/icons/bottom-tabs/profile.png'),
+};
+
+function TabIcon({
+  name,
+  focused,
+}: {
+  name: keyof typeof TAB_ICONS;
+  focused: boolean;
+}) {
+  return (
+    <Image
+      source={TAB_ICONS[name]}
+      resizeMode="contain"
+      style={[
+        styles.icon,
+        { tintColor: focused ? colors.purple : colors.black },
+      ]}
+    />
+  );
+}
 
 export default function MainLayout() {
   return (
@@ -8,45 +36,55 @@ export default function MainLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.purple,
         tabBarInactiveTintColor: colors.black,
-        tabBarStyle: {
-          height: 84,
-          paddingTop: 10,
-          backgroundColor: colors.cream,
-          borderTopWidth: 0,
-        },
+        tabBarLabelStyle: styles.label,
+        tabBarIconStyle: styles.iconContainer,
+        tabBarStyle: styles.tabBar,
       }}
     >
-      <Tabs.Screen name="home" options={{ title: 'Home' }} />
       <Tabs.Screen
-          name="crop-advisor"
-            options={{
-              title: 'Advisor', 
-              tabBarStyle: {display: 'none',},
-            }}
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name="home" focused={focused} />
+          ),
+        }}
       />
-      <Tabs.Screen 
-            name="advisor"
-            options={{
-              href: null,
-            }}
+
+      <Tabs.Screen
+        name="advisor"
+        options={{
+          title: 'Advisor',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name="advisor" focused={focused} />
+          ),
+        }}
       />
+
       <Tabs.Screen
         name="orders"
         options={{
           title: 'Orders',
-          tabBarStyle: { display: 'none' },
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name="orders" focused={focused} />
+          ),
         }}
       />
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name="profile" focused={focused} />
+          ),
+        }}
+      />
 
       <Tabs.Screen
         name="cart"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
-
       <Tabs.Screen
         name="order-detail"
         options={{ href: null, tabBarStyle: { display: 'none' } }}
@@ -76,13 +114,79 @@ export default function MainLayout() {
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
       <Tabs.Screen
-        name="crop-advisor-history"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
+        name="write-to-us"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
       />
       <Tabs.Screen
-        name="consultation-details"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
+        name="feedback-success"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="refer-now"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="account-settings"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
+        name="notifications-settings"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
+        name="privacy-policy"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
+        name="terms-and-conditions"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    height: 70,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    backgroundColor: colors.cream,
+    borderTopWidth: 0,
+    elevation: 0,
+  },
+  label: {
+    fontFamily: fonts.medium,
+    fontSize: type.sm,
+  },
+  iconContainer: {
+    marginTop: 0,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+});

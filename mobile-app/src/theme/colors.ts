@@ -18,6 +18,7 @@ export const COLORS = {
   cropAdvisorBackground: '#F5EEFF',
   cropAdvisorBorder: '#CBB0FF',
 
+  purpleBorder1: '#E2CEFF',
   stepperGreen: '#009411',
   paymentOffer: '#E2FFD3',
   walletSurface: '#F5EEFF',
@@ -31,7 +32,7 @@ export const COLORS = {
   productDetailBorder: '#6A6A6A',
   productVideo: '#D9D9D9',
   reviewGreen: '#0C7810',
-
+  copycode: '#ECE3FF',
   categoryBackground: '#E9EBF8',
 
   text: {
