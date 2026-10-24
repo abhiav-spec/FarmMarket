@@ -20,9 +20,12 @@ export const AUTH_COLORS = {
 export const AUTH_LAYOUT = {
   buttonHeight: 45,
   buttonRadius: 40,
-  buttonGap: 31,
+  buttonGap: 32,
   arrowWidth: 30,
   arrowHeight: 15,
+  // The Figma arrow PNG has 1px of transparent edge on each side
+  // (30 wide image for a 28 wide arrow), so it takes up 28px in layout.
+  arrowBleed: 1,
   headerSurfaceHeight: 123,
   headerSurfaceWidth: 405,
   backArrowSize: 30,

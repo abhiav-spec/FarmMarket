@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   arrowIcon: {
     width: AUTH_LAYOUT.arrowWidth,
     height: AUTH_LAYOUT.arrowHeight,
+    marginHorizontal: -AUTH_LAYOUT.arrowBleed,
   },
   title: {
     color: '#000000',
