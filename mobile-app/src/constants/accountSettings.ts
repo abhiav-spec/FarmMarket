@@ -66,29 +66,3 @@ protect your data from unauthorized access,
 alteration or loss.`,
   },
 ] as const;
-export const TERMS_AND_CONDITIONS_SECTIONS = [
-  {
-    title: 'Acceptance of Terms',
-    body: 'By accessing or using FarmMarket, you agree to the applicable terms. If you do not agree, please discontinue use of the service.',
-  },
-  {
-    title: 'Your Account',
-    body: 'You are responsible for providing accurate account information and keeping your account credentials secure.',
-  },
-  {
-    title: 'Orders and Payments',
-    body: 'Review product availability, pricing, delivery details and payment conditions before completing an order.',
-  },
-  {
-    title: 'Acceptable Use',
-    body: 'You agree to use FarmMarket lawfully and not misuse the service or interfere with its operation.',
-  },
-  {
-    title: 'Service Availability',
-    body: 'Features and services may change or be temporarily unavailable for maintenance or other operational reasons.',
-  },
-  {
-    title: 'Contact and Updates',
-    body: 'We may update these terms as the service evolves. Contact support if you have questions about the applicable terms.',
-  },
-] as const;
