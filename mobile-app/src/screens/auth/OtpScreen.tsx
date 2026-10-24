@@ -13,7 +13,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function OtpScreen() {
   const router = useRouter();
@@ -141,8 +141,8 @@ export function OtpScreen() {
                   onBlur={() => setFocusedIndex((prev) => (prev === index ? -1 : prev))}
                   autoFocus={index === 0}
                   selectTextOnFocus
-                  cursorColor="#7B4CE2"
-                  selectionColor="rgba(123, 76, 226, 0.3)"
+                  cursorColor={AUTH_COLORS.purple}
+                  selectionColor={AUTH_COLORS.purpleLight}
                 />
               </View>
             );
@@ -187,12 +187,12 @@ export function OtpScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     width: '100%',
     maxWidth: 402,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18.2, // 130% of 14px
     letterSpacing: 0,
-    color: AUTH_COLORS.textBody,
+    color: COLORS.text.dark,
     textAlign: 'center',
   },
   phoneSpan: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18.2,
     letterSpacing: 0,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
   },
   otpInputContainer: {
     position: 'absolute',
@@ -230,34 +230,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: AUTH_LAYOUT.inputBoxGap,
   },
+  // White box with a thin border; only the border changes when filled/focused
   otpBox: {
-    width: 40,
-    height: 45,
-    borderRadius: 8,
+    width: AUTH_LAYOUT.otpBoxWidth,
+    height: AUTH_LAYOUT.otpBoxHeight,
+    borderRadius: AUTH_LAYOUT.inputBoxRadius,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.15)',
-    backgroundColor: AUTH_COLORS.white,
+    borderColor: AUTH_COLORS.purpleBorder,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   otpBoxFilled: {
-    backgroundColor: 'rgba(219, 193, 254, 0.4)',
-    borderColor: 'rgba(123, 76, 226, 0.4)',
-    borderWidth: 1,
+    borderColor: AUTH_COLORS.purpleBorder,
   },
   otpBoxFocused: {
-    backgroundColor: 'rgba(219, 193, 254, 0.4)',
-    borderColor: '#7B4CE2',
-    borderWidth: 1.5,
+    borderColor: AUTH_COLORS.purple,
   },
   otpBoxInput: {
     width: '100%',
     height: '100%',
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: 20,
-    color: AUTH_COLORS.black,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.xxl,
+    color: COLORS.text.black,
     textAlign: 'center',
     textAlignVertical: 'center',
     padding: 0,
@@ -279,24 +276,24 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.xs,
     lineHeight: 15.6,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     marginBottom: 4.4, // next line starts at 428 in Figma
   },
   timerText: {
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
   },
   resendHighlight: {
-    color: AUTH_COLORS.resendLink,
+    color: COLORS.success,
     fontFamily: FONT_FAMILY.medium,
   },
   resendActiveText: {
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.sm,
     lineHeight: 18.2,
-    color: AUTH_COLORS.resendLink,
+    color: COLORS.success,
   },
   buttonWrapper: {
     position: 'absolute',

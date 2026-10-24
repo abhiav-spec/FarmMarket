@@ -13,11 +13,12 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_COLORS, AUTH_LAYOUT, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 export function MobileNumberScreen() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
   const isValid = cleanPhone.length === 10;
@@ -80,18 +81,17 @@ export function MobileNumberScreen() {
             Enter your mobile number
           </AppText>
 
-          {/* Mobile Number Input following StoreFiller pattern */}
+          {/* Mobile number: "+91" box next to the number box */}
           <View style={styles.inputRow}>
-            {/* Country code: +91 */}
-            <View style={styles.countryCodeSection}>
+            <View style={styles.countryCodeBox}>
               <AppText style={styles.countryCodeText}>+91</AppText>
-              <View style={styles.underline} />
             </View>
 
-            {/* Mobile number text input */}
-            <View style={styles.phoneSection}>
+            <View style={[styles.phoneBox, isFocused && styles.phoneBoxFocused]}>
               <TextInput
                 style={styles.phoneInput}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 keyboardType="phone-pad"
                 maxLength={10}
                 value={phone}
@@ -101,7 +101,6 @@ export function MobileNumberScreen() {
                 placeholder=""
                 autoFocus
               />
-              <View style={styles.underline} />
             </View>
           </View>
 
@@ -131,12 +130,12 @@ export function MobileNumberScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: AUTH_COLORS.white,
+    backgroundColor: COLORS.background,
     alignItems: 'center',
     width: '100%',
     maxWidth: 402,
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xl,
     lineHeight: 26,
     letterSpacing: 0,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
     textAlign: 'center',
   },
   contentContainer: {
@@ -197,35 +196,48 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.md,
     lineHeight: 20.8,
     letterSpacing: 0,
-    color: AUTH_COLORS.black,
+    color: COLORS.text.black,
   },
   inputRow: {
     flexDirection: 'row',
     marginTop: 25, // 189 - 143 - 21
-    alignItems: 'flex-end',
+    gap: AUTH_LAYOUT.inputBoxGap,
   },
-  countryCodeSection: {
-    width: 36,
+  countryCodeBox: {
+    width: AUTH_LAYOUT.countryCodeWidth,
+    height: AUTH_LAYOUT.inputBoxHeight,
+    borderRadius: AUTH_LAYOUT.inputBoxRadius,
+    borderWidth: 1,
+    borderColor: AUTH_COLORS.purpleBorder,
+    backgroundColor: COLORS.background,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   countryCodeText: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 21,
-    color: AUTH_COLORS.black,
-    paddingBottom: 4,
-  },
-  phoneSection: {
-    width: 242,
-    marginLeft: 24, // 76 - (16 + 36)
-  },
-  phoneInput: {
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
     lineHeight: 21,
-    color: AUTH_COLORS.black,
-    paddingVertical: 0,
-    paddingBottom: 4,
-    paddingHorizontal: 0,
+    color: COLORS.text.black,
+  },
+  phoneBox: {
+    flex: 1,
+    height: AUTH_LAYOUT.inputBoxHeight,
+    borderRadius: AUTH_LAYOUT.inputBoxRadius,
+    borderWidth: 1,
+    borderColor: AUTH_COLORS.purpleBorder,
+    backgroundColor: COLORS.background,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  phoneBoxFocused: {
+    borderColor: AUTH_COLORS.purple,
+  },
+  phoneInput: {
+    height: '100%',
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text.black,
+    padding: 0,
     borderWidth: 0,
     backgroundColor: 'transparent',
     ...Platform.select({
@@ -234,20 +246,15 @@ const styles = StyleSheet.create({
       } as any,
     }),
   },
-  underline: {
-    height: 1,
-    backgroundColor: AUTH_COLORS.inputLine,
-    width: '100%',
-  },
   securityText: {
-    marginTop: 210, // 425 - 215
+    marginTop: 188, // keeps the text at 425 below the 48px boxes
     width: 370,
     height: 32,
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.xs,
     lineHeight: 15.6,
     letterSpacing: 0,
-    color: AUTH_COLORS.textBody,
+    color: COLORS.text.dark,
   },
   buttonWrapper: {
     position: 'absolute',

@@ -3,17 +3,16 @@ import { FONT_FAMILY } from './typography';
 // Values for the auth and onboarding screens, taken from Figma.
 // Kept in their own groups (like CART_LAYOUT / WALLET_LAYOUT) so they never
 // clash with shared COLORS / SIZES keys used by other screens.
+// Black, white, body text and green come from the shared COLORS; only the
+// colours used just on these screens live here.
 
 export const AUTH_COLORS = {
-  black: '#000000',
-  white: '#FFFFFF',
-  textBody: '#333333',
   purple: '#7B4CE2',
   purpleLight: '#DBC1FE',
+  purpleBorder: 'rgba(123, 76, 226, 0.4)',
   buttonFill: 'rgba(219, 193, 254, 0.4)',
   inputLine: 'rgba(0, 0, 0, 0.2)',
   placeholder: '#CCCCCC',
-  resendLink: '#009411',
   dotInactive: '#F5F378',
 } as const;
 
@@ -31,6 +30,14 @@ export const AUTH_LAYOUT = {
   backArrowSize: 30,
   getStartedButtonWidth: 271,
   continueButtonWidth: 253,
+
+  // Bordered input boxes (mobile number + OTP)
+  inputBoxHeight: 48,
+  inputBoxRadius: 4,
+  inputBoxGap: 10,
+  countryCodeWidth: 56,
+  otpBoxWidth: 50,
+  otpBoxHeight: 56,
 
   // Onboarding illustration window
   imageWidth: 370,
