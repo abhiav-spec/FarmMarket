@@ -9,6 +9,8 @@ export interface AuthHeaderProps {
   onBack?: () => void;
   showBack?: boolean;
   fallbackRoute?: string;
+  /** Figma shows the white shadowed band only on the Mobile Number screen. */
+  showSurface?: boolean;
 }
 
 export function AuthHeader({
@@ -16,6 +18,7 @@ export function AuthHeader({
   onBack,
   showBack = true,
   fallbackRoute = '/(auth)/get-started',
+  showSurface = false,
 }: AuthHeaderProps) {
   const router = useRouter();
 
@@ -31,12 +34,13 @@ export function AuthHeader({
 
   return (
     <View style={styles.container}>
-      {/* White Figma Surface with bottom shadow */}
-      <Image
-        source={require('@/assets/auth/input-surface.png')}
-        style={styles.headerSurfaceBg}
-        resizeMode="stretch"
-      />
+      {showSurface ? (
+        <Image
+          source={require('@/assets/auth/input-surface.png')}
+          style={styles.headerSurfaceBg}
+          resizeMode="stretch"
+        />
+      ) : null}
 
       {/* Back Arrow */}
       {showBack ? (

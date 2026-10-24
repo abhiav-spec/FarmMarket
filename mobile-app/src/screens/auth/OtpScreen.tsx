@@ -201,18 +201,18 @@ const styles = StyleSheet.create({
   instructionContainer: {
     position: 'absolute',
     top: 143,
-    left: 37.5,
-    width: 327,
+    left: 16,
+    width: 370,
     alignItems: 'center',
     justifyContent: 'center',
   },
   instructionText: {
-    width: 327,
+    width: 370,
     fontFamily: FONT_FAMILY.regular,
     fontSize: 14,
     lineHeight: 18.2, // 130% of 14px
     letterSpacing: 0,
-    color: COLORS.black,
+    color: COLORS.text.body,
     textAlign: 'center',
   },
   phoneSpan: {
@@ -272,31 +272,31 @@ const styles = StyleSheet.create({
   resendContainer: {
     position: 'absolute',
     left: 16,
-    top: 409,
+    top: 408,
     width: 370,
   },
   resendPrompt: {
     fontFamily: FONT_FAMILY.regular,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: FONT_SIZE.xs,
+    lineHeight: 15.6,
     color: COLORS.black,
-    marginBottom: 2,
+    marginBottom: 4.4, // next line starts at 428 in Figma
   },
   timerText: {
     fontFamily: FONT_FAMILY.regular,
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: FONT_SIZE.sm,
+    lineHeight: 18.2,
     color: COLORS.black,
   },
   resendHighlight: {
-    color: COLORS.success,
+    color: COLORS.auth.resendLink,
     fontFamily: FONT_FAMILY.medium,
   },
   resendActiveText: {
     fontFamily: FONT_FAMILY.semiBold,
-    fontSize: 13,
-    lineHeight: 18,
-    color: COLORS.success,
+    fontSize: FONT_SIZE.sm,
+    lineHeight: 18.2,
+    color: COLORS.auth.resendLink,
   },
   buttonWrapper: {
     position: 'absolute',

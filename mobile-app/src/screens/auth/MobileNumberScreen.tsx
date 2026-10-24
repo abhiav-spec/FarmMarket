@@ -18,7 +18,6 @@ import { COLORS, FONT_FAMILY, FONT_SIZE, SIZES } from '@/theme';
 export function MobileNumberScreen() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
 
   const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
   const isValid = cleanPhone.length === 10;
@@ -38,8 +37,6 @@ export function MobileNumberScreen() {
       params: { phone: cleanPhone },
     });
   };
-
-  const isInputActive = isFocused || cleanPhone.length > 0;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -88,12 +85,7 @@ export function MobileNumberScreen() {
             {/* Country code: +91 */}
             <View style={styles.countryCodeSection}>
               <AppText style={styles.countryCodeText}>+91</AppText>
-              <View
-                style={[
-                  styles.underline,
-                  isInputActive && styles.underlineActive,
-                ]}
-              />
+              <View style={styles.underline} />
             </View>
 
             {/* Mobile number text input */}
@@ -104,19 +96,12 @@ export function MobileNumberScreen() {
                 maxLength={10}
                 value={phone}
                 onChangeText={(value) => setPhone(value.replace(/\D/g, '').slice(0, 10))}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
                 cursorColor={COLORS.purple.primary}
                 selectionColor={COLORS.purple.light}
                 placeholder=""
                 autoFocus
               />
-              <View
-                style={[
-                  styles.underline,
-                  isInputActive && styles.underlineActive,
-                ]}
-              />
+              <View style={styles.underline} />
             </View>
           </View>
 
@@ -223,7 +208,7 @@ const styles = StyleSheet.create({
     width: 36,
   },
   countryCodeText: {
-    fontFamily: FONT_FAMILY.medium,
+    fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
     lineHeight: 21,
     color: COLORS.black,
@@ -251,12 +236,8 @@ const styles = StyleSheet.create({
   },
   underline: {
     height: 1,
-    backgroundColor: COLORS.black,
+    backgroundColor: COLORS.auth.inputLine,
     width: '100%',
-  },
-  underlineActive: {
-    height: 1.5,
-    backgroundColor: COLORS.purple.active,
   },
   securityText: {
     marginTop: 210, // 425 - 215
@@ -264,7 +245,7 @@ const styles = StyleSheet.create({
     height: 32,
     fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.xs,
-    lineHeight: 16,
+    lineHeight: 15.6,
     letterSpacing: 0,
     color: COLORS.text.body,
   },

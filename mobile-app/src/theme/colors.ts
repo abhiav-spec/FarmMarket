@@ -29,6 +29,14 @@ export const COLORS = {
   border: '#E5E5E5',
   divider: '#EEEEEE',
 
+  // Auth / onboarding values taken from Figma
+  auth: {
+    inputLine: 'rgba(0, 0, 0, 0.2)',
+    placeholder: '#CCCCCC',
+    resendLink: '#009411',
+    dotInactive: '#F5F378',
+  },
+
   success: '#2E7D32',
   warning: '#F59E0B',
   error: '#D32F2F',

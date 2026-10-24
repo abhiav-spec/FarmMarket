@@ -5,9 +5,9 @@ export const SIZES = {
 
   authButtonHeight: 45,
   authButtonRadius: 40,
-  authButtonGap: 32,
-  authArrowWidth: 28,
-  authArrowHeight: 14,
+  authButtonGap: 31,
+  authArrowWidth: 30,
+  authArrowHeight: 15,
   authHeaderSurfaceHeight: 123,
   authHeaderSurfaceWidth: 405,
   authBackArrowSize: 30,

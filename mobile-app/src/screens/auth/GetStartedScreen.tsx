@@ -21,11 +21,11 @@ export function GetStartedScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Figma large circular background element with glow shadows */}
+        {/* Figma white circle with yellow/orange glow, exported as PNG */}
         <Image
-          source={require('@/assets/auth/Rectangle 1 (1).svg')}
+          source={require('@/assets/auth/get-started-glow.png')}
           style={styles.backgroundImage}
-          resizeMode="cover"
+          resizeMode="stretch"
         />
 
         <View style={styles.content}>
@@ -67,9 +67,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backgroundImage: {
-    ...StyleSheet.absoluteFill,
+    position: 'absolute',
+    top: 0,
+    left: 0,
     width: '100%',
-    height: '100%',
+    aspectRatio: 402 / 874,
   },
   content: {
     width: '100%',

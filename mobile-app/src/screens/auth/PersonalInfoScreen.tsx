@@ -132,7 +132,7 @@ export function PersonalInfoScreen() {
             <TextInput
               style={styles.input}
               placeholder="What should we call you?"
-              placeholderTextColor={COLORS.text.muted}
+              placeholderTextColor={COLORS.auth.placeholder}
               value={name}
               onChangeText={setName}
             />
@@ -195,18 +195,18 @@ export function PersonalInfoScreen() {
             <View style={styles.underline} />
           </View>
         </View>
-
-        {/* Continue Button */}
-        <View style={styles.bottomSection}>
-          <PillButton
-            label="Continue"
-            arrowPosition="left"
-            fullWidth={false}
-            onPress={handleContinue}
-            style={styles.button}
-          />
-        </View>
       </ScrollView>
+
+      {/* Continue Button: fixed near the bottom, as in Figma */}
+      <View style={styles.bottomSection}>
+        <PillButton
+          label="Continue"
+          arrowPosition="left"
+          fullWidth={false}
+          onPress={handleContinue}
+          style={styles.button}
+        />
+      </View>
 
       {/* Selection Modal Bottom Sheet */}
       <Modal
@@ -286,52 +286,58 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  // Figma rhythm: label 143 → value 180 → line 205 → next label 221
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: SPACING.xl,
-    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.xxl,
   },
   formSection: {
     paddingTop: SPACING.xl,
   },
   fieldGroup: {
-    marginBottom: SPACING.xxl,
+    width: 318,
+    marginBottom: SPACING.lg,
   },
   label: {
-    fontFamily: FONT_FAMILY.semiBold,
+    fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.sm,
+    lineHeight: 20.8,
+    color: COLORS.black,
+    marginBottom: 16.2,
   },
   input: {
-    fontFamily: FONT_FAMILY.regular,
+    fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
-    paddingVertical: SPACING.sm,
+    lineHeight: 20.8,
+    color: COLORS.black,
+    paddingVertical: 0,
+    paddingBottom: 4.2,
   },
   pickerTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: SPACING.sm,
+    paddingBottom: 4.2,
   },
   pickerText: {
-    fontFamily: FONT_FAMILY.regular,
+    fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
+    lineHeight: 20.8,
+    color: COLORS.black,
   },
   placeholderText: {
-    color: COLORS.text.muted,
+    color: COLORS.auth.placeholder,
   },
   underline: {
-    height: 1.5,
-    backgroundColor: COLORS.border,
+    height: 1,
+    backgroundColor: COLORS.auth.inputLine,
   },
   bottomSection: {
-    paddingTop: SPACING.xl,
     alignItems: 'center',
     justifyContent: 'center',
+    // Figma: 44px from the frame bottom; iOS SafeAreaView already removes ~34px
+    paddingBottom: Platform.OS === 'ios' ? 10 : 44,
   },
   button: {
     width: SIZES.continueButtonWidth,
