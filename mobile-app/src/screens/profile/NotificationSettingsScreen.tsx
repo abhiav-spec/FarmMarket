@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Alert,
+  Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   View,
 } from 'react-native';
@@ -20,140 +20,238 @@ import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 export function NotificationSettingsScreen() {
   const router = useRouter();
+  const [showSuccess, setShowSuccess] = useState(false);
   const [settings, setSettings] = useState(INITIAL_NOTIFICATION_SETTINGS);
 
-  const toggleNotification = (id: NotificationId, enabled: boolean) => {
-    setSettings((current) => ({ ...current, [id]: enabled }));
+  const handleToggle = (id: NotificationId, value: boolean) => {
+    setSettings((previous) => ({
+      ...previous,
+      [id]: value,
+    }));
   };
 
   const handleSave = () => {
-    // TODO: Persist these preferences through the notification settings API.
-    Alert.alert(
-      'Preferences',
-      'Notification preferences are selected locally. Saving them to your account requires API integration.',
-      [{ text: 'OK', onPress: () => router.back() }],
-    );
+    setShowSuccess(true);
   };
-
   return (
     <SafeAreaView style={styles.screen}>
       <FeedbackHeader title="Notifications" onBackPress={() => router.back()} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-        <Text style={styles.description}>
-          Choose which notifications you want to receive.
-        </Text>
+      <View style={styles.content}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.description}>
+            Choose what you want to be notified about
+          </Text>
 
-        <View style={styles.optionsCard}>
-          {NOTIFICATION_OPTIONS.map((option, index) => (
-            <React.Fragment key={option.id}>
-              {index > 0 ? <View style={styles.divider} /> : null}
+          <View style={styles.notificationList}>
+            {NOTIFICATION_OPTIONS.map((item) => (
+              <View key={item.id} style={styles.notificationRow}>
+                <View style={styles.notificationText}>
+                  <Text style={styles.notificationTitle}>{item.title}</Text>
 
-              <View style={styles.optionRow}>
-                <View style={styles.optionText}>
-                  <Text style={styles.optionTitle}>{option.title}</Text>
-                  <Text style={styles.optionDescription}>
-                    {option.description}
+                  <Text style={styles.notificationDescription}>
+                    {item.description}
                   </Text>
                 </View>
 
-                <Switch
-                  accessibilityLabel={option.title}
-                  value={settings[option.id]}
-                  onValueChange={(enabled) =>
-                    toggleNotification(option.id, enabled)
-                  }
-                  trackColor={{
-                    false: COLORS.disabled,
-                    true: COLORS.purple,
-                  }}
-                  thumbColor={COLORS.surface}
-                />
+                <Pressable
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: settings[item.id] }}
+                  accessibilityLabel={item.title}
+                  onPress={() => handleToggle(item.id, !settings[item.id])}
+                  style={[
+                    styles.switchTrack,
+                    settings[item.id] && styles.switchTrackOn,
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.switchThumb,
+                      settings[item.id] && styles.switchThumbOn,
+                    ]}
+                  />
+                </Pressable>
               </View>
-            </React.Fragment>
-          ))}
-        </View>
-      </ScrollView>
+            ))}
+          </View>
+        </ScrollView>
 
-      <View style={styles.footer}>
-        <Text
-          accessibilityRole="text"
-          style={styles.saveButton}
-          onPress={handleSave}
-        >
-          Save Changes
-        </Text>
+        <View style={styles.footer}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleSave}
+            style={({ pressed }) => [
+              styles.saveButton,
+              pressed && styles.saveButtonPressed,
+            ]}
+          >
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </Pressable>
+        </View>
       </View>
+      <Modal
+        visible={showSuccess}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowSuccess(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.successTitle}>Success!</Text>
+
+            <Text style={styles.successMessage}>
+              Your notification preferences have been saved.
+            </Text>
+
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setShowSuccess(false);
+                router.back();
+              }}
+              style={styles.modalButton}
+            >
+              <Text style={styles.modalButtonText}>OK</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: COLORS.background,
   },
   content: {
-    padding: SPACING.lg,
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
     paddingBottom: SPACING.xl,
   },
   description: {
-    color: COLORS.text.secondary,
-    fontFamily: FONT_FAMILY.regular,
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.sm,
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
-  optionsCard: {
-    paddingHorizontal: SPACING.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.xl,
-    backgroundColor: COLORS.surface,
+  notificationList: {
+    gap: SPACING.xl,
   },
-  optionRow: {
-    minHeight: SPACING.xxxl * 2,
+  notificationRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: SPACING.md,
-    paddingVertical: SPACING.lg,
+    minHeight: SPACING.xxxl,
   },
-  optionText: {
+  notificationText: {
     flex: 1,
     gap: SPACING.xs,
   },
-  optionTitle: {
+  notificationTitle: {
     color: COLORS.text.primary,
-    fontFamily: FONT_FAMILY.semiBold,
+    fontFamily: FONT_FAMILY.medium,
     fontSize: FONT_SIZE.md,
   },
-  optionDescription: {
-    color: COLORS.text.secondary,
+  notificationDescription: {
+    color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.xs,
-    lineHeight: SPACING.lg,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.divider,
   },
   footer: {
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.divider,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.lg,
     backgroundColor: COLORS.background,
   },
   saveButton: {
-    overflow: 'hidden',
-    paddingVertical: SPACING.lg,
-    borderRadius: RADIUS.lg,
+    minHeight: SPACING.xxxl + SPACING.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderRadius: SPACING.sm,
     backgroundColor: COLORS.purple,
+  },
+  saveButtonPressed: {
+    opacity: 0.8,
+  },
+  saveButtonText: {
     color: COLORS.text.inverse,
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
+  },
+  switchTrack: {
+    width: SPACING.xxxl * 2.5,
+    height: SPACING.xxxl,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.disabled,
+    justifyContent: 'center',
+    padding: 1,
+  },
+  switchTrackOn: {
+    backgroundColor: COLORS.purple,
+  },
+  switchThumb: {
+    width: SPACING.xl * 2,
+    height: SPACING.xxxl,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.surface,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: COLORS.purpleBorder,
+    alignSelf: 'flex-start',
+  },
+  switchThumbOn: {
+    alignSelf: 'flex-end',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.lg,
+    backgroundColor: COLORS.overlay,
+  },
+  modalCard: {
+    width: '100%',
+    padding: SPACING.xl,
+    borderRadius: RADIUS.lg,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    gap: SPACING.md,
+  },
+  successTitle: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.semiBold,
+    fontSize: FONT_SIZE.lg,
+  },
+  successMessage: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
     textAlign: 'center',
+  },
+  modalButton: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACING.md,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.purple,
+  },
+  modalButtonText: {
+    color: COLORS.text.inverse,
+    fontFamily: FONT_FAMILY.semiBold,
+    fontSize: FONT_SIZE.md,
   },
 });
