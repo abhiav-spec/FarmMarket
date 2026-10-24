@@ -1,36 +1,54 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
+  NativeSyntheticEvent,
   Platform,
   Pressable,
   SafeAreaView,
   StyleSheet,
   TextInput,
+  TextInputKeyPressEventData,
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
+import { OutlinedBox } from '@/components/auth/OutlinedBox';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import {
+  AUTH_STRINGS,
+  COUNTRY_CODE,
+  OTP_LENGTH,
+  OTP_RESEND_SECONDS,
+  PHONE_LENGTH,
+} from '@/constants/auth';
+import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+
+const STRINGS = AUTH_STRINGS.otp;
+const BOX_INDEXES = Array.from({ length: OTP_LENGTH }, (_, i) => i);
+const emptyDigits = () => Array<string>(OTP_LENGTH).fill('');
+
+// Shows the first half of the number, e.g. 98765 XXXXX
+const maskPhone = (phone: string) => {
+  const half = PHONE_LENGTH / 2;
+  const hidden = 'X'.repeat(half);
+  return phone.length === PHONE_LENGTH
+    ? `${phone.slice(0, half)} ${hidden}`
+    : `${hidden} ${hidden}`;
+};
 
 export function OtpScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ phone?: string }>();
-  const phone = params.phone || '';
+  const { phone = '' } = useLocalSearchParams<{ phone?: string }>();
 
-  const [digits, setDigits] = useState<string[]>(['', '', '', '', '', '']);
-  const [focusedIndex, setFocusedIndex] = useState<number>(0);
-  const [timer, setTimer] = useState(30);
-  const inputRefs = useRef<Array<TextInput | null>>([]);
+  const [digits, setDigits] = useState<string[]>(emptyDigits);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [timer, setTimer] = useState(OTP_RESEND_SECONDS);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const otp = digits.join('');
-
-  // Mask phone e.g. 98765 XXXXX or XXXXX XXXXX
-  const displayPhone = phone.length === 10
-    ? `${phone.slice(0, 5)} XXXXX`
-    : 'XXXXX XXXXX';
+  const isComplete = otp.length === OTP_LENGTH;
 
   useEffect(() => {
     if (timer <= 0) return;
@@ -42,8 +60,8 @@ export function OtpScreen() {
 
   const handleResend = () => {
     if (timer === 0) {
-      setTimer(30);
-      setDigits(['', '', '', '', '', '']);
+      setTimer(OTP_RESEND_SECONDS);
+      setDigits(emptyDigits());
       inputRefs.current[0]?.focus();
     }
   };
@@ -51,16 +69,15 @@ export function OtpScreen() {
   const handleDigitChange = (text: string, index: number) => {
     const clean = text.replace(/[^0-9]/g, '');
 
-    // Handle paste of multiple digits
+    // Pasting the full code fills every box
     if (clean.length > 1) {
       const newDigits = [...digits];
-      const chars = clean.slice(0, 6).split('');
+      const chars = clean.slice(0, OTP_LENGTH).split('');
       chars.forEach((c, idx) => {
         newDigits[idx] = c;
       });
       setDigits(newDigits);
-      const nextIdx = Math.min(chars.length, 5);
-      inputRefs.current[nextIdx]?.focus();
+      inputRefs.current[Math.min(chars.length, OTP_LENGTH - 1)]?.focus();
       return;
     }
 
@@ -68,24 +85,26 @@ export function OtpScreen() {
     newDigits[index] = clean.slice(-1);
     setDigits(newDigits);
 
-    if (clean && index < 5) {
+    if (clean && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyPress = (e: any, index: number) => {
-    if (e.nativeEvent.key === 'Backspace') {
-      if (!digits[index] && index > 0) {
-        const newDigits = [...digits];
-        newDigits[index - 1] = '';
-        setDigits(newDigits);
-        inputRefs.current[index - 1]?.focus();
-      }
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number,
+  ) => {
+    // Backspace on an empty box clears and jumps to the previous one
+    if (e.nativeEvent.key === 'Backspace' && !digits[index] && index > 0) {
+      const newDigits = [...digits];
+      newDigits[index - 1] = '';
+      setDigits(newDigits);
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handleContinue = () => {
-    if (otp.length === 6) {
+    if (isComplete) {
       router.push('/(auth)/personal-info');
     }
   };
@@ -96,85 +115,76 @@ export function OtpScreen() {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* 1. Top Header: Reused AuthHeader component with Mobile Number top bar layout */}
         <AuthHeader
-          title="Verify your number"
+          title={STRINGS.header}
           fallbackRoute="/(auth)/mobile-number"
         />
 
-        {/* 2. OTP Instruction Text: Centered, width 327, top 143 */}
         <View style={styles.instructionContainer}>
           <AppText style={styles.instructionText}>
-            We've sent a 6-digit verification code to{' '}
-            <AppText style={styles.phoneSpan}>
-              {`+91 ${displayPhone}`}
-            </AppText>
-            . Enter the code below to continue.
+            {STRINGS.sentPrefix}
+            <AppText
+              style={styles.phoneSpan}
+            >{`${COUNTRY_CODE} ${maskPhone(phone)}`}</AppText>
+            {STRINGS.sentSuffix}
           </AppText>
         </View>
 
-        {/* 3. 6 Individual OTP Input Boxes: 40px × 45px rounded rectangular boxes */}
         <View style={styles.otpInputContainer}>
-          {[0, 1, 2, 3, 4, 5].map((index) => {
-            const isFilled = Boolean(digits[index]);
-            const isFocused = focusedIndex === index;
-
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.otpBox,
-                  isFilled && styles.otpBoxFilled,
-                  isFocused && styles.otpBoxFocused,
-                ]}
-              >
-                <TextInput
-                  ref={(ref) => {
-                    inputRefs.current[index] = ref;
-                  }}
-                  style={styles.otpBoxInput}
-                  keyboardType="number-pad"
-                  value={digits[index]}
-                  onChangeText={(text) => handleDigitChange(text, index)}
-                  onKeyPress={(e) => handleKeyPress(e, index)}
-                  onFocus={() => setFocusedIndex(index)}
-                  onBlur={() => setFocusedIndex((prev) => (prev === index ? -1 : prev))}
-                  autoFocus={index === 0}
-                  selectTextOnFocus
-                  cursorColor={AUTH_COLORS.purple}
-                  selectionColor={AUTH_COLORS.purpleLight}
-                />
-              </View>
-            );
-          })}
+          {BOX_INDEXES.map((index) => (
+            <OutlinedBox
+              key={index}
+              focused={focusedIndex === index}
+              style={styles.otpBox}
+            >
+              <TextInput
+                ref={(ref) => {
+                  inputRefs.current[index] = ref;
+                }}
+                style={styles.otpBoxInput}
+                keyboardType="number-pad"
+                value={digits[index]}
+                onChangeText={(text) => handleDigitChange(text, index)}
+                onKeyPress={(e) => handleKeyPress(e, index)}
+                onFocus={() => setFocusedIndex(index)}
+                onBlur={() =>
+                  setFocusedIndex((prev) => (prev === index ? -1 : prev))
+                }
+                autoFocus={index === 0}
+                selectTextOnFocus
+                cursorColor={AUTH_COLORS.purple}
+                selectionColor={AUTH_COLORS.purpleLight}
+              />
+            </OutlinedBox>
+          ))}
         </View>
 
-        {/* 4. Resend Section: Left: 16px, Top: 409px */}
         <View style={styles.resendContainer}>
-          <AppText style={styles.resendPrompt}>
-            Didn't receive the code?
-          </AppText>
+          <AppText style={styles.resendPrompt}>{STRINGS.notReceived}</AppText>
           {timer > 0 ? (
             <AppText style={styles.timerText}>
-              You can <AppText style={styles.resendHighlight}>resend it</AppText> in {timer} seconds.
+              {STRINGS.resendPrefix}
+              <AppText style={styles.resendHighlight}>
+                {STRINGS.resendLink}
+              </AppText>
+              {STRINGS.resendSuffix(timer)}
             </AppText>
           ) : (
             <Pressable onPress={handleResend} hitSlop={8}>
               <AppText style={styles.resendActiveText}>
-                Resend code
+                {STRINGS.resendNow}
               </AppText>
             </Pressable>
           )}
         </View>
 
-        {/* 5. Continue Button: Left: 75px, Top: 474px, Width: 253px, Height: 45px, Pill */}
         <View style={styles.buttonWrapper}>
           <PillButton
-            title="Continue"
+            title={AUTH_STRINGS.continue}
             showArrow
             arrowPosition="left"
             fullWidth={false}
-            disabled={otp.length !== 6}
+            disabled={!isComplete}
             onPress={handleContinue}
             style={styles.button}
           />
@@ -184,6 +194,7 @@ export function OtpScreen() {
   );
 }
 
+// Figma (402×874 frame): instruction 143 → OTP boxes 205 → resend 408 → button 474
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -195,31 +206,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     alignItems: 'center',
     width: '100%',
-    maxWidth: 402,
+    maxWidth: AUTH_LAYOUT.screenWidth,
     position: 'relative',
   },
   instructionContainer: {
     position: 'absolute',
     top: 143,
-    left: 16,
-    width: 370,
-    alignItems: 'center',
-    justifyContent: 'center',
+    left: AUTH_LAYOUT.screenPadding,
+    right: AUTH_LAYOUT.screenPadding,
   },
   instructionText: {
-    width: 370,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: 14,
-    lineHeight: 18.2, // 130% of 14px
-    letterSpacing: 0,
+    ...AUTH_TYPOGRAPHY.bodySmall,
     color: COLORS.text.dark,
     textAlign: 'center',
   },
   phoneSpan: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: 14,
-    lineHeight: 18.2,
-    letterSpacing: 0,
+    ...AUTH_TYPOGRAPHY.bodySmallStrong,
     color: COLORS.text.black,
   },
   otpInputContainer: {
@@ -228,32 +230,17 @@ const styles = StyleSheet.create({
     right: 0,
     top: 205,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
     gap: AUTH_LAYOUT.inputBoxGap,
   },
-  // White box with a thin border; only the border changes when filled/focused
   otpBox: {
     width: AUTH_LAYOUT.otpBoxWidth,
     height: AUTH_LAYOUT.otpBoxHeight,
-    borderRadius: AUTH_LAYOUT.inputBoxRadius,
-    borderWidth: 1,
-    borderColor: AUTH_COLORS.purpleBorder,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  otpBoxFilled: {
-    borderColor: AUTH_COLORS.purpleBorder,
-  },
-  otpBoxFocused: {
-    borderColor: AUTH_COLORS.purple,
   },
   otpBoxInput: {
+    ...AUTH_TYPOGRAPHY.otpDigit,
     width: '100%',
     height: '100%',
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.xxl,
     color: COLORS.text.black,
     textAlign: 'center',
     textAlignVertical: 'center',
@@ -263,53 +250,42 @@ const styles = StyleSheet.create({
     ...Platform.select({
       web: {
         outlineStyle: 'none',
-      } as any,
+      } as object,
     }),
   },
   resendContainer: {
     position: 'absolute',
-    left: 16,
+    left: AUTH_LAYOUT.screenPadding,
+    right: AUTH_LAYOUT.screenPadding,
     top: 408,
-    width: 370,
   },
   resendPrompt: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.xs,
-    lineHeight: 15.6,
+    ...AUTH_TYPOGRAPHY.captionRegular,
     color: COLORS.text.black,
     marginBottom: 4.4, // next line starts at 428 in Figma
   },
   timerText: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 18.2,
+    ...AUTH_TYPOGRAPHY.bodySmall,
     color: COLORS.text.black,
   },
   resendHighlight: {
+    fontFamily: AUTH_TYPOGRAPHY.body.fontFamily,
     color: COLORS.success,
-    fontFamily: FONT_FAMILY.medium,
   },
   resendActiveText: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 18.2,
+    ...AUTH_TYPOGRAPHY.bodySmallStrong,
     color: COLORS.success,
   },
   buttonWrapper: {
     position: 'absolute',
-    left: 75,
     top: 474,
-    width: AUTH_LAYOUT.continueButtonWidth,
-    height: AUTH_LAYOUT.buttonHeight,
-    borderRadius: AUTH_LAYOUT.buttonHeight / 2,
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    justifyContent: 'center',
     zIndex: 10,
   },
   button: {
     width: AUTH_LAYOUT.continueButtonWidth,
     height: AUTH_LAYOUT.buttonHeight,
-    borderRadius: AUTH_LAYOUT.buttonHeight / 2,
-    backgroundColor: AUTH_COLORS.buttonFill,
   },
 });

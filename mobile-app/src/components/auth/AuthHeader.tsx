@@ -1,14 +1,17 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
+
 import { AppText } from '@/components/common/AppText';
-import { AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
 
 export interface AuthHeaderProps {
   title?: string;
   onBack?: () => void;
   showBack?: boolean;
-  fallbackRoute?: string;
+  /** Where to go when there is no screen to go back to. */
+  fallbackRoute?: Href;
   /** Figma shows the white shadowed band only on the Mobile Number screen. */
   showSurface?: boolean;
 }
@@ -28,7 +31,7 @@ export function AuthHeader({
     } else if (router.canGoBack()) {
       router.back();
     } else {
-      router.replace(fallbackRoute as any);
+      router.replace(fallbackRoute);
     }
   };
 
@@ -42,11 +45,10 @@ export function AuthHeader({
         />
       ) : null}
 
-      {/* Back Arrow */}
       {showBack ? (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Go back"
+          accessibilityLabel={AUTH_STRINGS.back}
           onPress={handleBack}
           hitSlop={12}
           style={styles.backButton}
@@ -59,15 +61,16 @@ export function AuthHeader({
         </Pressable>
       ) : null}
 
-      {/* Centered Header Title */}
-      {title ? (
-        <AppText style={styles.title}>
-          {title}
-        </AppText>
-      ) : null}
+      {title ? <AppText style={styles.title}>{title}</AppText> : null}
     </View>
   );
 }
+
+// Title sits clear of the back arrow on both sides so it stays centred
+const TITLE_SIDE_INSET =
+  AUTH_LAYOUT.screenPadding +
+  AUTH_LAYOUT.backArrowSize +
+  AUTH_LAYOUT.screenPadding / 2;
 
 const styles = StyleSheet.create({
   container: {
@@ -81,13 +84,13 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 138,
+    height: AUTH_LAYOUT.headerShadowHeight,
     width: '100%',
   },
   backButton: {
     position: 'absolute',
-    left: 16,
-    top: 83,
+    left: AUTH_LAYOUT.screenPadding,
+    top: AUTH_LAYOUT.headerContentTop,
     width: AUTH_LAYOUT.backArrowSize,
     height: AUTH_LAYOUT.backArrowSize,
     alignItems: 'center',
@@ -99,15 +102,14 @@ const styles = StyleSheet.create({
     height: AUTH_LAYOUT.backArrowSize,
   },
   title: {
+    ...AUTH_TYPOGRAPHY.header,
     position: 'absolute',
-    left: 56,
-    right: 56,
-    top: 85,
-    height: 26,
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xl,
-    lineHeight: 26,
-    letterSpacing: 0,
+    left: TITLE_SIDE_INSET,
+    right: TITLE_SIDE_INSET,
+    // Centre the 26px title on the 30px back arrow
+    top:
+      AUTH_LAYOUT.headerContentTop +
+      (AUTH_LAYOUT.backArrowSize - AUTH_TYPOGRAPHY.header.lineHeight) / 2,
     color: COLORS.text.black,
     textAlign: 'center',
   },

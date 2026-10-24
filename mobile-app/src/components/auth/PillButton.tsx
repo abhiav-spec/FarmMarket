@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { AppText } from '@/components/common/AppText';
-import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
 
 export interface PillButtonProps {
   title?: string;
@@ -36,7 +36,8 @@ export function PillButton({
 }: PillButtonProps) {
   const isDisabled = disabled || loading;
   const buttonText = title || label;
-  const resolvedArrowPosition = arrowPosition ?? (showArrow ? 'right' : undefined);
+  const resolvedArrowPosition =
+    arrowPosition ?? (showArrow ? 'right' : undefined);
   const shouldShowArrow = showArrow || Boolean(arrowPosition);
 
   return (
@@ -54,7 +55,7 @@ export function PillButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#000000" />
+        <ActivityIndicator size="small" color={COLORS.text.black} />
       ) : (
         <View style={styles.content}>
           {shouldShowArrow && resolvedArrowPosition === 'left' && (
@@ -65,9 +66,7 @@ export function PillButton({
             />
           )}
           {buttonText ? (
-            <AppText style={styles.title}>
-              {buttonText}
-            </AppText>
+            <AppText style={styles.title}>{buttonText}</AppText>
           ) : null}
           {shouldShowArrow && resolvedArrowPosition === 'right' && (
             <Image
@@ -113,10 +112,8 @@ const styles = StyleSheet.create({
     marginHorizontal: -AUTH_LAYOUT.arrowBleed,
   },
   title: {
+    ...AUTH_TYPOGRAPHY.button,
     color: COLORS.text.black,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
     textAlign: 'center',
   },
 });

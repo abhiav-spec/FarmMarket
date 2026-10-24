@@ -17,39 +17,38 @@ import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { PillButton } from '@/components/auth/PillButton';
 import { STATES, districtsOf } from '@/data/geography';
+import { AUTH_STRINGS } from '@/constants/auth';
 import { LANGUAGES } from '@/data/languages';
-import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import {
+  AUTH_COLORS,
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  FONT_FAMILY,
+  FONT_SIZE,
+  RADIUS,
+  SPACING,
+} from '@/theme';
 
-type ModalType = 'language' | 'state' | 'district' | null;
+const STRINGS = AUTH_STRINGS.personalInfo;
+
+type ModalType = keyof typeof STRINGS.modalTitles | null;
 
 export function PersonalInfoScreen() {
   const router = useRouter();
 
   const [name, setName] = useState('');
-  const [language, setLanguage] = useState('english');
+  const [language, setLanguage] = useState<string>(STRINGS.defaultLanguageKey);
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [search, setSearch] = useState('');
 
-  // Location string in format: `${district}, ${state}`
-  const location = district && state ? `${district}, ${state}` : '';
-
   const selectedLanguageLabel =
-    LANGUAGES.find((lang) => lang.key === language)?.name || 'English';
+    LANGUAGES.find((lang) => lang.key === language)?.name ||
+    STRINGS.defaultLanguageName;
 
-  const modalTitle = useMemo(() => {
-    switch (activeModal) {
-      case 'language':
-        return 'Select Language';
-      case 'state':
-        return 'Select State';
-      case 'district':
-        return 'Select District';
-      default:
-        return '';
-    }
-  }, [activeModal]);
+  const modalTitle = activeModal ? STRINGS.modalTitles[activeModal] : '';
 
   const currentOptions = useMemo(() => {
     switch (activeModal) {
@@ -79,7 +78,7 @@ export function PersonalInfoScreen() {
     return currentOptions.filter(
       (opt) =>
         opt.label.toLowerCase().includes(query) ||
-        opt.key.toLowerCase().includes(query)
+        opt.key.toLowerCase().includes(query),
     );
   }, [currentOptions, search]);
 
@@ -119,7 +118,7 @@ export function PersonalInfoScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <AuthHeader title="Personal Information" fallbackRoute="/(auth)/otp" />
+      <AuthHeader title={STRINGS.header} fallbackRoute="/(auth)/otp" />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -128,10 +127,10 @@ export function PersonalInfoScreen() {
         <View style={styles.formSection}>
           {/* Name Field */}
           <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>Name</AppText>
+            <AppText style={styles.label}>{STRINGS.nameLabel}</AppText>
             <TextInput
               style={styles.input}
-              placeholder="What should we call you?"
+              placeholder={STRINGS.namePlaceholder}
               placeholderTextColor={AUTH_COLORS.placeholder}
               value={name}
               onChangeText={setName}
@@ -141,18 +140,15 @@ export function PersonalInfoScreen() {
 
           {/* State Field */}
           <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>State</AppText>
+            <AppText style={styles.label}>{STRINGS.stateLabel}</AppText>
             <Pressable
               onPress={() => setActiveModal('state')}
               style={styles.pickerTrigger}
             >
               <AppText
-                style={[
-                  styles.pickerText,
-                  !state && styles.placeholderText,
-                ]}
+                style={[styles.pickerText, !state && styles.placeholderText]}
               >
-                {state || 'Select your state'}
+                {state || STRINGS.statePlaceholder}
               </AppText>
               <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
             </Pressable>
@@ -161,19 +157,19 @@ export function PersonalInfoScreen() {
 
           {/* District Field */}
           <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>District</AppText>
+            <AppText style={styles.label}>{STRINGS.districtLabel}</AppText>
             <Pressable
               onPress={() => state && setActiveModal('district')}
               style={styles.pickerTrigger}
               disabled={!state}
             >
               <AppText
-                style={[
-                  styles.pickerText,
-                  !district && styles.placeholderText,
-                ]}
+                style={[styles.pickerText, !district && styles.placeholderText]}
               >
-                {district || (state ? 'Select your district' : 'Select state first')}
+                {district ||
+                  (state
+                    ? STRINGS.districtPlaceholder
+                    : STRINGS.districtLocked)}
               </AppText>
               <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
             </Pressable>
@@ -182,7 +178,7 @@ export function PersonalInfoScreen() {
 
           {/* Language Selection */}
           <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>Language</AppText>
+            <AppText style={styles.label}>{STRINGS.languageLabel}</AppText>
             <Pressable
               onPress={() => setActiveModal('language')}
               style={styles.pickerTrigger}
@@ -200,7 +196,7 @@ export function PersonalInfoScreen() {
       {/* Continue Button: fixed near the bottom, as in Figma */}
       <View style={styles.bottomSection}>
         <PillButton
-          label="Continue"
+          label={AUTH_STRINGS.continue}
           arrowPosition="left"
           fullWidth={false}
           onPress={handleContinue}
@@ -232,7 +228,7 @@ export function PersonalInfoScreen() {
             {currentOptions.length > 7 && (
               <View style={styles.searchContainer}>
                 <TextInput
-                  placeholder="Search..."
+                  placeholder={STRINGS.search}
                   placeholderTextColor={COLORS.text.muted}
                   value={search}
                   onChangeText={setSearch}
@@ -265,13 +261,17 @@ export function PersonalInfoScreen() {
                       {item.label}
                     </AppText>
                     {isSelected && (
-                      <AppIcon name="check" size="sm" color="#7B4CE2" />
+                      <AppIcon
+                        name="check"
+                        size="sm"
+                        color={AUTH_COLORS.purple}
+                      />
                     )}
                   </Pressable>
                 );
               }}
               ListEmptyComponent={
-                <AppText style={styles.emptyText}>No options found</AppText>
+                <AppText style={styles.emptyText}>{STRINGS.empty}</AppText>
               }
             />
           </View>
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   // Figma rhythm: label 143 → value 180 → line 205 → next label 221
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: SPACING.lg,
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
     paddingBottom: SPACING.xxl,
   },
   formSection: {
@@ -300,16 +300,12 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   label: {
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
+    ...AUTH_TYPOGRAPHY.body,
     color: COLORS.text.black,
     marginBottom: 16.2,
   },
   input: {
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
+    ...AUTH_TYPOGRAPHY.body,
     color: COLORS.text.black,
     paddingVertical: 0,
     paddingBottom: 4.2,
@@ -321,9 +317,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4.2,
   },
   pickerText: {
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
+    ...AUTH_TYPOGRAPHY.body,
     color: COLORS.text.black,
   },
   placeholderText: {
@@ -393,7 +387,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.divider,
   },
   selectionItemSelected: {
-    backgroundColor: 'rgba(219, 193, 254, 0.4)',
+    backgroundColor: AUTH_COLORS.buttonFill,
     borderRadius: RADIUS.md,
     paddingHorizontal: SPACING.sm,
   },

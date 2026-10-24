@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   BackHandler,
   Image,
-  ImageSourcePropType,
   Platform,
   Pressable,
   SafeAreaView,
@@ -13,45 +12,18 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { WelcomeImage } from '@/components/auth/WelcomeImage';
-import { AUTH_COLORS, AUTH_LAYOUT, COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import { AUTH_STRINGS, ONBOARDING_SLIDES } from '@/constants/auth';
+import {
+  AUTH_COLORS,
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  RADIUS,
+  SPACING,
+} from '@/theme';
 
-interface OnboardingItem {
-  id: string;
-  title: string;
-  description: string;
-  image: ImageSourcePropType;
-  /** Image size and offset inside the 370×397 image window (from Figma). */
-  imageFrame: { width: number; height: number; left: number; top: number };
-  /** Figma crops Expert and Trust to the window; Track is not cropped. */
-  clipImage: boolean;
-}
-
-const ONBOARDING_ITEMS: OnboardingItem[] = [
-  {
-    id: 'crop-guidance',
-    title: 'Expert Crop\nGuidance',
-    description: 'Upload photos and videos of your crops and get\nadvice from our agricultural experts.',
-    image: require('@/assets/illustrations/expert-crop.png'),
-    imageFrame: { width: 382, height: 573, left: -6, top: -45 },
-    clipImage: true,
-  },
-  {
-    id: 'agricultural-products',
-    title: 'Trusted Agricultural\nProducts',
-    description: 'Buy seeds, fertilizers, pesticides and equipment from\nverified suppliers.',
-    image: require('@/assets/illustrations/trusted-products.png'),
-    imageFrame: { width: 369, height: 553, left: 0, top: -30 },
-    clipImage: true,
-  },
-  {
-    id: 'track-order',
-    title: 'Track Every\nOrder',
-    description: 'Track your orders from purchase to delivery at your\ndoorstep.',
-    image: require('@/assets/illustrations/track-order.png'),
-    imageFrame: { width: 371, height: 555, left: 0, top: -28 },
-    clipImage: false,
-  },
-];
+const STRINGS = AUTH_STRINGS.onboarding;
+const LAST_INDEX = ONBOARDING_SLIDES.length - 1;
 
 export function OnboardingScreen() {
   const router = useRouter();
@@ -68,14 +40,14 @@ export function OnboardingScreen() {
 
     const backHandlerSubscription = BackHandler.addEventListener(
       'hardwareBackPress',
-      handleHardwareBack
+      handleHardwareBack,
     );
 
     return () => backHandlerSubscription.remove();
   }, [currentIndex]);
 
   const handleNext = () => {
-    if (currentIndex < ONBOARDING_ITEMS.length - 1) {
+    if (currentIndex < LAST_INDEX) {
       setCurrentIndex((prev) => prev + 1);
     } else {
       router.replace('/(main)/home');
@@ -86,7 +58,7 @@ export function OnboardingScreen() {
     setCurrentIndex(index);
   };
 
-  const currentItem = ONBOARDING_ITEMS[currentIndex];
+  const currentItem = ONBOARDING_SLIDES[currentIndex];
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -105,21 +77,23 @@ export function OnboardingScreen() {
         {/* Text Details Section */}
         <View style={styles.textContainer}>
           <AppText style={styles.title}>{currentItem.title}</AppText>
-          <AppText style={styles.description}>{currentItem.description}</AppText>
+          <AppText style={styles.description}>
+            {currentItem.description}
+          </AppText>
         </View>
 
         {/* Bottom Navigation Row: Indicator Dots & Action CTA */}
         <View style={styles.bottomRow}>
           <View style={styles.dotsContainer}>
-            {ONBOARDING_ITEMS.map((_, index) => {
+            {ONBOARDING_SLIDES.map((slide, index) => {
               const isActive = currentIndex === index;
               return (
                 <Pressable
-                  key={index}
+                  key={slide.id}
                   onPress={() => handleDotPress(index)}
                   hitSlop={8}
                   accessibilityRole="button"
-                  accessibilityLabel={`Go to slide ${index + 1}`}
+                  accessibilityLabel={STRINGS.goToSlide(index + 1)}
                   style={[
                     styles.dot,
                     isActive ? styles.activeDot : styles.inactiveDot,
@@ -132,9 +106,7 @@ export function OnboardingScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={
-              currentIndex === ONBOARDING_ITEMS.length - 1
-                ? 'Get started'
-                : 'Next slide'
+              currentIndex === LAST_INDEX ? STRINGS.finish : STRINGS.next
             }
             onPress={handleNext}
             style={({ pressed }) => [
@@ -163,7 +135,7 @@ const styles = StyleSheet.create({
   // description 659 → dots/button row 793–825
   container: {
     flex: 1,
-    paddingHorizontal: AUTH_LAYOUT.imageLeft,
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
     paddingBottom: Platform.OS === 'ios' ? 15 : 49,
   },
   imageWindow: {
@@ -181,17 +153,13 @@ const styles = StyleSheet.create({
     marginTop: 50, // 559 - 509
   },
   title: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xxxl,
-    lineHeight: 41.6,
+    ...AUTH_TYPOGRAPHY.onboardingTitle,
     color: COLORS.text.black,
     marginBottom: 16.8, // 659 - (559 + 2 × 41.6)
   },
   description: {
+    ...AUTH_TYPOGRAPHY.bodySmall,
     width: 344,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 18.2,
     color: COLORS.text.black,
   },
   bottomRow: {

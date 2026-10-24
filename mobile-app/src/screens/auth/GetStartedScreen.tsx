@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
+import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+
+const STRINGS = AUTH_STRINGS.getStarted;
 
 export function GetStartedScreen() {
   const router = useRouter();
@@ -29,20 +27,12 @@ export function GetStartedScreen() {
         />
 
         <View style={styles.content}>
-          {/* Welcome to Atavi Header */}
-          <AppText style={styles.title}>
-            Welcome to Atavi
-          </AppText>
+          <AppText style={styles.title}>{STRINGS.title}</AppText>
+          <AppText style={styles.subtitle}>{STRINGS.subtitle}</AppText>
 
-          {/* Subtitle */}
-          <AppText style={styles.subtitle}>
-            Buy trusted agricultural products and get expert crop guidance.
-          </AppText>
-
-          {/* Get Started Button */}
           <View style={styles.buttonWrapper}>
             <PillButton
-              title="Get Started"
+              title={STRINGS.button}
               showArrow
               arrowPosition="left"
               fullWidth={false}
@@ -56,6 +46,7 @@ export function GetStartedScreen() {
   );
 }
 
+// Figma (402×874 frame): title 313 → subtitle 361 → button 610
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -75,30 +66,22 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    maxWidth: 402,
+    maxWidth: AUTH_LAYOUT.screenWidth,
     alignItems: 'center',
     paddingTop: 313,
   },
   title: {
+    ...AUTH_TYPOGRAPHY.welcomeTitle,
     width: 231,
-    height: 36,
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: AUTH_TYPOGRAPHY.welcomeTitle.fontSize,
-    lineHeight: AUTH_TYPOGRAPHY.welcomeTitle.lineHeight,
     color: COLORS.text.black,
     textAlign: 'center',
-    letterSpacing: 0,
   },
   subtitle: {
+    ...AUTH_TYPOGRAPHY.body,
     marginTop: 12,
     width: 313,
-    height: 42,
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
     color: COLORS.text.dark,
     textAlign: 'center',
-    letterSpacing: 0,
   },
   buttonWrapper: {
     marginTop: 207,
@@ -110,4 +93,3 @@ const styles = StyleSheet.create({
     height: AUTH_LAYOUT.buttonHeight,
   },
 });
-
