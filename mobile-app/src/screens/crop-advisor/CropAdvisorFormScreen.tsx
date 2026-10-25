@@ -72,7 +72,7 @@ function RequiredFieldsModal({ missing, onClose }: { missing: string[] | null; o
               • {m}
             </AppText>
           ))}
-          <AppButton title="OK" onPress={onClose} fullWidth />
+          <AppButton title="OK" onPress={onClose} fullWidth style={styles.formButton} />
         </View>
       </View>
     </Modal>

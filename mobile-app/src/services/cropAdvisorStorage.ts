@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system/legacy';
+import { Directory, File, Paths } from 'expo-file-system';
 
 export interface ConsultationMedia {
   uri: string;
@@ -81,12 +81,13 @@ async function webSave(item: Consultation): Promise<void> {
 /* ---------- Native: AsyncStorage + files copied to app storage ---------- */
 
 async function copyToAppStorage(uri: string, name: string): Promise<string> {
-  const dir = `${FileSystem.documentDirectory}crop-advisor/`;
-  await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+  const dir = new Directory(Paths.document, 'crop-advisor');
+  if (!dir.exists) dir.create({ intermediates: true });
   const ext = (uri.split('?')[0].split('.').pop() || 'bin').replace(/[^a-zA-Z0-9]/g, '');
-  const dest = `${dir}${name}.${ext}`;
-  await FileSystem.copyAsync({ from: uri, to: dest });
-  return dest;
+  const dest = new File(dir, `${name}.${ext}`);
+  if (dest.exists) dest.delete();
+  new File(uri).copy(dest);
+  return dest.uri;
 }
 
 async function nativeLoad(): Promise<Consultation[]> {

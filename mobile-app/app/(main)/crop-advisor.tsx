@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 
+import { TAB_BAR_STYLE } from './_layout';
 import { useCropAdvisor } from '@/context/CropAdvisorContext';
 import { CropAdvisorFormScreen } from '@/screens/crop-advisor/CropAdvisorFormScreen';
 import { CropAdvisorIntroScreen } from '@/screens/crop-advisor/CropAdvisorIntroScreen';
@@ -14,7 +15,15 @@ export default function CropAdvisorRoute() {
   const [screen, setScreen] = useState<CropAdvisorScreen>('intro');
 
   const { addConsultation } = useCropAdvisor();
+  const navigation = useNavigation();
   const phoneNumber = params.phoneNumber?.trim();
+
+  // Show the bottom tab bar only on the intro screen (as in Figma).
+  useEffect(() => {
+    navigation.setOptions({
+      tabBarStyle: screen === 'intro' ? TAB_BAR_STYLE : { display: 'none' },
+    });
+  }, [navigation, screen]);
 
   if (screen === 'form') {
     return (
