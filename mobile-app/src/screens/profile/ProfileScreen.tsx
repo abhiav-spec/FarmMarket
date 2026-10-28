@@ -8,10 +8,11 @@ import {
   ProfileQuickActions,
   ProfileReferralBanner,
 } from '@/components/profile';
-
+import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
 export function ProfileScreen() {
+  const router = useRouter();
   const showNotConnectedMessage = (feature: string) => {
     Alert.alert(feature, 'This feature is not connected yet.');
   };
@@ -47,9 +48,7 @@ export function ProfileScreen() {
           <ProfileMenuSection section={accountSection} />
         ) : null}
 
-        <ProfileReferralBanner
-          onPress={() => showNotConnectedMessage('Refer & Earn')}
-        />
+        <ProfileReferralBanner onPress={() => router.push('/refer-now')} />
 
         {settingsSection ? (
           <ProfileMenuSection section={settingsSection} />

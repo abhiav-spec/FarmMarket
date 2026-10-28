@@ -7,7 +7,8 @@ export const COLORS = {
   primary: '#8B5E3C',
   secondary: '#A67C52',
   orange: '#C47A44',
-
+  support: '#4A00B1',
+  supportcall: '#E7D7FF',
   purple: '#6A00FF',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',
@@ -28,7 +29,7 @@ export const COLORS = {
   productDetailBorder: '#6A6A6A',
   productVideo: '#D9D9D9',
   reviewGreen: '#0C7810',
-
+  copycode: '#ECE3FF',
   categoryBackground: '#E9EBF8',
 
   text: {

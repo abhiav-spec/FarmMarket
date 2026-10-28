@@ -6,7 +6,7 @@ export type ProfileMenuItemConfig = {
   title: string;
   subtitle: string;
   icon: ProfileMenuIcon;
-  route?: '/help-centre' | '/reviews';
+  route?: '/help-centre' | '/write-to-us' | '/account-settings';
 };
 
 export type ProfileMenuSectionConfig = {
@@ -57,6 +57,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'Account Settings',
         subtitle: 'Privacy, Security and more',
         icon: 'setting',
+        route: '/account-settings',
       },
       {
         id: 'logout',
