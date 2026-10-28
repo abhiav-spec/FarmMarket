@@ -1,1 +1,1 @@
-export { PrivacyPolicyScreen as default } from '@/screens/profile/AccountSettingsScreens';
+export { PrivacyPolicyScreen as default } from '@/screens/profile/PrivacyPolicyScreen';

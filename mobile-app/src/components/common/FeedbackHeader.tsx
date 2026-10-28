@@ -1,18 +1,9 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import {
-  COLORS,
-  FEEDBACK_HEADER_LAYOUT,
-  FONT_FAMILY,
-  FONT_SIZE,
-  ICON_SIZES,
-  RADIUS,
-  SPACING,
-  UI,
-} from '@/theme';
+import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
-interface FeedbackHeaderProps {
+type FeedbackHeaderProps = {
   title: string;
   onBackPress: () => void;
   rightIconSource?: number;
@@ -32,7 +23,7 @@ export function FeedbackHeader({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Go back"
-        hitSlop={UI.hitSlop}
+        hitSlop={8}
         onPress={onBackPress}
         style={styles.actionButton}
       >
@@ -40,7 +31,6 @@ export function FeedbackHeader({
           source={require('../../../assets/icons/back-arrow.png')}
           style={styles.backArrow}
           resizeMode="contain"
-          accessibilityLabel="Back arrow"
         />
       </Pressable>
 
@@ -72,39 +62,42 @@ export function FeedbackHeader({
 
 const styles = StyleSheet.create({
   container: {
-    height: FEEDBACK_HEADER_LAYOUT.height,
-    backgroundColor: COLORS.purpleSurface,
-    flexDirection: 'row',
+    height: 112,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.lg,
-    borderBottomWidth: FEEDBACK_HEADER_LAYOUT.borderWidth,
+    backgroundColor: COLORS.purpleSurface,
     borderBottomColor: COLORS.purple,
     borderBottomLeftRadius: RADIUS.header,
     borderBottomRightRadius: RADIUS.header,
+    borderBottomWidth: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.lg,
   },
+  backButton: {
+    height: 44,
   actionButton: {
     width: FEEDBACK_HEADER_LAYOUT.backButtonWidth,
     height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
     alignItems: 'flex-start',
     justifyContent: 'center',
+    width: 40,
     zIndex: 1,
   },
   backArrow: {
-    width: FEEDBACK_HEADER_LAYOUT.arrowWidth,
-    height: ICON_SIZES.xl,
+    height: 32,
+    width: 32,
   },
   title: {
-    position: 'absolute',
-    left: UI.zeroInset,
-    right: UI.zeroInset,
-    textAlign: 'center',
+    color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    textAlign: 'center',
   },
-  rightSpacer: {
-    width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
+  spacer: {
+    width: 40,
   },
   rightAction: {
     width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,

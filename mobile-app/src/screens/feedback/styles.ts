@@ -1,229 +1,271 @@
 import { StyleSheet } from 'react-native';
+
 import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 export const styles = StyleSheet.create({
   screen: {
-    flex: 1,
     backgroundColor: COLORS.background,
+    flex: 1,
   },
-
   scrollContent: {
-    padding: SPACING.lg,
-    paddingBottom: SPACING.xl,
-  },
-
-  heading: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.xl,
-    color: COLORS.purple,
-    textAlign: 'center',
-    marginTop: SPACING.xl,
-  },
-
-  description: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginTop: SPACING.md,
-    marginBottom: SPACING.xxl,
-  },
-
-  label: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
-    marginTop: SPACING.lg,
-    marginBottom: SPACING.md,
-  },
-
-  dropdown: {
-    minHeight: 54,
-    backgroundColor: COLORS.purpleSurface,
-    borderWidth: 1,
-    borderColor: COLORS.purpleBorder1,
-    borderRadius: RADIUS.md,
+    paddingBottom: SPACING.xxl,
     paddingHorizontal: SPACING.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
-
-  dropdownText: {
-    fontFamily: FONT_FAMILY.semiBold,
+  label: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
+    marginBottom: SPACING.md,
+    marginTop: SPACING.xxl,
   },
-
-  placeholderText: {
-    color: COLORS.text.primary,
+  requiredMark: {
+    color: COLORS.error,
   },
-
-  dropdownChevron: {
-    width: 24,
-    height: 24,
-  },
-
-  messageContainer: {
-    width: '100%',
-  },
-
-  messageInputContainer: {
-    minHeight: 120,
-    alignItems: 'stretch',
-    borderColor: COLORS.purpleBorder1,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    backgroundColor: COLORS.surface,
-  },
-
   messageInputWrapper: {
     position: 'relative',
   },
-
+  messageContainer: {
+    width: '100%',
+  },
+  messageInputContainer: {
+    alignItems: 'stretch',
+    backgroundColor: COLORS.background,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.md,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    minHeight: 126,
+  },
+  messageInputFocused: {
+    backgroundColor: COLORS.background,
+    borderColor: COLORS.purple,
+    borderStyle: 'solid',
+    borderWidth: 2,
+    boxShadow: '0 0 0 1px #6A00FF',
+  },
   messageInput: {
-    paddingTop: SPACING.md,
-    paddingHorizontal: SPACING.md,
+    backgroundColor: COLORS.background,
+    borderColor: 'transparent',
+    borderRadius: RADIUS.md,
+    borderStyle: 'solid',
+    borderWidth: 2,
     paddingBottom: SPACING.xl,
+    paddingHorizontal: SPACING.md,
+    paddingTop: SPACING.md,
     textAlignVertical: 'top',
   },
-
+  messageTextInputFocused: {
+    borderColor: COLORS.purple,
+    boxShadow: '0 0 0 1px #6A00FF',
+  },
   characterCount: {
+    bottom: SPACING.md,
+    color: COLORS.text.muted,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.xs,
     position: 'absolute',
     right: SPACING.md,
-    bottom: SPACING.md,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.text.muted,
   },
-
+  photoDescription: {
+    color: COLORS.text.secondary,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.xs,
+    marginBottom: SPACING.md,
+  },
+  photoUploadContainer: {
+    backgroundColor: COLORS.background,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    padding: SPACING.md,
+  },
+  photosGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.md,
+  },
+  photoCard: {
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    height: 94,
+    overflow: 'hidden',
+    position: 'relative',
+    width: 94,
+  },
+  photoPreview: {
+    height: '100%',
+    width: '100%',
+  },
+  photoRemoveButton: {
+    alignItems: 'center',
+    backgroundColor: COLORS.overlay,
+    borderRadius: RADIUS.circle,
+    height: 24,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: SPACING.xs,
+    top: SPACING.xs,
+    width: 24,
+  },
+  uploadPhotoAction: {
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.sm,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    flexDirection: 'row',
+    minHeight: 76,
+    paddingHorizontal: SPACING.md,
+  },
+  uploadPhotoIconContainer: {
+    alignItems: 'center',
+    backgroundColor: COLORS.purpleLight,
+    borderRadius: RADIUS.pill,
+    height: 44,
+    justifyContent: 'center',
+    marginRight: SPACING.md,
+    width: 44,
+  },
+  uploadPhotoCopy: {
+    flex: 1,
+  },
+  uploadPhotoTitle: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.semiBold,
+    fontSize: FONT_SIZE.sm,
+  },
+  uploadPhotoHint: {
+    color: COLORS.text.secondary,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.xs,
+    marginTop: SPACING.xs,
+  },
+  photoCountBadge: {
+    backgroundColor: COLORS.purpleLight,
+    borderRadius: RADIUS.pill,
+    marginLeft: SPACING.sm,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+  },
+  photoCount: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.semiBold,
+    fontSize: FONT_SIZE.xxs,
+  },
+  addMorePhotoButton: {
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.sm,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    height: 94,
+    justifyContent: 'center',
+    width: 94,
+  },
+  addMorePhotoText: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: FONT_SIZE.xs,
+  },
+  photoCountRow: {
+    alignItems: 'center',
+    marginTop: SPACING.md,
+  },
+  photoCountLabel: {
+    color: COLORS.text.secondary,
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: FONT_SIZE.xs,
+  },
+  uploadStatus: {
+    marginTop: SPACING.md,
+  },
+  uploadStatusLabel: {
+    color: COLORS.text.secondary,
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: FONT_SIZE.xs,
+    marginBottom: SPACING.xs,
+  },
+  uploadProgressTrack: {
+    backgroundColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.pill,
+    height: 6,
+    overflow: 'hidden',
+  },
+  uploadProgress: {
+    backgroundColor: COLORS.purple,
+    borderRadius: RADIUS.pill,
+    height: '100%',
+  },
   errorText: {
     color: COLORS.error,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     marginTop: SPACING.xs,
   },
-
   footer: {
+    backgroundColor: COLORS.background,
+    paddingBottom: SPACING.lg,
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.md,
-    paddingBottom: SPACING.lg,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    backgroundColor: COLORS.background,
   },
-
   sendMessageButton: {
     backgroundColor: COLORS.purple,
-    borderRadius: RADIUS.md,
-    height: 56,
+    borderRadius: RADIUS.sm,
+    height: 48,
   },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: COLORS.overlay,
-    justifyContent: 'center',
-    padding: SPACING.lg,
-  },
-
-  modalCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-  },
-
-  modalTitle: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.lg,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.md,
-  },
-
-  subjectOption: {
-    minHeight: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: COLORS.border,
-  },
-
-  subjectText: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.text.primary,
-  },
-
-  selectedSubjectText: {
-    color: COLORS.purple,
-    fontFamily: FONT_FAMILY.bold,
-  },
-
-  checkmark: {
-    color: COLORS.purple,
-    fontSize: FONT_SIZE.lg,
-  },
-
-  // Feedback success screen
   successScreen: {
-    flex: 1,
     backgroundColor: COLORS.background,
-  },
-
-  successContent: {
     flex: 1,
+  },
+  successContent: {
     alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
-    overflow: 'visible',
   },
-
   successIllustration: {
-    width: '100%',
-
     height: 250,
     marginBottom: SPACING.xl,
+    width: '100%',
   },
-
   successTitle: {
+    color: COLORS.purple,
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.xl,
-    color: COLORS.purple,
-    textAlign: 'center',
     marginBottom: SPACING.xs,
+    textAlign: 'center',
   },
-
   successDescription: {
+    color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
-    color: COLORS.text.primary,
     lineHeight: 22,
     textAlign: 'center',
   },
-
   successFooter: {
+    backgroundColor: COLORS.background,
+    paddingBottom: SPACING.xxxl,
     paddingHorizontal: SPACING.lg,
     paddingTop: SPACING.xs,
-    paddingBottom: SPACING.xxxl,
-    backgroundColor: COLORS.background,
   },
-
   returnHomeButton: {
-    height: 48,
-    width: '100%',
+    alignItems: 'center',
     backgroundColor: COLORS.purpleSurface,
-    borderWidth: 2,
     borderColor: COLORS.purple,
     borderRadius: RADIUS.sm,
-    alignItems: 'center',
+    borderWidth: 1,
+    height: 48,
     justifyContent: 'center',
+    width: '100%',
   },
-
   returnHomeButtonText: {
+    color: COLORS.purple,
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.md,
-    color: COLORS.purple,
     textAlign: 'center',
   },
 });

@@ -1,2 +1,2 @@
-export { WriteToUsScreen } from './WriteToUsScreen';
-export { FeedbackSuccessScreen } from './FeedbackSuccessScreen';
+export { ReviewScreen } from './ReviewScreen';
+export { ReviewSuccessScreen } from './ReviewSuccessScreen';

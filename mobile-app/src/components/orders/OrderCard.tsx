@@ -28,7 +28,12 @@ export function OrderCard({ order }: { order: FarmOrder }) {
     <View style={styles.card}>
       <Pressable
         style={styles.productRow}
-        onPress={() => router.push({ pathname: '/(main)/order-detail', params: { orderId: order.id } })}
+        onPress={() =>
+          router.push({
+            pathname: '/(main)/order-detail',
+            params: { orderId: order.id },
+          })
+        }
       >
         <View style={styles.productFrame}>
           <ProductBag small />
@@ -37,10 +42,15 @@ export function OrderCard({ order }: { order: FarmOrder }) {
           <Text style={styles.delivered}>{order.status}</Text>
           <Text style={styles.meta}>{order.deliveredAt}</Text>
           <View style={styles.nameRow}>
-            <Text style={[styles.productName, compact && styles.compactName]} numberOfLines={1}>
+            <Text
+              style={[styles.productName, compact && styles.compactName]}
+              numberOfLines={1}
+            >
               {order.product}
             </Text>
-            <Text style={[styles.weight, compact && styles.compactWeight]}>{order.weight}</Text>
+            <Text style={[styles.weight, compact && styles.compactWeight]}>
+              {order.weight}
+            </Text>
           </View>
         </View>
         <Image
@@ -54,7 +64,7 @@ export function OrderCard({ order }: { order: FarmOrder }) {
           style={styles.reviewRow}
           onPress={() =>
             router.push({
-              pathname: '/(main)/reviews' as never,
+              pathname: '/reviews',
               params: { orderId: order.id },
             })
           }
@@ -64,7 +74,7 @@ export function OrderCard({ order }: { order: FarmOrder }) {
             style={styles.reviewImage}
             resizeMode="contain"
           />
-          <Text style={styles.review}>View Review</Text>
+          <Text style={styles.review}>Write a review</Text>
         </Pressable>
       )}
     </View>
