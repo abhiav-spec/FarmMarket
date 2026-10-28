@@ -30,6 +30,7 @@
     "@expo/vector-icons": "^15.1.1",
     "babel-preset-expo": "~57.0.12",
     "expo": "^57.0.24",
+    "expo-clipboard": "~57.0.2",
     "expo-font": "~57.0.4",
     "expo-image-picker": "^57.0.20",
     "expo-router": "~57.0.22",

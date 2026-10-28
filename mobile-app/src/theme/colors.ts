@@ -7,17 +7,15 @@ export const COLORS = {
   primary: '#8B5E3C',
   secondary: '#A67C52',
   orange: '#C47A44',
-  purple: '#6B21A8',
-  purpleLight: '#FAF5FF',
-  purpleBorder: '#C084FC',
-
+  support: '#4A00B1',
+  supportcall: '#E7D7FF',
   purple: '#6A00FF',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',
   purpleButtonBorder: '#CBB0FF',
   purpleBorder: '#A491BF',
   purpleLight: '#F5EEFF',
-
+  purpleBorder1: '#E2CEFF',
   stepperGreen: '#009411',
   paymentOffer: '#E2FFD3',
   walletSurface: '#F5EEFF',
@@ -31,8 +29,9 @@ export const COLORS = {
   productDetailBorder: '#6A6A6A',
   productVideo: '#D9D9D9',
   reviewGreen: '#0C7810',
-
+  copycode: '#ECE3FF',
   categoryBackground: '#E9EBF8',
+
   text: {
     primary: '#1A1A1A',
     black: '#000000',
