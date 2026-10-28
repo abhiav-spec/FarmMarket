@@ -62,7 +62,7 @@ export function HomeScreen() {
           }}
         />
 
-        <CropAdvisorBanner />
+        <CropAdvisorBanner onPress={() => router.push('/(main)/crop-advisor')} />
 
         <CategorySection
           title="Top Companies"

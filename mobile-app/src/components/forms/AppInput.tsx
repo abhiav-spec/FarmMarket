@@ -33,6 +33,7 @@ interface AppInputProps extends TextInputProps {
   onRightIconPress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
+  inputContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export function AppInput({
@@ -45,16 +46,11 @@ export function AppInput({
   onRightIconPress,
   containerStyle,
   inputStyle,
+  inputContainerStyle,
   style,
   ...props
 }: AppInputProps) {
   const [focused, setFocused] = useState(false);
-
-  const borderColor = error
-    ? COLORS.error
-    : focused
-      ? COLORS.primary
-      : COLORS.border;
 
   const isDisabled = props.editable === false;
 
@@ -64,9 +60,7 @@ export function AppInput({
       {label && (
         <AppText variant="bodyMedium" style={styles.label}>
           {label}
-          {required && (
-            <AppText color={COLORS.error}> *</AppText>
-          )}
+          {required && <AppText color={COLORS.error}> *</AppText>}
         </AppText>
       )}
 
@@ -74,7 +68,9 @@ export function AppInput({
       <View
         style={[
           styles.inputContainer,
-          { borderColor },
+          focused && styles.focused,
+          inputContainerStyle,
+          error && styles.errorBorder,
           isDisabled && styles.disabled,
         ]}
       >
@@ -83,11 +79,7 @@ export function AppInput({
           <AppIcon
             name={leftIcon}
             size="sm"
-            color={
-              focused
-                ? COLORS.primary
-                : COLORS.text.secondary
-            }
+            color={focused ? COLORS.primary : COLORS.text.secondary}
             style={styles.leftIcon}
           />
         )}
@@ -125,11 +117,7 @@ export function AppInput({
             <AppIcon
               name={rightIcon}
               size="sm"
-              color={
-                focused
-                  ? COLORS.primary
-                  : COLORS.text.secondary
-              }
+              color={focused ? COLORS.primary : COLORS.text.secondary}
             />
           </Pressable>
         )}
@@ -137,11 +125,7 @@ export function AppInput({
 
       {/* Error */}
       {error ? (
-        <AppText
-          variant="caption"
-          color={COLORS.error}
-          style={styles.message}
-        >
+        <AppText variant="caption" color={COLORS.error} style={styles.message}>
           {error}
         </AppText>
       ) : helperText ? (
@@ -171,6 +155,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  focused: {
+    borderColor: COLORS.primary,
+  },
+
+  errorBorder: {
+    borderColor: COLORS.error,
+  },
+
   input: {
     flex: 1,
     minHeight: SIZES.inputHeight,
@@ -191,6 +183,8 @@ const styles = StyleSheet.create({
    */
   webInput: {
     outlineWidth: 0,
+    outlineColor: 'transparent',
+    boxShadow: 'none',
   },
 
   inputWithLeftIcon: {

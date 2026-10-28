@@ -25,14 +25,6 @@ import { Header } from '../../components/orders/Header';
 import { ProductBag } from '../../components/orders/ProductBag';
 import { KeyValue } from '../../components/orders/InfoCard';
 
-const cancellationDetails: Record<string, string[]> = {
-  'Ordered by mistake': ['Ordered by mistake'],
-  'Change in requirement': ['Requirement changed', 'No longer required'],
-  'Found a better price': ['Found a better price'],
-  'Delivery taking too long': ['Delivery taking too long'],
-  Other: ['Other'],
-};
-
 const packedStatusDot = require('../../components/images/Rectangle 66.png');
 
 function CancellationProductCard({ order }: { order: FarmOrder }) {
@@ -58,44 +50,29 @@ function CancellationProductCard({ order }: { order: FarmOrder }) {
 }
 
 function CancellationReasonList({
-  expandedReason,
   selectedReason,
-  onToggle,
   onSelect,
 }: {
-  expandedReason: string | null;
   selectedReason: string | null;
-  onToggle: (reason: string) => void;
   onSelect: (reason: string) => void;
 }) {
   return (
     <>
       {CANCELLATION_REASONS.map((reason) => (
-        <View key={reason}>
-          <Pressable style={styles.reason} onPress={() => onToggle(reason)}>
-            <Text style={styles.reasonText}>{reason}</Text>
-            <Ionicons
-              name={expandedReason === reason ? 'chevron-down-outline' : 'chevron-forward-outline'}
-              size={20}
-              color={colors.black}
-            />
-          </Pressable>
-          {expandedReason === reason && (
-            <View style={styles.reasonOptions}>
-              <Text style={styles.reasonHint}>Select the reason that best applies</Text>
-              {cancellationDetails[reason].map((detail) => (
-                <Pressable key={detail} style={styles.detailOption} onPress={() => onSelect(detail)}>
-                  <Text style={styles.detailText}>{detail}</Text>
-                  <Ionicons
-                    name={selectedReason === detail ? 'checkbox' : 'square-outline'}
-                    size={20}
-                    color={selectedReason === detail ? colors.purple : colors.black}
-                  />
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
+        <Pressable
+          key={reason}
+          style={[styles.reason, selectedReason === reason && styles.selectedReason]}
+          onPress={() => onSelect(reason)}
+        >
+          <Text style={[styles.reasonText, selectedReason === reason && styles.selectedReasonText]}>
+            {reason}
+          </Text>
+          <Ionicons
+            name="chevron-forward-outline"
+            size={20}
+            color={selectedReason === reason ? colors.purple : colors.black}
+          />
+        </Pressable>
       ))}
     </>
   );
@@ -123,9 +100,9 @@ function CancellationDetails({ order, reason, success = false }: { order: FarmOr
 
 export function CancelOrderScreen() {
   const order = useOrder();
-  const [expandedReason, setExpandedReason] = useState<string | null>(null);
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [noteFocused, setNoteFocused] = useState(false);
   return (
     <View style={styles.page}>
       <Header title="Cancel Order" backRoute={`/(main)/order-detail?orderId=${encodeURIComponent(order.id)}`} />
@@ -141,16 +118,11 @@ export function CancelOrderScreen() {
         <CancellationProductCard order={order} />
         <Text style={styles.heading}>Why do you want to cancel?</Text>
         <CancellationReasonList
-          expandedReason={expandedReason}
           selectedReason={selectedReason}
-          onToggle={(reason) => {
-            setExpandedReason((current) => current === reason ? null : reason);
-            setSelectedReason(null);
-          }}
           onSelect={setSelectedReason}
         />
         <Text style={styles.noteLabel}>Additional Note (Optional)</Text>
-        <View style={styles.note}>
+        <View style={[styles.note, noteFocused && styles.noteFocused]}>
           <TextInput
             placeholder="Write a reason (optional)"
             placeholderTextColor={colors.placeholder}
@@ -162,6 +134,8 @@ export function CancelOrderScreen() {
             maxLength={5000}
             value={note}
             onChangeText={setNote}
+            onFocus={() => setNoteFocused(true)}
+            onBlur={() => setNoteFocused(false)}
             style={[styles.noteInput, { outlineWidth: 0, outlineColor: 'transparent', backgroundColor: 'transparent' }]}
           />
           <Text style={styles.counter}>{note.length}/5000</Text>
@@ -319,33 +293,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  selectedReason: {
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.purple,
+    backgroundColor: colors.white,
+    marginHorizontal: -spacing.sm,
+    paddingHorizontal: spacing.sm,
+  },
+  selectedReasonText: { color: colors.purple },
   reasonText: {
     color: colors.muted,
     fontFamily: fonts.semiBold,
-    fontSize: type.sm,
-  },
-  reasonOptions: {
-    marginBottom: spacing.xs,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.sm,
-    backgroundColor: colors.palePurple,
-  },
-  reasonHint: {
-    color: colors.muted,
-    fontFamily: fonts.regular,
-    fontSize: type.xs,
-    marginBottom: spacing.xs,
-  },
-  detailOption: {
-    minHeight: 28,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  detailText: {
-    color: colors.black,
-    fontFamily: fonts.medium,
     fontSize: type.sm,
   },
   noteLabel: {
@@ -362,6 +321,9 @@ const styles = StyleSheet.create({
     borderColor: colors.inputBorder,
     padding: spacing.sm,
     justifyContent: 'space-between',
+  },
+  noteFocused: {
+    borderColor: colors.purple,
   },
   noteInput: {
     color: colors.black,
