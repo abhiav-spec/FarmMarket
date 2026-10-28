@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
+import { WishlistProvider } from '@/context/WishlistContext';
 import { CropAdvisorProvider } from '@/context/CropAdvisorContext';
 import { CartProvider } from '@/context/CartContext';
 import { MOCK_CART_CONFIG, MOCK_CART_ITEMS } from '@/data/mockProducts';
@@ -40,7 +41,9 @@ export default function RootLayout() {
   return (
     <CartProvider initialItems={MOCK_CART_ITEMS} config={MOCK_CART_CONFIG}>
       <CropAdvisorProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <WishlistProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </WishlistProvider>
       </CropAdvisorProvider>
     </CartProvider>
   );

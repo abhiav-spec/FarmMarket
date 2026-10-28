@@ -40,6 +40,8 @@ interface ProductDetailsProps {
   faqs?: readonly { id: string; question: string; answer?: string }[];
   onReply?: (reviewId: string) => void;
   onReviewOptions?: (reviewId: string) => void;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
 }
 
 function ProductGallery({ images, name, onShare, saved, onSave }: { images: readonly ImageSourcePropType[]; name: string; onShare?: () => void; saved: boolean; onSave: () => void }) {
@@ -182,8 +184,10 @@ function ProductFaqs({ faqs }: { faqs: readonly { id: string; question: string; 
   </View>;
 }
 
-export function ProductDetails({ product, onBack, onCart, onSearch, onShare, onPackChange, onAddToCart, onBuyNow, onAddressChange, onPlayVideo, onReturns, onProductPress, onReply, onReviewOptions, packs = PRODUCT_PACKS, images, reviewLabel = PRODUCT_DETAIL_COPY.reviews, address = PRODUCT_DETAIL_ADDRESS, detailSections = PRODUCT_DETAIL_SECTIONS, similarProducts = [], recommendedProducts = similarProducts, reviews = PRODUCT_REVIEWS, faqs = PRODUCT_FAQS }: ProductDetailsProps) {
-  const [saved, setSaved] = useState(false);
+export function ProductDetails({ product, onBack, onCart, onSearch, onShare, onPackChange, onAddToCart, onBuyNow, onAddressChange, onPlayVideo, onReturns, onProductPress, onReply, onReviewOptions, isSaved, onToggleSave, packs = PRODUCT_PACKS, images, reviewLabel = PRODUCT_DETAIL_COPY.reviews, address = PRODUCT_DETAIL_ADDRESS, detailSections = PRODUCT_DETAIL_SECTIONS, similarProducts = [], recommendedProducts = similarProducts, reviews = PRODUCT_REVIEWS, faqs = PRODUCT_FAQS }: ProductDetailsProps) {
+  const [savedLocal, setSavedLocal] = useState(false);
+  const saved = isSaved ?? savedLocal;
+  const toggleSaved = () => (onToggleSave ? onToggleSave() : setSavedLocal(!savedLocal));
   const imageSource = typeof product.imageUrl === 'string' ? { uri: product.imageUrl } : product.imageUrl;
   const galleryImages = images ?? [imageSource];
   return (
@@ -196,11 +200,11 @@ export function ProductDetails({ product, onBack, onCart, onSearch, onShare, onP
         <AppText style={styles.headerTitle}>{PRODUCT_DETAIL_COPY.title}</AppText>
         <View style={styles.headerActions}>
           <Pressable onPress={onSearch} disabled={!onSearch} accessibilityRole="button" accessibilityLabel={CART_COPY.search} hitSlop={UI.hitSlop}><Image source={IMAGES.headerSearch} style={styles.headerIcon} /></Pressable>
-          <Pressable onPress={() => setSaved(!saved)} accessibilityRole="button" accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist} accessibilityState={{ selected: saved }} hitSlop={UI.hitSlop}><Ionicons name={saved ? ICONS.heartFilled : ICONS.heart} size={SIZES.cartHeaderIconSize} color={saved ? COLORS.purple : COLORS.text.black} /></Pressable>
+          <Pressable onPress={toggleSaved} accessibilityRole="button" accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist} accessibilityState={{ selected: saved }} hitSlop={UI.hitSlop}><Ionicons name={saved ? ICONS.heartFilled : ICONS.heart} size={SIZES.cartHeaderIconSize} color={saved ? COLORS.purple : COLORS.text.black} /></Pressable>
           <Pressable onPress={onCart} accessibilityRole="button" accessibilityLabel={PRODUCT_DETAIL_COPY.cart} hitSlop={UI.hitSlop}><Image source={IMAGES.productHeaderCart} style={styles.headerIcon} resizeMode="contain" accessible={false} /></Pressable>
         </View>
       </View>
-        <ProductGallery images={galleryImages} name={product.name} onShare={onShare} saved={saved} onSave={() => setSaved(!saved)} />
+        <ProductGallery images={galleryImages} name={product.name} onShare={onShare} saved={saved} onSave={toggleSaved} />
         <View style={styles.content}>
           <AppText style={styles.name}>{product.name}</AppText>
           <View style={styles.rating}>

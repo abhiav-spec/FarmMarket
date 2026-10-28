@@ -20,6 +20,7 @@ import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, PAYMENT_SUCCESS_LAYOUT, PAYMENT_S
 import { formatPaise } from '@/utils/price';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
 import { MOCK_CART_PRODUCTS, MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductDetails } from '@/components/product/ProductDetails';
 
 interface CartViewProps {
@@ -46,6 +47,7 @@ interface CartViewProps {
 export default function CartScreen() {
   const router = useRouter();
   const cart = useCart();
+  const wishlist = useWishlist();
   const { step, productId, walletTab } = useLocalSearchParams<{ step?: string; productId?: string; walletTab?: string }>();
 
   if (step === 'wallet') {
@@ -69,6 +71,8 @@ export default function CartScreen() {
       onBack={() => router.canGoBack() ? router.back() : router.replace('/cart')}
       onCart={() => router.replace('/cart')}
       onAddToCart={cart.addItem}
+      isSaved={wishlist.isWished(product.id)}
+      onToggleSave={() => wishlist.toggle(product.id)}
       onBuyNow={(item) => { cart.addItem(item); router.push({ pathname: '/cart', params: { step: 'payment' } }); }}
       similarProducts={MOCK_RECOMMENDATION_PRODUCTS}
       onProductPress={(item) => router.push({ pathname: '/cart', params: { step: 'product', productId: item.id } })}
