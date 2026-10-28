@@ -22,15 +22,26 @@ export function OrderDetailScreen() {
   const phoneDigits = order.deliveryAddress.phone.replace(/\D/g, '');
   const phoneLabel = order.deliveryAddress.phone.replace(phoneDigits, '');
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-      <Header title="My Orders" help helpOrderId={order.id} backRoute="/(main)/orders" />
+    <ScrollView
+      style={styles.page}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Header
+        title="My Orders"
+        help
+        helpOrderId={order.id}
+        backRoute="/(main)/orders"
+      />
       <View style={styles.deliveredBand}>
         <Text style={styles.delivered}>{order.status}</Text>
       </View>
       <View style={styles.productBand}>
         <View style={styles.product}>
           <View style={styles.productMain}>
-            <View style={styles.productArt}><ProductBag small /></View>
+            <View style={styles.productArt}>
+              <ProductBag small />
+            </View>
             <View style={styles.copy}>
               <Text style={styles.productName} numberOfLines={1}>
                 {order.product}
@@ -40,11 +51,20 @@ export function OrderDetailScreen() {
             </View>
             <View style={styles.caretSlot}>
               <Pressable
-                onPress={() => router.push({ pathname: '/(main)/product' as never, params: { product: order.product } })}
+                onPress={() =>
+                  router.push({
+                    pathname: '/cart',
+                    params: { step: 'product' },
+                  })
+                }
                 hitSlop={spacing.sm}
                 accessibilityLabel="Open product"
               >
-                <Image source={caretRightImage} style={styles.caret} resizeMode="contain" />
+                <Image
+                  source={caretRightImage}
+                  style={styles.caret}
+                  resizeMode="contain"
+                />
               </Pressable>
             </View>
           </View>
@@ -65,11 +85,14 @@ export function OrderDetailScreen() {
         <Text style={styles.bold}>{order.deliveryAddress.name}</Text>
         <Text style={styles.address}>{order.deliveryAddress.lines}</Text>
         <Text style={styles.phone}>
-          {phoneLabel}<Text style={styles.phoneDigits}>{phoneDigits}</Text>
+          {phoneLabel}
+          <Text style={styles.phoneDigits}>{phoneDigits}</Text>
         </Text>
       </InfoCard>
       <InfoCard minHeight={130} afterGap={19} paddingTop={9} paddingBottom={3}>
-        <Text style={[styles.cardTitle, styles.summaryTitle]}>Order Summary</Text>
+        <Text style={[styles.cardTitle, styles.summaryTitle]}>
+          Order Summary
+        </Text>
         <KeyValue label="Order ID" value={order.id} />
         <KeyValue label="Order Date" value={order.date} />
         <KeyValue label="Payment Method" value={order.paymentMethod} />
@@ -78,7 +101,12 @@ export function OrderDetailScreen() {
       {!isDelivered && (
         <Pressable
           style={styles.cancelButton}
-          onPress={() => router.push({ pathname: '/(main)/cancel-order', params: { orderId: order.id } })}
+          onPress={() =>
+            router.push({
+              pathname: '/(main)/cancel-order',
+              params: { orderId: order.id },
+            })
+          }
         >
           <Text style={styles.cancelButtonText}>Cancel Order</Text>
         </Pressable>
@@ -101,7 +129,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cancelButtonText: { color: colors.purple, fontFamily: fonts.bold, fontSize: type.lg },
+  cancelButtonText: {
+    color: colors.purple,
+    fontFamily: fonts.bold,
+    fontSize: type.lg,
+  },
   deliveredBand: {
     height: 50,
     paddingHorizontal: spacing.lg,
@@ -130,8 +162,19 @@ const styles = StyleSheet.create({
   },
   productMain: { height: 74, flexDirection: 'row', alignItems: 'center' },
   productArt: { transform: [{ translateY: -5 }] },
-  copy: { flex: 1, minWidth: 0, marginLeft: 33, transform: [{ translateY: -3 }] },
-  caretSlot: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: 5 }] },
+  copy: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 33,
+    transform: [{ translateY: -3 }],
+  },
+  caretSlot: {
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    transform: [{ translateY: 5 }],
+  },
   caret: { width: 20, height: 20 },
   productName: {
     color: colors.black,
@@ -144,7 +187,12 @@ const styles = StyleSheet.create({
     fontSize: type.sm,
     marginTop: spacing.xs,
   },
-  meta: { color: colors.secondaryText, fontFamily: fonts.medium, fontSize: type.xs, marginTop: 2 },
+  meta: {
+    color: colors.secondaryText,
+    fontFamily: fonts.medium,
+    fontSize: type.xs,
+    marginTop: 2,
+  },
   date: {
     color: colors.secondaryText,
     fontFamily: fonts.regular,
