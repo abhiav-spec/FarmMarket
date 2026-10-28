@@ -124,7 +124,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.xs,
   },
   title: {
-    fontWeight: '600',
+    fontWeight: '500',
+    color: COLORS.text.dark,
     marginTop: SPACING.xs,
   },
   specs: {
