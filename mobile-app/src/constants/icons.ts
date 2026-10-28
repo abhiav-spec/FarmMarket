@@ -17,6 +17,7 @@ export const ICONS = {
   home: 'home-outline',
   products: 'grid-outline',
   cart: 'cart-outline',
+  wallet: 'wallet-outline',
   orders: 'receipt-outline',
   profile: 'person-outline',
 

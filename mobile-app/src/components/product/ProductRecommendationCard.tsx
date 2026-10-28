@@ -1,79 +1,37 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import { CART_COPY, type CartCopy } from '@/constants/config';
-
-import { ICONS } from '@/constants/icons';
 import { AppText } from '@/components/common/AppText';
+import { PriceTag } from '@/components/ui/PriceTag';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
+import { ICONS } from '@/constants/icons';
 import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, RADIUS, SIZES, UI } from '@/theme';
 import { type Product } from '@/types';
-import { getProductDiscountPercent, formatPaise } from '@/utils/price';
+import { toImageSource } from '@/utils/image';
 
 interface ProductRecommendationCardProps {
-  copy?: CartCopy;
   product: Product;
   onAddToCart: (product: Product) => void;
   onProductPress?: (product: Product) => void;
 }
 
-export function ProductRecommendationCard({
-  product,
-  onAddToCart,
-  copy = CART_COPY,
-  onProductPress,
-}: ProductRecommendationCardProps) {
-  const hasDiscount = product.mrpPaise > product.pricePaise;
-  const imageSource = typeof product.imageUrl === 'string' ? { uri: product.imageUrl } : product.imageUrl;
-
+export function ProductRecommendationCard({ product, onAddToCart, onProductPress }: ProductRecommendationCardProps) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.imageContainer} onPress={() => onProductPress?.(product)} disabled={!onProductPress} accessibilityRole="button" accessibilityLabel={product.name}>
-        <Image
-          source={imageSource}
-          style={styles.image}
-          resizeMode="contain"
-          accessibilityLabel={product.name}
-        />
-      </Pressable>
-
+      <Touchable style={styles.imageContainer} onPress={onProductPress && (() => onProductPress(product))} label={product.name} hitSlop={0}>
+        <Image source={toImageSource(product.imageUrl)} style={styles.image} resizeMode="contain" accessibilityLabel={product.name} />
+      </Touchable>
       <View style={styles.info}>
-        <AppText style={styles.productTitle} numberOfLines={1}>
-          {product.name}
-        </AppText>
-
-        <AppText style={styles.variantText}>
-          {product.variant}
-        </AppText>
-
-        <View style={styles.priceRow}>
-          <AppText style={styles.priceText}>
-            {formatPaise(product.pricePaise, true)}
-          </AppText>
-          {hasDiscount && (
-            <>
-              <AppText style={styles.mrpText}>
-                {formatPaise(product.mrpPaise, true)}
-              </AppText>
-              <AppText style={styles.discountText}>
-                {copy.discount(getProductDiscountPercent(product))}
-              </AppText>
-            </>
-          )}
-        </View>
+        <AppText style={styles.productTitle} numberOfLines={1}>{product.name}</AppText>
+        <AppText style={styles.variantText}>{product.variant}</AppText>
+        <PriceTag product={product} variant="card" />
       </View>
-
-      <Pressable
-        onPress={() => onAddToCart(product)}
-        style={styles.addButton}
-        accessibilityRole="button"
-        accessibilityLabel={copy.addProduct(product.name)}
-      >
+      <Touchable onPress={() => onAddToCart(product)} label={CART_COPY.addProduct(product.name)} hitSlop={0} style={styles.addButton}>
         <Ionicons name={ICONS.cart} size={SIZES.recommendationIconWidth} color={COLORS.purple} style={styles.cartIcon} />
-        <AppText style={styles.buttonText} numberOfLines={1}>
-          {copy.addToCart}
-        </AppText>
-      </Pressable>
+        <AppText style={styles.buttonText} numberOfLines={1}>{CART_COPY.addToCart}</AppText>
+      </Touchable>
     </View>
   );
 }
@@ -89,41 +47,11 @@ const styles = StyleSheet.create({
     padding: CART_LAYOUT.cardPadding,
     overflow: 'hidden',
   },
-  imageContainer: {
-    height: SIZES.recommendationCardImageHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  imageContainer: { height: SIZES.recommendationCardImageHeight, alignItems: 'center', justifyContent: 'center' },
   image: { width: '100%', height: '100%' },
-  info: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    gap: CART_LAYOUT.cardPadding,
-    paddingTop: UI.tightGap,
-  },
+  info: { flex: 1, justifyContent: 'flex-start', gap: CART_LAYOUT.cardPadding, paddingTop: UI.tightGap },
   productTitle: { ...CART_TYPOGRAPHY.recommendationName, color: COLORS.text.black },
-  variantText: {
-    ...CART_TYPOGRAPHY.recommendationVariant,
-    color: COLORS.text.dark,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: UI.compactGap,
-  },
-  priceText: {
-    ...CART_TYPOGRAPHY.recommendationPrice,
-    color: COLORS.purple,
-  },
-  mrpText: {
-    ...CART_TYPOGRAPHY.recommendationMrp,
-    color: COLORS.originalPrice,
-    textDecorationLine: 'line-through',
-  },
-  discountText: {
-    ...CART_TYPOGRAPHY.recommendationDiscount,
-    color: COLORS.purple,
-  },
+  variantText: { ...CART_TYPOGRAPHY.recommendationVariant, color: COLORS.text.dark },
   addButton: {
     width: SIZES.recommendationButtonWidth,
     height: SIZES.recommendationButtonHeight,
@@ -140,15 +68,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.purpleLight,
     marginBottom: CART_LAYOUT.cardContentGap,
   },
-  cartIcon: {
-    flexShrink: 0,
-    width: SIZES.recommendationIconWidth,
-    height: SIZES.recommendationIconHeight,
-    lineHeight: SIZES.recommendationIconHeight,
-  },
-  buttonText: {
-    ...CART_TYPOGRAPHY.recommendationButton,
-    flexShrink: 0,
-    color: COLORS.purple,
-  },
+  cartIcon: { flexShrink: 0, width: SIZES.recommendationIconWidth, height: SIZES.recommendationIconHeight, lineHeight: SIZES.recommendationIconHeight },
+  buttonText: { ...CART_TYPOGRAPHY.recommendationButton, flexShrink: 0, color: COLORS.purple },
 });

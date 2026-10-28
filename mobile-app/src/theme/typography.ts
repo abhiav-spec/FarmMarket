@@ -81,7 +81,6 @@ export const CART_TYPOGRAPHY = {
   itemPrice: { fontFamily: FONT_FAMILY.semiBold, fontSize: 12, lineHeight: 15.6 },
   itemMrp: { fontFamily: FONT_FAMILY.regular, fontSize: 8, lineHeight: 12 },
   itemDiscount: { fontFamily: FONT_FAMILY.semiBold, fontSize: 10, lineHeight: 13 },
-  caption: { fontFamily: FONT_FAMILY.regular, fontSize: 10, lineHeight: 14 },
   viewMore: { fontFamily: FONT_FAMILY.semiBold, fontSize: 10, lineHeight: 13 },
   recommendationName: { fontFamily: FONT_FAMILY.medium, fontSize: 10, lineHeight: 13 },
   recommendationVariant: { fontFamily: FONT_FAMILY.medium, fontSize: 8, lineHeight: 10.4 },
