@@ -10,6 +10,8 @@ export const COLORS = {
   support: '#4A00B1',
   supportcall: '#E7D7FF',
   purple: '#6A00FF',
+  purpleLight: '#FAF5FF',
+  purpleBorder: '#C084FC',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',
   purpleButtonBorder: '#CBB0FF',

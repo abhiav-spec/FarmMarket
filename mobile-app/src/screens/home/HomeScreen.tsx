@@ -52,7 +52,7 @@ export function HomeScreen() {
           onCategoryPress={(category) => {
             if (category.id === 'farming-tools') {
               router.push('/category/equipments');
-            } else if (category.id === 'pesticides') {
+            } else if (category.id === 'pesticides' || category.id === 'fungicides') {
               router.push('/category/pesticides');
             } else if (category.id === 'fertilizers') {
               router.push('/category/fertilizers');
@@ -81,6 +81,7 @@ export function HomeScreen() {
         <ProductSection
           title="Seeds Section"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/seeds')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -89,6 +90,7 @@ export function HomeScreen() {
         <ProductSection
           title="Fertilizers"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/fertilizers')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -97,6 +99,7 @@ export function HomeScreen() {
         <ProductSection
           title="Pesticides"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/pesticides')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}
@@ -105,6 +108,7 @@ export function HomeScreen() {
         <ProductSection
           title="Equipment and Tools"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onViewAllPress={() => router.push('/category/equipments')}
           onAddToCart={(product) => {
             // connect to CartContext here
           }}

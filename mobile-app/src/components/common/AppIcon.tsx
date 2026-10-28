@@ -31,6 +31,7 @@ export function AppIcon({
           {
             width: iconSize,
             height: iconSize,
+            tintColor: color,
           },
           style,
         ]}

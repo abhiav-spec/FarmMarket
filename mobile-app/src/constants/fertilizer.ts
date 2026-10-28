@@ -10,7 +10,7 @@ export const FERTILIZER_PRODUCTS: ProductItem[] = [
   {
     id: 'fert-1',
     name: 'Compo Expert Zitrilon 15 W...',
-    specs: '500g',
+    specs: '50kg',
     pricePaise: 110000,
     originalPricePaise: 200000,
     discountPercentage: 45,
@@ -94,7 +94,7 @@ export const FERTILIZER_PRODUCTS: ProductItem[] = [
     pricePaise: 100078,
     originalPricePaise: 116400,
     discountPercentage: 14,
-    image: require('../../assets/images/categories/greennourishfertilizer-npk.png'),
+    image: require('../../assets/images/categories/greenfiel-nutrition-npk.png'),
     category: 'fertilizers',
   },
   {
@@ -104,7 +104,7 @@ export const FERTILIZER_PRODUCTS: ProductItem[] = [
     pricePaise: 46665,
     originalPricePaise: 54600,
     discountPercentage: 14,
-    image: require('../../assets/images/categories/greennourish-npk.png'),
+    image: require('../../assets/images/categories/greenfieldnutrition-npk.png'),
     category: 'fertilizers',
   },
 ];
