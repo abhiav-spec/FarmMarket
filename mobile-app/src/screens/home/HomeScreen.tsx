@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { CategorySection, HomeHeader, HomeSearchBar } from '@/components';
+import {
+  CategorySection,
+  CropAdvisorBanner,
+  HomeHeader,
+  HomeSearchBar,
+} from '@/components';
 import { RecommendationCarousel } from '@/components/cart';
 import { CART_COPY } from '@/constants/config';
 import { useCart } from '@/context/CartContext';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
-import { HOME_CATEGORIES } from '@/constants/home';
+import {
+  HOME_CATEGORIES,
+  HOME_HEADER_DATA,
+  HOME_TOP_COMPANIES,
+} from '@/constants/home';
 import { COLORS, SPACING } from '@/theme';
 
 export function HomeScreen() {
@@ -22,9 +31,12 @@ export function HomeScreen() {
         contentContainerStyle={styles.content}
       >
         <HomeHeader
-          location="Hyderabad"
+          location={HOME_HEADER_DATA.location}
+          walletBalance={HOME_HEADER_DATA.walletBalance}
+          onLocationPress={() => {}}
           onNotificationPress={() => {}}
-          onProfilePress={() => {}}
+          onWalletPress={() => {}}
+          onCartPress={() => {}}
         />
 
         <HomeSearchBar
@@ -37,7 +49,12 @@ export function HomeScreen() {
         <CategorySection
           title="Shop by Category"
           categories={HOME_CATEGORIES}
-          onCategoryPress={() => {}}
+        />
+        <CropAdvisorBanner />
+        <CategorySection
+          title="Top Companies"
+          categories={HOME_TOP_COMPANIES}
+          marginTop={-70}
         />
         <RecommendationCarousel
           title={CART_COPY.recommendations}
