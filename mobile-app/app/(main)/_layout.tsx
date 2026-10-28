@@ -29,6 +29,15 @@ function TabIcon({
   );
 }
 
+export const TAB_BAR_STYLE = {
+  height: 70,
+  paddingTop: spacing.sm,
+  paddingBottom: spacing.sm,
+  backgroundColor: colors.cream,
+  borderTopWidth: 0,
+  elevation: 0,
+} as const;
+
 export default function MainLayout() {
   return (
     <Tabs
@@ -38,7 +47,7 @@ export default function MainLayout() {
         tabBarInactiveTintColor: colors.black,
         tabBarLabelStyle: styles.label,
         tabBarIconStyle: styles.iconContainer,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: TAB_BAR_STYLE,
       }}
     >
       <Tabs.Screen
@@ -52,7 +61,7 @@ export default function MainLayout() {
       />
 
       <Tabs.Screen
-        name="advisor"
+        name="crop-advisor"
         options={{
           title: 'Advisor',
           tabBarIcon: ({ focused }) => (
@@ -159,19 +168,27 @@ export default function MainLayout() {
           tabBarStyle: { display: 'none' },
         }}
       />
+      <Tabs.Screen
+        name="advisor"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="wishlist"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="crop-advisor-history"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="consultation-details"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
     </Tabs>
   );
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    height: 70,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.cream,
-    borderTopWidth: 0,
-    elevation: 0,
-  },
   label: {
     fontFamily: fonts.medium,
     fontSize: type.sm,

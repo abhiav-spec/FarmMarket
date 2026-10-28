@@ -59,10 +59,8 @@ import {
 } from '@/theme';
 import { formatPaise } from '@/utils/price';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
-import {
-  MOCK_CART_PRODUCTS,
-  MOCK_RECOMMENDATION_PRODUCTS,
-} from '@/data/mockProducts';
+import { MOCK_CART_PRODUCTS, MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductDetails } from '@/components/product/ProductDetails';
 
 interface CartViewProps {
@@ -89,6 +87,8 @@ interface CartViewProps {
 export default function CartScreen() {
   const router = useRouter();
   const cart = useCart();
+  const wishlist = useWishlist();
+  const { step, productId, walletTab } = useLocalSearchParams<{ step?: string; productId?: string; walletTab?: string }>();
   const { deleteReview, submittedReviews } = useReviews();
   const { step, productId, walletTab } = useLocalSearchParams<{
     step?: string;
@@ -130,6 +130,7 @@ export default function CartScreen() {
   }
 
   if (step === 'product') {
+
     const product =
       [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
         (item) => item.id === productId,
@@ -146,6 +147,8 @@ export default function CartScreen() {
         }
         onCart={() => router.replace('/cart')}
         onAddToCart={cart.addItem}
+        isSaved={wishlist.isWished(product.id)}
+        onToggleSave={() => wishlist.toggle(product.id)}
         onBuyNow={(item) => {
           cart.addItem(item);
           router.push({ pathname: '/cart', params: { step: 'payment' } });
@@ -165,6 +168,7 @@ export default function CartScreen() {
         }
       />
     );
+
   }
 
   if (step === 'payment') {
