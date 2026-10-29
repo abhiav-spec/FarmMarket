@@ -17,8 +17,7 @@ export const COLORS = {
   purpleButtonBorder: '#CBB0FF',
   // Figma pill button fill: #DBC1FE at 40%
   purpleButtonFill: 'rgba(219, 193, 254, 0.4)',
-  purpleBorder: '#A491BF',
-  purpleLight: '#F5EEFF',
+
   cropAdvisor: '#6A00FF',
   cropAdvisorBackground: '#F5EEFF',
   cropAdvisorBorder: '#CBB0FF',
