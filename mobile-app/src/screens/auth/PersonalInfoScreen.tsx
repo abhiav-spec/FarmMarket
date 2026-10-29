@@ -4,7 +4,6 @@ import {
   Modal,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -24,10 +23,9 @@ import {
   AUTH_LAYOUT,
   AUTH_TYPOGRAPHY,
   COLORS,
-  FONT_FAMILY,
-  FONT_SIZE,
   RADIUS,
   SPACING,
+  UI,
 } from '@/theme';
 
 const STRINGS = AUTH_STRINGS.personalInfo;
@@ -117,7 +115,7 @@ export function PersonalInfoScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.screen}>
       <AuthHeader title={STRINGS.header} fallbackRoute="/(auth)/otp" />
 
       <ScrollView
@@ -217,7 +215,7 @@ export function PersonalInfoScreen() {
               <AppText style={styles.modalTitle}>{modalTitle}</AppText>
               <Pressable
                 onPress={handleCloseModal}
-                hitSlop={8}
+                hitSlop={UI.hitSlop}
                 accessibilityRole="button"
                 accessibilityLabel={`Close ${modalTitle} selector`}
               >
@@ -277,16 +275,16 @@ export function PersonalInfoScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  screen: {
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Figma rhythm: label 143 → value 180 → line 205 → next label 221
+  // Each field: bold label → value → underline, like the team's form screens
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: AUTH_LAYOUT.screenPadding,
@@ -295,43 +293,45 @@ const styles = StyleSheet.create({
   formSection: {
     paddingTop: SPACING.xl,
   },
+  // Full width, like the other forms in the app (Figma's 318px only fits 402)
   fieldGroup: {
-    width: 318,
+    width: '100%',
     marginBottom: SPACING.lg,
   },
+  // Field titles (Name, State, District, Language) are bold subheadings
   label: {
-    ...AUTH_TYPOGRAPHY.body,
-    color: COLORS.text.black,
-    marginBottom: 16.2,
+    ...AUTH_TYPOGRAPHY.label,
+    color: COLORS.text.primary,
+    marginBottom: SPACING.md,
   },
   input: {
-    ...AUTH_TYPOGRAPHY.body,
-    color: COLORS.text.black,
-    paddingVertical: 0,
-    paddingBottom: 4.2,
+    ...AUTH_TYPOGRAPHY.bodySmallMedium,
+    color: COLORS.text.primary,
+    paddingVertical: UI.zeroInset,
+    paddingBottom: SPACING.xs,
   },
   pickerTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 4.2,
+    paddingBottom: SPACING.xs,
   },
   pickerText: {
-    ...AUTH_TYPOGRAPHY.body,
-    color: COLORS.text.black,
+    ...AUTH_TYPOGRAPHY.bodySmallMedium,
+    color: COLORS.text.primary,
   },
   placeholderText: {
     color: AUTH_COLORS.placeholder,
   },
   underline: {
-    height: 1,
+    height: UI.borderWidth,
     backgroundColor: AUTH_COLORS.inputLine,
   },
   bottomSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    // Figma: 44px from the frame bottom; iOS SafeAreaView already removes ~34px
-    paddingBottom: Platform.OS === 'ios' ? 10 : 44,
+    // Figma: 44px from the bottom of the screen
+    paddingBottom: AUTH_LAYOUT.bottomGap,
   },
   button: {
     width: AUTH_LAYOUT.continueButtonWidth,
@@ -357,22 +357,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingBottom: SPACING.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: UI.borderWidth,
     borderBottomColor: COLORS.divider,
   },
   modalTitle: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.lg,
+    ...AUTH_TYPOGRAPHY.sheetTitle,
     color: COLORS.text.primary,
   },
   searchContainer: {
     paddingVertical: SPACING.sm,
-    borderBottomWidth: 1,
+    borderBottomWidth: UI.borderWidth,
     borderBottomColor: COLORS.divider,
   },
   searchInput: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
+    ...AUTH_TYPOGRAPHY.option,
     color: COLORS.text.primary,
     paddingVertical: SPACING.xs,
     paddingHorizontal: SPACING.xs,
@@ -383,7 +381,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xs,
-    borderBottomWidth: 1,
+    borderBottomWidth: UI.borderWidth,
     borderBottomColor: COLORS.divider,
   },
   selectionItemSelected: {
@@ -392,17 +390,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.sm,
   },
   selectionItemText: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
+    ...AUTH_TYPOGRAPHY.option,
     color: COLORS.text.primary,
   },
   selectionItemSelectedText: {
-    fontFamily: FONT_FAMILY.semiBold,
+    ...AUTH_TYPOGRAPHY.optionSelected,
     color: AUTH_COLORS.purple,
   },
   emptyText: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
+    ...AUTH_TYPOGRAPHY.bodySmall,
     color: COLORS.text.muted,
     textAlign: 'center',
     paddingVertical: SPACING.xl,

@@ -14,7 +14,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps) {
-  const priceRupees = (product.pricePaise / 100).toFixed(2);
+  const priceRupees =
+    product.pricePaise % 100 === 0
+      ? (product.pricePaise / 100).toString()
+      : (product.pricePaise / 100).toFixed(2);
   const originalPriceRupees = (product.originalPricePaise / 100).toFixed(0);
 
   return (
@@ -106,22 +109,23 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: 120,
-    backgroundColor: COLORS.surfaceLight,
+    height: 135,
+    backgroundColor: COLORS.background,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.xs,
   },
   image: {
-    width: '85%',
-    height: '85%',
+    width: '90%',
+    height: '90%',
   },
   details: {
     paddingHorizontal: SPACING.xs,
   },
   title: {
-    fontWeight: '700',
+    fontWeight: '500',
+    color: COLORS.text.dark,
     marginTop: SPACING.xs,
   },
   specs: {
@@ -152,17 +156,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: SPACING.xs,
+    gap: SPACING.sm,
     borderWidth: 1,
-    borderColor: COLORS.purple,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm - 2,
+    borderColor: COLORS.purpleButtonBorder,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.sm - 1,
     marginTop: SPACING.sm,
     backgroundColor: COLORS.purpleLight,
   },
   addButtonText: {
     color: COLORS.purple,
     fontWeight: '600',
-    fontSize: FONT_SIZE.xs,
+    fontSize: FONT_SIZE.sm,
   },
 });
