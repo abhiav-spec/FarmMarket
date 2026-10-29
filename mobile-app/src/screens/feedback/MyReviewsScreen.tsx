@@ -19,12 +19,18 @@ import {
 } from '@/data/mockProducts';
 import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
+import {
+  MediaPreviewModal,
+  type PreviewItem,
+} from '../crop-advisor/MediaPreview';
+
 const products = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS];
 
 export function MyReviewsScreen() {
   const router = useRouter();
   const { submittedReviews } = useReviews();
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PreviewItem | null>(null);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -67,11 +73,13 @@ export function MyReviewsScreen() {
                     current === review.id ? null : review.id,
                   )
                 }
+                onPreviewPhoto={(uri) => setPreview({ type: 'image', uri })}
               />
             );
           })
         )}
       </ScrollView>
+      <MediaPreviewModal item={preview} onClose={() => setPreview(null)} />
     </SafeAreaView>
   );
 }
@@ -81,11 +89,13 @@ function ReviewCard({
   review,
   showActions,
   onToggleActions,
+  onPreviewPhoto,
 }: {
   productName: string;
   review: SubmittedReview;
   showActions: boolean;
   onToggleActions: () => void;
+  onPreviewPhoto: (uri: string) => void;
 }) {
   const router = useRouter();
   const { deleteReview } = useReviews();
@@ -166,13 +176,14 @@ function ReviewCard({
       {review.photoUris.length > 0 ? (
         <View style={styles.photoList}>
           {review.photoUris.map((uri, index) => (
-            <Image
-              accessibilityLabel={`Uploaded review photo ${index + 1}`}
+            <Pressable
+              accessibilityLabel={`Preview uploaded review photo ${index + 1}`}
+              accessibilityRole="button"
               key={uri}
-              resizeMode="cover"
-              source={{ uri }}
-              style={styles.photo}
-            />
+              onPress={() => onPreviewPhoto(uri)}
+            >
+              <Image resizeMode="cover" source={{ uri }} style={styles.photo} />
+            </Pressable>
           ))}
         </View>
       ) : null}

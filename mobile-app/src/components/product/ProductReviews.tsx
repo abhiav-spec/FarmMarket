@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/common/AppText';
 import { ReactionButtons } from '@/components/ui/ReactionButtons';
@@ -20,6 +20,10 @@ import {
   SIZES,
 } from '@/theme';
 import { type ProductReview } from '@/types';
+import {
+  MediaPreviewModal,
+  type PreviewItem,
+} from '@/screens/crop-advisor/MediaPreview';
 
 /** Renders only as many stars as the rating (3 → three stars); a fractional rating (4.5) ends with a partial star. */
 export function RatingStars({
@@ -69,6 +73,7 @@ export function ProductReviews({
   onReply,
 }: ProductReviewsProps) {
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PreviewItem | null>(null);
 
   return (
     <View style={styles.section}>
@@ -114,8 +119,10 @@ export function ProductReviews({
               current === review.id ? null : review.id,
             )
           }
+          onPreviewPhoto={(uri) => setPreview({ type: 'image', uri })}
         />
       ))}
+      <MediaPreviewModal item={preview} onClose={() => setPreview(null)} />
     </View>
   );
 }
@@ -127,12 +134,14 @@ function ReviewItem({
   onReply,
   showActions,
   onToggleActions,
+  onPreviewPhoto,
 }: { review: ProductReview } & Omit<
   ProductReviewsProps,
   'rating' | 'reviews'
 > & {
     showActions: boolean;
     onToggleActions: () => void;
+    onPreviewPhoto: (uri: string) => void;
   }) {
   const canManage = review.author === 'You' && (onEdit || onDelete);
 
@@ -202,13 +211,14 @@ function ReviewItem({
       {review.photoUris?.length ? (
         <View style={styles.photoList}>
           {review.photoUris.map((uri, index) => (
-            <Image
-              accessibilityLabel={`Uploaded review photo ${index + 1}`}
+            <Pressable
+              accessibilityLabel={`Preview uploaded review photo ${index + 1}`}
+              accessibilityRole="button"
               key={uri}
-              resizeMode="cover"
-              source={{ uri }}
-              style={styles.photo}
-            />
+              onPress={() => onPreviewPhoto(uri)}
+            >
+              <Image resizeMode="cover" source={{ uri }} style={styles.photo} />
+            </Pressable>
           ))}
         </View>
       ) : null}
