@@ -18,3 +18,8 @@ export {
   ReviewSuccessScreen,
   WriteToUsScreen,
 } from './feedback';
+export { ReferNowScreen } from './profile/ReferNowScreen';
+export { AccountSettingsScreen } from './profile/AccountSettingsScreen';
+export { NotificationSettingsScreen } from './profile/NotificationSettingsScreen';
+export { PrivacyPolicyScreen } from './profile/PrivacyPolicyScreen';
+export { TermsAndConditionsScreen } from './profile/TermsAndConditionsScreen';
