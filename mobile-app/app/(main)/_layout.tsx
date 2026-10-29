@@ -127,6 +127,10 @@ export default function MainLayout() {
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
       <Tabs.Screen
+        name="my-reviews"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
         name="write-to-us"
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />

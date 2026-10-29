@@ -96,6 +96,7 @@ export const styles = StyleSheet.create({
   },
   noteFocused: { borderColor: colors.purple },
   noteInput: {
+    borderWidth: 0,
     color: colors.black,
     fontFamily: fonts.regular,
     fontSize: type.sm,

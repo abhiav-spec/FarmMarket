@@ -153,12 +153,25 @@ export default function CartScreen() {
           cart.addItem(item);
           router.push({ pathname: '/cart', params: { step: 'payment' } });
         }}
-        onWriteReview={() => router.push('/reviews')}
+        onWriteReview={() =>
+          router.push({
+            pathname: '/reviews',
+            params: { entryId: String(Date.now()), productId: product.id },
+          })
+        }
         onEditReview={(reviewId) =>
-          router.push({ pathname: '/reviews', params: { reviewId } })
+          router.push({
+            pathname: '/reviews',
+            params: { productId: product.id, reviewId },
+          })
         }
         onDeleteReview={deleteReview}
-        reviews={[...submittedReviews, ...PRODUCT_REVIEWS]}
+        reviews={[
+          ...submittedReviews.filter(
+            (review) => review.productId === product.id,
+          ),
+          ...PRODUCT_REVIEWS,
+        ]}
         similarProducts={MOCK_RECOMMENDATION_PRODUCTS}
         onProductPress={(item) =>
           router.push({
