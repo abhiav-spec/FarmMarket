@@ -25,10 +25,31 @@ const UPLOAD_INTERVAL_MS = 140;
 type ReviewPhoto = Pick<ImagePicker.ImagePickerAsset, 'uri'>;
 
 export function ReviewScreen() {
+  const { entryId, productId, reviewId } = useLocalSearchParams<{
+    entryId?: string;
+    productId?: string;
+    reviewId?: string;
+  }>();
+  return (
+    <ReviewForm
+      key={`${reviewId ?? 'new'}:${entryId ?? 'initial'}`}
+      productId={productId}
+      reviewId={reviewId}
+    />
+  );
+}
+
+function ReviewForm({
+  productId,
+  reviewId,
+}: {
+  productId?: string;
+  reviewId?: string;
+}) {
   const router = useRouter();
-  const { reviewId } = useLocalSearchParams<{ reviewId?: string }>();
   const { submitReview, submittedReviews, updateReview } = useReviews();
   const existingReview = submittedReviews.find((item) => item.id === reviewId);
+  const activeProductId = productId ?? existingReview?.productId ?? 'prod-001';
   const isEditing = existingReview !== undefined;
   const [rating, setRating] = useState<number | null>(
     () => existingReview?.stars ?? null,
@@ -49,6 +70,7 @@ export function ReviewScreen() {
     rating: '',
     review: '',
   });
+
   const isUploading = photos.some(
     (photo) => (uploadProgress[photo.uri] ?? 0) < 100,
   );
@@ -168,6 +190,7 @@ export function ReviewScreen() {
 
     const reviewData = {
       photoUris: photos.map((photo) => photo.uri),
+      productId: activeProductId,
       stars: rating,
       text: review.trim(),
     };
@@ -177,7 +200,10 @@ export function ReviewScreen() {
     } else {
       submitReview(reviewData);
     }
-    router.push('/review-success');
+    router.replace({
+      pathname: '/review-success',
+      params: { productId: activeProductId },
+    });
   };
 
   return (
@@ -217,10 +243,7 @@ export function ReviewScreen() {
               styles.messageInputContainer,
               reviewFocused && styles.messageInputFocused,
             ]}
-            inputStyle={[
-              styles.messageInput,
-              reviewFocused && styles.messageTextInputFocused,
-            ]}
+            inputStyle={styles.messageInput}
             maxLength={1000}
             multiline
             onBlur={() => setReviewFocused(false)}

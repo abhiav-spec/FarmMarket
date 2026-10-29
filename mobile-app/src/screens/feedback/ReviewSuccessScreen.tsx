@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Pressable, SafeAreaView, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { FeedbackHeader } from '@/components/common/FeedbackHeader';
 
@@ -8,11 +8,18 @@ import { styles } from './styles';
 
 export function ReviewSuccessScreen() {
   const router = useRouter();
-  const returnHome = () => router.replace('/(main)/home');
+  const { productId } = useLocalSearchParams<{ productId?: string }>();
+  const returnToProduct = () =>
+    productId
+      ? router.replace({
+          pathname: '/product/[id]',
+          params: { id: productId },
+        })
+      : router.replace('/(main)/home');
 
   return (
     <SafeAreaView style={styles.successScreen}>
-      <FeedbackHeader title="Review" onBackPress={returnHome} />
+      <FeedbackHeader title="Review" onBackPress={returnToProduct} />
 
       <View style={styles.successContent}>
         <Image
@@ -30,10 +37,12 @@ export function ReviewSuccessScreen() {
       <View style={styles.successFooter}>
         <Pressable
           accessibilityRole="button"
-          onPress={returnHome}
+          onPress={returnToProduct}
           style={styles.returnHomeButton}
         >
-          <Text style={styles.returnHomeButtonText}>Return to home</Text>
+          <Text style={styles.returnHomeButtonText}>
+            {productId ? 'Back to product' : 'Return to home'}
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>

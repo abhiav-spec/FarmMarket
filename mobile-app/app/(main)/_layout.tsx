@@ -130,6 +130,7 @@ export default function MainLayout() {
       <Tabs.Screen name="confirm-cancellation" options={{ href: null }} />
       <Tabs.Screen name="cancellation-success" options={{ href: null }} />
       <Tabs.Screen name="reviews" options={{ href: null }} />
+      <Tabs.Screen name="my-reviews" options={{ href: null }} />
       <Tabs.Screen name="write-to-us" options={{ href: null }} />
       <Tabs.Screen name="feedback-success" options={{ href: null }} />
       <Tabs.Screen name="review-success" options={{ href: null }} />

@@ -4,6 +4,10 @@ import { Image, Pressable, Text, View } from 'react-native';
 import { CANCELLATION_REASONS } from '../../constants/orders';
 import { ProductBag } from '../../components/orders/ProductBag';
 import { KeyValue } from '../../components/orders/InfoCard';
+import {
+  MOCK_CART_PRODUCTS,
+  MOCK_RECOMMENDATION_PRODUCTS,
+} from '../../data/mockProducts';
 import type { FarmOrder } from '../../types/order';
 import { colors, spacing } from '../../../themes';
 import { styles } from './cancellationStyles';
@@ -17,6 +21,10 @@ type CancellationProductCardProps = {
 export function CancellationProductCard({
   order,
 }: CancellationProductCardProps) {
+  const product = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
+    (item) => item.name === order.product,
+  );
+
   return (
     <View style={styles.product}>
       <ProductBag small />
@@ -34,8 +42,8 @@ export function CancellationProductCard({
       <Pressable
         onPress={() =>
           router.push({
-            pathname: '/(main)/product' as never,
-            params: { product: order.product },
+            pathname: '/cart',
+            params: { productId: product?.id ?? 'prod-001', step: 'product' },
           })
         }
         hitSlop={spacing.sm}

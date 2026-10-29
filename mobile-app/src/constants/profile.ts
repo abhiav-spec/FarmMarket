@@ -9,6 +9,7 @@ export type ProfileMenuItemConfig = {
   route?:
     | '/help-centre'
     | '/write-to-us'
+    | '/my-reviews'
     | '/account-settings'
     | '/crop-advisor-history'
     | '/reviews';
@@ -57,7 +58,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'My Reviews',
         subtitle: 'View and manage your product reviews',
         icon: 'review',
-        route: '/reviews',
+        route: '/my-reviews',
       },
     ],
   },

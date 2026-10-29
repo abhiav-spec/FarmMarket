@@ -14,6 +14,7 @@ export { AdvisorScreen } from './navigation/NavigationScreens';
 export { ProfileScreen } from './profile/ProfileScreen';
 export {
   FeedbackSuccessScreen,
+  MyReviewsScreen,
   ReviewScreen,
   ReviewSuccessScreen,
   WriteToUsScreen,

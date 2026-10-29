@@ -24,6 +24,11 @@ import {
 import { Header } from '../../components/orders/Header';
 import { ProductBag } from '../../components/orders/ProductBag';
 import { KeyValue } from '../../components/orders/InfoCard';
+import {
+  MediaPreviewModal,
+  type PreviewItem,
+  VideoThumb,
+} from '../crop-advisor/MediaPreview';
 
 const caretRightImage = require('../../components/images/caret-right (1) 8.png');
 
@@ -31,7 +36,10 @@ export function HelpCentreScreen() {
   const order = useOrder();
   return (
     <ScrollView style={styles.page}>
-      <Header title="Help Centre" backRoute={`/(main)/order-detail?orderId=${encodeURIComponent(order.id)}`} />
+      <Header
+        title="Help Centre"
+        backRoute={`/(main)/order-detail?orderId=${encodeURIComponent(order.id)}`}
+      />
       <View style={styles.content}>
         <View style={styles.orderInfo}>
           <Text style={styles.meta}>
@@ -45,7 +53,12 @@ export function HelpCentreScreen() {
         </View>
         <Pressable
           style={styles.product}
-          onPress={() => router.push({ pathname: '/(main)/help-upload', params: { orderId: order.id } })}
+          onPress={() =>
+            router.push({
+              pathname: '/(main)/help-upload',
+              params: { orderId: order.id },
+            })
+          }
         >
           <ProductBag small />
           <View style={styles.copy}>
@@ -55,17 +68,30 @@ export function HelpCentreScreen() {
               <Text style={styles.deliveryOn}>Delivery On</Text>
             </View>
           </View>
-          <Image source={caretRightImage} style={styles.productCaret} resizeMode="contain" />
+          <Image
+            source={caretRightImage}
+            style={styles.productCaret}
+            resizeMode="contain"
+          />
         </Pressable>
         <Text style={styles.heading}>What Issue are you facing?</Text>
         {HELP_ISSUES.map((issue) => (
           <Pressable
             key={issue}
             style={styles.issue}
-            onPress={() => router.push({ pathname: '/(main)/help-upload', params: { orderId: order.id, issue } })}
+            onPress={() =>
+              router.push({
+                pathname: '/(main)/help-upload',
+                params: { orderId: order.id, issue },
+              })
+            }
           >
             <Text style={styles.issueText}>{issue}</Text>
-            <Image source={caretRightImage} style={styles.issueCaret} resizeMode="contain" />
+            <Image
+              source={caretRightImage}
+              style={styles.issueCaret}
+              resizeMode="contain"
+            />
           </Pressable>
         ))}
       </View>
@@ -76,21 +102,31 @@ export function HelpCentreScreen() {
 export function HelpUploadScreen() {
   const order = useOrder();
   const { issue = '' } = useLocalSearchParams<{ issue?: string }>();
-  const [selectedMedia, setSelectedMedia] = useState<ImagePicker.ImagePickerAsset[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [selectedMedia, setSelectedMedia] = useState<
+    ImagePicker.ImagePickerAsset[]
+  >([]);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {},
+  );
+  const [preview, setPreview] = useState<PreviewItem | null>(null);
   const [details, setDetails] = useState('');
   const [detailsFocused, setDetailsFocused] = useState(false);
   const canProceed = selectedMedia.length > 0 && details.trim().length > 0;
 
   useEffect(() => {
-    const pendingMedia = selectedMedia.filter((asset) => (uploadProgress[asset.uri] ?? 0) < 100);
+    const pendingMedia = selectedMedia.filter(
+      (asset) => (uploadProgress[asset.uri] ?? 0) < 100,
+    );
     if (pendingMedia.length === 0) return;
 
     const timer = setInterval(() => {
       setUploadProgress((progress) => {
         const nextProgress = { ...progress };
         pendingMedia.forEach((asset) => {
-          nextProgress[asset.uri] = Math.min((nextProgress[asset.uri] ?? 0) + 20, 100);
+          nextProgress[asset.uri] = Math.min(
+            (nextProgress[asset.uri] ?? 0) + 20,
+            100,
+          );
         });
         return nextProgress;
       });
@@ -110,7 +146,10 @@ export function HelpUploadScreen() {
     if (!result.canceled) {
       setSelectedMedia((current) => {
         const existingUris = new Set(current.map((asset) => asset.uri));
-        return [...current, ...result.assets.filter((asset) => !existingUris.has(asset.uri))];
+        return [
+          ...current,
+          ...result.assets.filter((asset) => !existingUris.has(asset.uri)),
+        ];
       });
       setUploadProgress((current) => ({
         ...current,
@@ -130,7 +169,10 @@ export function HelpUploadScreen() {
 
   return (
     <View style={styles.page}>
-      <Header title="Help Centre" backRoute={`/(main)/help-centre?orderId=${encodeURIComponent(order.id)}`} />
+      <Header
+        title="Help Centre"
+        backRoute={`/(main)/help-centre?orderId=${encodeURIComponent(order.id)}`}
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.uploadTitle}>Tell us more about the issue</Text>
         <Text style={styles.description}>
@@ -141,18 +183,20 @@ export function HelpUploadScreen() {
         <View style={styles.uploadRow}>
           <UploadChoice
             icon="camera-outline"
-            label={selectedMedia.some((asset) => asset.type === 'image') ? 'Photo selected' : 'Upload Photos'}
+            label="Upload Photos"
             assets={selectedMedia.filter((asset) => asset.type === 'image')}
             uploadProgress={uploadProgress}
             onRemove={removeMedia}
+            onPreview={(asset) => setPreview({ type: 'image', uri: asset.uri })}
             onPress={() => pickMedia(ImagePicker.MediaTypeOptions.Images)}
           />
           <UploadChoice
             icon="videocam-outline"
-            label={selectedMedia.some((asset) => asset.type === 'video') ? 'Video selected' : 'Upload Video'}
+            label="Upload Video"
             assets={selectedMedia.filter((asset) => asset.type === 'video')}
             uploadProgress={uploadProgress}
             onRemove={removeMedia}
+            onPreview={(asset) => setPreview({ type: 'video', uri: asset.uri })}
             onPress={() => pickMedia(ImagePicker.MediaTypeOptions.Videos)}
           />
         </View>
@@ -174,17 +218,31 @@ export function HelpUploadScreen() {
             onChangeText={setDetails}
             onFocus={() => setDetailsFocused(true)}
             onBlur={() => setDetailsFocused(false)}
-            style={[styles.input, { outlineWidth: 0, outlineColor: 'transparent', backgroundColor: 'transparent' }]}
+            style={[
+              styles.input,
+              {
+                outlineWidth: 0,
+                outlineColor: 'transparent',
+                backgroundColor: 'transparent',
+              },
+            ]}
           />
           <Text style={styles.counter}>{details.length}/5000</Text>
         </View>
       </ScrollView>
+      <MediaPreviewModal item={preview} onClose={() => setPreview(null)} />
       <Pressable
         style={[styles.nextButton, !canProceed && styles.disabledButton]}
         disabled={!canProceed}
         onPress={() => {
           if (canProceed) {
-            router.push({ pathname: '/(main)/return-success', params: { orderId: order.id, reason: issue || order.returnRequest.reason } });
+            router.push({
+              pathname: '/(main)/return-success',
+              params: {
+                orderId: order.id,
+                reason: issue || order.returnRequest.reason,
+              },
+            });
           }
         }}
       >
@@ -200,6 +258,7 @@ function UploadChoice({
   assets,
   uploadProgress,
   onRemove,
+  onPreview,
   onPress,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
@@ -207,30 +266,52 @@ function UploadChoice({
   assets: ImagePicker.ImagePickerAsset[];
   uploadProgress: Record<string, number>;
   onRemove: (uri: string) => void;
+  onPreview: (asset: ImagePicker.ImagePickerAsset) => void;
   onPress: () => void;
 }) {
   const selectedAsset = assets[0];
-  const progressAsset = assets.find((asset) => (uploadProgress[asset.uri] ?? 0) < 100);
-  const selectedProgress = progressAsset ? uploadProgress[progressAsset.uri] ?? 0 : 100;
+  const progressAsset = assets.find(
+    (asset) => (uploadProgress[asset.uri] ?? 0) < 100,
+  );
+  const selectedProgress = progressAsset
+    ? (uploadProgress[progressAsset.uri] ?? 0)
+    : 100;
   return (
-    <Pressable style={styles.uploadChoice} onPress={onPress} accessibilityRole="button">
+    <Pressable
+      style={styles.uploadChoice}
+      onPress={selectedAsset ? () => onPreview(selectedAsset) : onPress}
+      accessibilityRole="button"
+    >
       {selectedAsset ? (
         <>
           {selectedAsset.type === 'image' ? (
-            <Image source={{ uri: selectedAsset.uri }} style={styles.uploadPreview} />
+            <Image
+              resizeMode="cover"
+              source={{ uri: selectedAsset.uri }}
+              style={styles.uploadPreview}
+            />
           ) : (
-            <Ionicons name="videocam" size={30} color={colors.purple} />
+            <VideoThumb uri={selectedAsset.uri} />
           )}
-          <Text style={styles.uploadChoiceText} numberOfLines={1}>{label}</Text>
-          {assets.length > 1 && <Text style={styles.mediaCount}>+{assets.length - 1} more</Text>}
+          {assets.length > 1 && (
+            <Text style={styles.mediaCount}>+{assets.length - 1} more</Text>
+          )}
           {selectedProgress < 100 && (
             <View style={styles.choiceProgressTrack}>
-              <View style={[styles.uploadProgress, { width: `${selectedProgress}%` }]} />
+              <View
+                style={[
+                  styles.uploadProgress,
+                  { width: `${selectedProgress}%` },
+                ]}
+              />
             </View>
           )}
           <Pressable
             style={styles.choiceRemove}
-            onPress={() => onRemove(selectedAsset.uri)}
+            onPress={(event) => {
+              event.stopPropagation();
+              onRemove(selectedAsset.uri);
+            }}
             accessibilityLabel="Remove selected media"
           >
             <Ionicons name="close" size={16} color={colors.black} />
@@ -248,7 +329,9 @@ function UploadChoice({
 
 export function ReturnSuccessScreen() {
   const order = useOrder();
-  const { reason = order.returnRequest.reason } = useLocalSearchParams<{ reason?: string }>();
+  const { reason = order.returnRequest.reason } = useLocalSearchParams<{
+    reason?: string;
+  }>();
   const supportCallRoute = '/(main)/support-call' as never;
   const supportChatRoute = '/(main)/chat-support' as never;
   return (
@@ -264,32 +347,70 @@ export function ReturnSuccessScreen() {
         </Text>
         <Text style={styles.requestTitle}>Request Details</Text>
         <View style={styles.requestDetails}>
-          <KeyValue label="Request ID" value={order.returnRequest.id} labelStyle={styles.requestLabel} valueStyle={styles.requestValue} />
+          <KeyValue
+            label="Request ID"
+            value={order.returnRequest.id}
+            labelStyle={styles.requestLabel}
+            valueStyle={styles.requestValue}
+          />
           <KeyValue
             label="Product"
             value={`${order.product} (${order.weight})`}
             labelStyle={styles.requestLabel}
             valueStyle={styles.requestValue}
           />
-          <KeyValue label="Reason" value={reason} labelStyle={styles.requestLabel} valueStyle={styles.requestValue} />
-          <KeyValue label="Refund Amount" value={order.price} labelStyle={styles.requestLabel} valueStyle={styles.requestAmount} />
-          <KeyValue label="Request Date" value={order.requestDate} labelStyle={styles.requestLabel} valueStyle={styles.requestValue} />
+          <KeyValue
+            label="Reason"
+            value={reason}
+            labelStyle={styles.requestLabel}
+            valueStyle={styles.requestValue}
+          />
+          <KeyValue
+            label="Refund Amount"
+            value={order.price}
+            labelStyle={styles.requestLabel}
+            valueStyle={styles.requestAmount}
+          />
+          <KeyValue
+            label="Request Date"
+            value={order.requestDate}
+            labelStyle={styles.requestLabel}
+            valueStyle={styles.requestValue}
+          />
         </View>
       </View>
       <View style={styles.successActions}>
         <Pressable
           style={styles.nextButton}
-          onPress={() => router.push({ pathname: supportCallRoute, params: { orderId: order.id } })}
+          onPress={() =>
+            router.push({
+              pathname: supportCallRoute,
+              params: { orderId: order.id },
+            })
+          }
         >
-          <Image source={require('../../components/images/phone-fill (1) 1.png')} style={styles.supportIcon} />
+          <Image
+            source={require('../../components/images/phone-fill (1) 1.png')}
+            style={styles.supportIcon}
+          />
           <Text style={styles.supportActionText}>Request a Support Call</Text>
         </Pressable>
         <Pressable
           style={styles.chatButton}
-          onPress={() => router.push({ pathname: supportChatRoute, params: { orderId: order.id } })}
+          onPress={() =>
+            router.push({
+              pathname: supportChatRoute,
+              params: { orderId: order.id },
+            })
+          }
         >
-          <Image source={require('../../components/images/Vector (4).png')} style={styles.supportIcon} />
-          <Text style={[styles.supportActionText, styles.chatActionText]}>Chat with support</Text>
+          <Image
+            source={require('../../components/images/Vector (4).png')}
+            style={styles.supportIcon}
+          />
+          <Text style={[styles.supportActionText, styles.chatActionText]}>
+            Chat with support
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -385,11 +506,46 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
   },
   uploadRow: { flexDirection: 'row', gap: spacing.xl, marginTop: spacing.md },
-  uploadPreview: { width: 42, height: 42, borderRadius: radii.sm },
-  mediaCount: { color: colors.text, fontFamily: fonts.semiBold, fontSize: type.xs },
-  choiceProgressTrack: { width: '90%', height: 5, borderRadius: 3, backgroundColor: colors.border },
-  choiceRemove: { position: 'absolute', top: spacing.xs, right: spacing.xs, padding: 2 },
-  uploadProgress: { height: 5, borderRadius: 3, backgroundColor: colors.purple },
+  uploadPreview: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  mediaCount: {
+    backgroundColor: 'rgba(255,255,255,0.88)',
+    borderRadius: radii.pill,
+    bottom: spacing.md,
+    color: colors.text,
+    fontFamily: fonts.semiBold,
+    fontSize: type.xs,
+    left: spacing.sm,
+    overflow: 'hidden',
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+    position: 'absolute',
+  },
+  choiceProgressTrack: {
+    backgroundColor: colors.border,
+    bottom: spacing.xs,
+    borderRadius: 3,
+    height: 5,
+    left: spacing.xs,
+    position: 'absolute',
+    right: spacing.xs,
+  },
+  choiceRemove: {
+    position: 'absolute',
+    top: spacing.xs,
+    right: spacing.xs,
+    padding: 2,
+  },
+  uploadProgress: {
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.purple,
+  },
   uploadChoice: {
     height: 120,
     flex: 1,
@@ -400,6 +556,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.md,
+    overflow: 'hidden',
+    position: 'relative',
   },
   uploadChoiceText: {
     color: colors.purple,
@@ -468,7 +626,12 @@ const styles = StyleSheet.create({
   requestDetails: { alignSelf: 'stretch', gap: spacing.xs },
   requestLabel: { fontSize: type.productSubtext, lineHeight: lineHeight.sm },
   requestValue: { fontSize: type.productSubtext, lineHeight: lineHeight.sm },
-  requestAmount: { color: colors.black, fontFamily: fonts.bold, fontSize: type.productSubtext, lineHeight: lineHeight.sm },
+  requestAmount: {
+    color: colors.black,
+    fontFamily: fonts.bold,
+    fontSize: type.productSubtext,
+    lineHeight: lineHeight.sm,
+  },
   successActions: { marginTop: spacing.xxl * 3, paddingBottom: 101, gap: 0 },
   chatButton: {
     height: 48,
@@ -483,6 +646,10 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   supportIcon: { width: 20, height: 20, resizeMode: 'contain' },
-  supportActionText: { color: colors.white, fontFamily: fonts.semiBold, fontSize: type.md },
+  supportActionText: {
+    color: colors.white,
+    fontFamily: fonts.semiBold,
+    fontSize: type.md,
+  },
   chatActionText: { color: colors.black, fontFamily: fonts.bold },
 });
