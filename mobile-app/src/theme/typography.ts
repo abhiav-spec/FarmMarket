@@ -45,7 +45,9 @@ export const FONT_SIZE = {
   md: 16,
   lg: 18,
   xl: 20,
+  heading: 22,
   xxl: 24,
+  hero: 28,
   xxxl: 32,
 } as const;
 
@@ -57,6 +59,7 @@ export const LINE_HEIGHT = {
   lg: 26,
   xl: 28,
   xxl: 32,
+  hero: 36,
   xxxl: 40,
 } as const;
 
@@ -94,6 +97,31 @@ export const CART_TYPOGRAPHY = {
   quantity: { fontFamily: FONT_FAMILY.medium, fontSize: 12, lineHeight: 16 },
   paymentMethod: { fontFamily: FONT_FAMILY.semiBold, fontSize: 14, lineHeight: 18.2 },
   paymentOffer: { fontFamily: FONT_FAMILY.semiBold, fontSize: 10, lineHeight: 13 },
+} as const;
+
+// Auth + onboarding text styles. Same weights as Figma (e.g. headers
+// SemiBold, buttons Bold), one size step larger, built only from the shared
+// FONT_SIZE / LINE_HEIGHT tokens.
+export const AUTH_TYPOGRAPHY = {
+  // Get Started keeps its original Figma sizes (28 / 16 / 16)
+  welcomeTitle: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.hero, lineHeight: LINE_HEIGHT.hero },
+  welcomeSubtitle: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.md, lineHeight: LINE_HEIGHT.sm },
+  welcomeButton: { fontFamily: FONT_FAMILY.bold, fontSize: FONT_SIZE.md, lineHeight: LINE_HEIGHT.sm },
+  onboardingTitle: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.xxxl, lineHeight: LINE_HEIGHT.xxxl },
+  header: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.heading, lineHeight: LINE_HEIGHT.xl },
+  label: { fontFamily: FONT_FAMILY.bold, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
+  body: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
+  bodyStrong: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
+  bodySmall: { fontFamily: FONT_FAMILY.regular, fontSize: FONT_SIZE.md, lineHeight: LINE_HEIGHT.sm },
+  bodySmallMedium: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.md, lineHeight: LINE_HEIGHT.sm },
+  bodySmallStrong: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.md, lineHeight: LINE_HEIGHT.sm },
+  caption: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.detail, lineHeight: LINE_HEIGHT.xs },
+  captionRegular: { fontFamily: FONT_FAMILY.regular, fontSize: FONT_SIZE.detail, lineHeight: LINE_HEIGHT.xs },
+  button: { fontFamily: FONT_FAMILY.bold, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
+  otpDigit: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.xxl, lineHeight: LINE_HEIGHT.xxl },
+  sheetTitle: { fontFamily: FONT_FAMILY.bold, fontSize: FONT_SIZE.xl, lineHeight: LINE_HEIGHT.xl },
+  option: { fontFamily: FONT_FAMILY.regular, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
+  optionSelected: { fontFamily: FONT_FAMILY.semiBold, fontSize: FONT_SIZE.lg, lineHeight: LINE_HEIGHT.md },
 } as const;
 
 export const PRODUCT_TYPOGRAPHY = {
