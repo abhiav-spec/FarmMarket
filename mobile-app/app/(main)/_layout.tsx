@@ -90,14 +90,10 @@ export default function MainLayout() {
           ),
         }}
       />
-
       {/* Cart */}
       <Tabs.Screen
-        name="cart"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
+        name="cart/index"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
       {/* Checkout */}
       <Tabs.Screen
