@@ -40,6 +40,7 @@ export interface ProductReview {
   stars: number;
   date: string;
   text: string;
+  photoUris?: readonly string[];
 }
 
 export interface ProductDeliveryInfo {

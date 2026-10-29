@@ -24,6 +24,7 @@ const products = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS];
 export function MyReviewsScreen() {
   const router = useRouter();
   const { submittedReviews } = useReviews();
+  const [openActionsId, setOpenActionsId] = useState<string | null>(null);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -34,6 +35,13 @@ export function MyReviewsScreen() {
         }
       />
       <ScrollView contentContainerStyle={styles.content}>
+        {openActionsId ? (
+          <Pressable
+            accessibilityLabel="Close review actions"
+            onPress={() => setOpenActionsId(null)}
+            style={styles.menuBackdrop}
+          />
+        ) : null}
         {submittedReviews.length === 0 ? (
           <View style={styles.emptyState}>
             <AppText style={styles.emptyTitle}>No reviews yet</AppText>
@@ -53,6 +61,12 @@ export function MyReviewsScreen() {
                 key={review.id}
                 productName={productName}
                 review={review}
+                showActions={openActionsId === review.id}
+                onToggleActions={() =>
+                  setOpenActionsId((current) =>
+                    current === review.id ? null : review.id,
+                  )
+                }
               />
             );
           })
@@ -65,16 +79,19 @@ export function MyReviewsScreen() {
 function ReviewCard({
   productName,
   review,
+  showActions,
+  onToggleActions,
 }: {
   productName: string;
   review: SubmittedReview;
+  showActions: boolean;
+  onToggleActions: () => void;
 }) {
   const router = useRouter();
   const { deleteReview } = useReviews();
-  const [showActions, setShowActions] = useState(false);
 
   return (
-    <View style={styles.reviewCard}>
+    <View style={[styles.reviewCard, showActions && styles.activeReviewCard]}>
       <View style={styles.productHeader}>
         <AppText style={styles.productName}>{productName}</AppText>
         <View style={styles.headerActions}>
@@ -94,7 +111,11 @@ function ReviewCard({
             accessibilityLabel={`Review actions for ${productName}`}
             accessibilityRole="button"
             hitSlop={8}
-            onPress={() => setShowActions((current) => !current)}
+            onPress={(event) => {
+              event.stopPropagation();
+              onToggleActions();
+            }}
+            onTouchStart={(event) => event.stopPropagation()}
           >
             <Ionicons
               color={COLORS.text.secondary}
@@ -105,22 +126,29 @@ function ReviewCard({
         </View>
       </View>
       {showActions ? (
-        <View style={styles.optionsMenu}>
+        <View
+          onTouchStart={(event) => event.stopPropagation()}
+          style={styles.optionsMenu}
+        >
           <Pressable
             accessibilityRole="button"
-            onPress={() =>
+            onPress={(event) => {
+              event.stopPropagation();
               router.push({
                 pathname: '/reviews',
                 params: { productId: review.productId, reviewId: review.id },
-              })
-            }
+              });
+            }}
             style={styles.option}
           >
             <AppText style={styles.editLink}>Edit review</AppText>
           </Pressable>
           <Pressable
             accessibilityRole="button"
-            onPress={() => deleteReview(review.id)}
+            onPress={(event) => {
+              event.stopPropagation();
+              deleteReview(review.id);
+            }}
             style={styles.option}
           >
             <AppText style={styles.deleteLink}>Delete review</AppText>
@@ -153,14 +181,23 @@ function ReviewCard({
 }
 
 const styles = StyleSheet.create({
-  content: { padding: SPACING.lg, paddingBottom: SPACING.xxxl },
+  content: {
+    flexGrow: 1,
+    padding: SPACING.lg,
+    paddingBottom: SPACING.xxxl,
+    position: 'relative',
+  },
+  menuBackdrop: {
+    ...StyleSheet.absoluteFill,
+    zIndex: 1,
+  },
   date: {
     color: COLORS.text.muted,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.xs,
   },
   editLink: {
-    color: COLORS.purple,
+    color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.sm,
   },
@@ -210,22 +247,26 @@ const styles = StyleSheet.create({
     marginRight: SPACING.md,
   },
   optionsMenu: {
-    alignSelf: 'flex-end',
     backgroundColor: COLORS.surface,
     borderColor: COLORS.purpleButtonBorder,
     borderRadius: RADIUS.sm,
     borderWidth: 1,
-    marginBottom: SPACING.sm,
     minWidth: 124,
     overflow: 'hidden',
+    position: 'absolute',
+    right: SPACING.md,
+    top: 38,
+    zIndex: 2,
   },
   option: { paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm },
   photo: {
     borderRadius: RADIUS.sm,
-    height: 180,
-    width: '100%',
+    height: 76,
+    width: 76,
   },
   photoList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: SPACING.md,
     marginTop: SPACING.md,
   },
@@ -236,7 +277,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: SPACING.md,
     padding: SPACING.md,
+    position: 'relative',
   },
+  activeReviewCard: { zIndex: 2 },
   reviewMeta: {
     alignItems: 'center',
     flexDirection: 'row',

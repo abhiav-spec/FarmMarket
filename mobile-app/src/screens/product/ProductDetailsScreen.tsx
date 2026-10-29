@@ -50,7 +50,7 @@ const ALL_PRODUCTS = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS];
 export function ProductDetailsScreen() {
   const router = useRouter();
   const { addItem } = useCart();
-  const { submittedReviews } = useReviews();
+  const { deleteReview, submittedReviews } = useReviews();
   const { id } = useLocalSearchParams<{ id: string }>();
   const goBack = useGoBack('/cart');
   const [saved, setSaved] = useState(false);
@@ -191,7 +191,17 @@ export function ProductDetailsScreen() {
             onProductPress={openProduct}
             style={styles.similarSection}
           />
-          <ProductReviews rating={rating} reviews={reviews} />
+          <ProductReviews
+            rating={rating}
+            reviews={reviews}
+            onDelete={deleteReview}
+            onEdit={(reviewId) =>
+              router.push({
+                pathname: '/reviews',
+                params: { productId: product.id, reviewId },
+              })
+            }
+          />
           <Touchable
             label="Write a review"
             onPress={() =>

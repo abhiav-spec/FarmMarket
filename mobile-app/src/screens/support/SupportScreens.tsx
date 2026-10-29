@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   },
   mediaCount: {
     backgroundColor: 'rgba(255,255,255,0.88)',
-    borderRadius: radii.pill,
+    borderRadius: radii.md,
     bottom: spacing.md,
     color: colors.text,
     fontFamily: fonts.semiBold,
