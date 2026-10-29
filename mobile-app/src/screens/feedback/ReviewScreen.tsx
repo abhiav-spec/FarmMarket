@@ -24,6 +24,18 @@ const UPLOAD_INCREMENT = 20;
 const UPLOAD_INTERVAL_MS = 140;
 type ReviewPhoto = Pick<ImagePicker.ImagePickerAsset, 'uri'>;
 
+function toPersistentReviewPhoto(
+  asset: ImagePicker.ImagePickerAsset,
+): ReviewPhoto {
+  if (!asset.base64) {
+    return { uri: asset.uri };
+  }
+
+  return {
+    uri: `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`,
+  };
+}
+
 export function ReviewScreen() {
   const { entryId, productId, reviewId } = useLocalSearchParams<{
     entryId?: string;
@@ -126,16 +138,18 @@ function ReviewForm({
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: false,
       allowsMultipleSelection: true,
+      base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
+      quality: 0.65,
     });
 
     if (result.canceled) {
       return;
     }
 
+    const selectedPhotos = result.assets.map(toPersistentReviewPhoto);
     const existingUris = new Set(photos.map((photo) => photo.uri));
-    const uniquePhotos = result.assets.filter(
+    const uniquePhotos = selectedPhotos.filter(
       (photo) => !existingUris.has(photo.uri),
     );
     const acceptedPhotos = uniquePhotos.slice(0, remainingSlots);
