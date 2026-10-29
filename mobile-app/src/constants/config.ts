@@ -1,3 +1,5 @@
+import { type PaymentOption, type WalletTransaction } from '@/types';
+
 export const CART_CONFIG = {
   FREE_SHIPPING_THRESHOLD_PAISE: 50000,
   DEFAULT_SHIPPING_PAISE: 5000,
@@ -18,6 +20,7 @@ export const PAYMENT_SUCCESS_COPY = {
   viewOrders: 'View My Orders',
   home: 'Go to home',
   orderOptions: 'Order options',
+  unit: '/unit',
 } as const;
 
 export const WALLET_COPY = {
@@ -33,20 +36,13 @@ export const WALLET_COPY = {
   howToUse: 'How to use',
 } as const;
 
-export const WALLET_DATA = {
+export const WALLET_DATA: { balance: string; transactions: readonly WalletTransaction[] } = {
   balance: '500',
   transactions: [
     { id: 'refund-03-may', title: 'Refund credited', date: '03 MAY', amount: '+244', credited: true },
     { id: 'order-02-may', title: 'Order debited', date: '02 MAY', amount: '-100', credited: false },
   ],
-} as const;
-
-export const PAYMENT_SUCCESS_ORDER = {
-  name: 'Backpack Sprayer',
-  price: '466.6',
-  unit: '/unit',
-  location: 'Kolar, Karnataka',
-} as const;
+};
 
 export const CART_COPY = {
   title: 'Cart',
@@ -79,7 +75,6 @@ export const CART_COPY = {
   decreaseQuantity: 'Decrease quantity',
   increment: '+',
   decrement: '−',
-  couponSymbol: '%',
   pricePrefix: '+ ',
 } as const;
 
@@ -90,19 +85,13 @@ export const SCREEN_TITLES = {
   profile: 'Profile',
 } as const;
 
-export type CartCopy = {
-  [Key in keyof typeof CART_COPY]: (typeof CART_COPY)[Key] extends string
-    ? string
-    : (typeof CART_COPY)[Key];
-};
-
 export const PAYMENT_COPY = {
   title: 'Payment Method',
   selectMethod: 'Select Payment Method',
   placeOrder: 'Place Order',
 } as const;
 
-export const PAYMENT_OPTIONS = [
+export const PAYMENT_OPTIONS: readonly PaymentOption[] = [
   { id: 'cash', label: 'Cash on delivery', discountPaise: 0 },
   { id: 'cash-offer', label: 'Cash on delivery', discountPaise: 1000, offer: 'Extra 10 rupees off' },
 ] as const;
@@ -130,6 +119,7 @@ export const PRODUCT_DETAIL_COPY = {
   ratingReviewCount: '(100+ Reviews)',
   reply: 'Reply',
   helpful: 'Mark review helpful',
+  notHelpful: 'Mark review not helpful',
   reviewOptions: 'Review options',
   recommendedProducts: 'You Might Like',
   faq: 'Frequently Asked Questions',
@@ -167,8 +157,6 @@ export const PRODUCT_BENEFITS = [
 ] as const;
 
 export const PRODUCT_RATING = {
-  score: '4.9',
-  filledStars: 4.5,
   distribution: [
     { stars: 5, percent: 93 },
     { stars: 4, percent: 87 },
@@ -189,8 +177,8 @@ export const PRODUCT_REVIEWS = [
 ] as const;
 
 export const PRODUCT_FAQS = [
-  { id: 'crop', question: 'Is this product suitable for my crop?' },
-  { id: 'usage', question: 'How do I use this product?' },
-  { id: 'dosage', question: 'What is the recommended dosage?' },
-  { id: 'help', question: 'Need help choosing the right product?' },
+  { id: 'crop', title: 'Is this product suitable for my crop?' },
+  { id: 'usage', title: 'How do I use this product?' },
+  { id: 'dosage', title: 'What is the recommended dosage?' },
+  { id: 'help', title: 'Need help choosing the right product?' },
 ] as const;
