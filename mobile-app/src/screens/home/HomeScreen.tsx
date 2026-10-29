@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
-
 import {
   CategorySection,
   CropAdvisorBanner,
@@ -11,17 +9,20 @@ import {
   HomeSearchBar,
   ProductSection,
 } from '@/components';
-
+import { RecommendationCarousel } from '@/components/cart';
+import { CART_COPY } from '@/constants/config';
 import {
   HOME_CATEGORIES,
   HOME_HEADER_DATA,
   HOME_TOP_COMPANIES,
 } from '@/constants/home';
-
+import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
+import { useCart } from '@/context/CartContext';
 import { COLORS, SPACING } from '@/theme';
 
 export function HomeScreen() {
   const router = useRouter();
+  const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -36,7 +37,7 @@ export function HomeScreen() {
           onLocationPress={() => {}}
           onNotificationPress={() => {}}
           onWalletPress={() => {}}
-          onCartPress={() => {}}
+          onCartPress={() => router.push('/(main)/cart')}
         />
 
         <HomeSearchBar
@@ -52,7 +53,10 @@ export function HomeScreen() {
           onCategoryPress={(category) => {
             if (category.id === 'farming-tools') {
               router.push('/category/equipments');
-            } else if (category.id === 'pesticides' || category.id === 'fungicides') {
+            } else if (
+              category.id === 'pesticides' ||
+              category.id === 'fungicides'
+            ) {
               router.push('/category/pesticides');
             } else if (category.id === 'fertilizers') {
               router.push('/category/fertilizers');
@@ -62,7 +66,9 @@ export function HomeScreen() {
           }}
         />
 
-        <CropAdvisorBanner onPress={() => router.push('/(main)/crop-advisor')} />
+        <CropAdvisorBanner
+          onPress={() => router.push('/(main)/crop-advisor')}
+        />
 
         <CategorySection
           title="Top Companies"
@@ -73,45 +79,42 @@ export function HomeScreen() {
         <ProductSection
           title="Recommended for you"
           products={MOCK_RECOMMENDATION_PRODUCTS}
-          onAddToCart={(product) => {
-            // connect to CartContext here
-          }}
+          onAddToCart={(product) => cart.addItem(product)}
         />
 
         <ProductSection
           title="Seeds Section"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onViewAllPress={() => router.push('/category/seeds')}
-          onAddToCart={(product) => {
-            // connect to CartContext here
-          }}
+          onAddToCart={(product) => cart.addItem(product)}
         />
 
         <ProductSection
           title="Fertilizers"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onViewAllPress={() => router.push('/category/fertilizers')}
-          onAddToCart={(product) => {
-            // connect to CartContext here
-          }}
+          onAddToCart={(product) => cart.addItem(product)}
         />
 
         <ProductSection
           title="Pesticides"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onViewAllPress={() => router.push('/category/pesticides')}
-          onAddToCart={(product) => {
-            // connect to CartContext here
-          }}
+          onAddToCart={(product) => cart.addItem(product)}
         />
 
         <ProductSection
           title="Equipment and Tools"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onViewAllPress={() => router.push('/category/equipments')}
-          onAddToCart={(product) => {
-            // connect to CartContext here
-          }}
+          onAddToCart={(product) => cart.addItem(product)}
+        />
+
+        <RecommendationCarousel
+          title={CART_COPY.recommendations}
+          products={MOCK_RECOMMENDATION_PRODUCTS}
+          onAddToCart={cart.addItem}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
         />
       </ScrollView>
     </SafeAreaView>
@@ -123,7 +126,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-
   content: {
     paddingBottom: SPACING.xxxl,
   },

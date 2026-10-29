@@ -19,7 +19,11 @@ export function CropAdvisorHeader({ title }: { title: string }) {
         accessibilityRole="button"
         accessibilityLabel="Go back"
         hitSlop={10}
-        onPress={() => (router.canGoBack() ? router.back() : router.replace('/(main)/crop-advisor'))}
+        onPress={() =>
+          router.canGoBack()
+            ? router.back()
+            : router.replace('/(main)/crop-advisor')
+        }
         style={styles.back}
       >
         <Ionicons name="chevron-back" size={32} color={COLORS.text.black} />
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
   },
   back: {
     position: 'absolute',
-    left: WALLET_LAYOUT.horizontalPadding,
+    left: 16,
     top: CONTENT_TOP,
     zIndex: 2,
   },

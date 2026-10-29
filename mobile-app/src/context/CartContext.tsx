@@ -11,75 +11,29 @@ type CartAction =
   | { type: 'SET_QUANTITY'; productId: string; quantity: number }
   | { type: 'CLEAR_CART' };
 
-interface CartState {
-  items: CartItem[];
+function updateQuantity(items: CartItem[], productId: string, update: (quantity: number) => number): CartItem[] {
+  return items.map((item) => (item.product.id === productId ? { ...item, quantity: update(item.quantity) } : item));
 }
 
-function cartReducer(
-  state: CartState,
-  action: CartAction,
-  config: CartConfig,
-): CartState {
+function cartReducer(items: CartItem[], action: CartAction, config: CartConfig): CartItem[] {
+  const { MIN_QUANTITY_PER_ITEM: min, MAX_QUANTITY_PER_ITEM: max } = config;
   switch (action.type) {
-    case 'ADD_ITEM': {
-      const existing = state.items.find(
-        (item) => item.product.id === action.product.id,
-      );
-      if (!existing) {
-        return {
-          items: [...state.items, {
-            product: action.product,
-            quantity: config.MIN_QUANTITY_PER_ITEM,
-          }],
-        };
-      }
-      if (existing.quantity >= config.MAX_QUANTITY_PER_ITEM) return state;
-      return {
-        items: state.items.map((item) =>
-          item.product.id === action.product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        ),
-      };
-    }
-    case 'REMOVE_ITEM': {
-      const existing = state.items.find(
-        (item) => item.product.id === action.productId,
-      );
-      if (!existing) return state;
-      if (existing.quantity <= config.MIN_QUANTITY_PER_ITEM) {
-        return {
-          items: state.items.filter((item) => item.product.id !== action.productId),
-        };
-      }
-      return {
-        items: state.items.map((item) =>
-          item.product.id === action.productId
-            ? { ...item, quantity: item.quantity - 1 }
-            : item,
-        ),
-      };
-    }
+    case 'ADD_ITEM':
+      return items.some((item) => item.product.id === action.product.id)
+        ? updateQuantity(items, action.product.id, (quantity) => Math.min(quantity + 1, max))
+        : [...items, { product: action.product, quantity: min }];
+    case 'REMOVE_ITEM':
+      // Decrementing below the minimum removes the item.
+      return updateQuantity(items, action.productId, (quantity) => quantity - 1).filter((item) => item.quantity >= min);
     case 'DELETE_ITEM':
-      return {
-        items: state.items.filter((item) => item.product.id !== action.productId),
-      };
-    case 'SET_QUANTITY': {
-      if (!Number.isFinite(action.quantity)) return state;
-      const quantity = Math.min(
-        Math.max(Math.trunc(action.quantity), config.MIN_QUANTITY_PER_ITEM),
-        config.MAX_QUANTITY_PER_ITEM,
-      );
-      return {
-        items: state.items.map((item) =>
-          item.product.id === action.productId ? { ...item, quantity } : item,
-        ),
-      };
-    }
+      return items.filter((item) => item.product.id !== action.productId);
+    case 'SET_QUANTITY':
+      if (!Number.isFinite(action.quantity)) return items;
+      return updateQuantity(items, action.productId, () => Math.min(Math.max(Math.trunc(action.quantity), min), max));
     case 'CLEAR_CART':
-      return { items: [] };
+      return [];
     default:
-      return state;
+      return items;
   }
 }
 
@@ -109,10 +63,10 @@ export function CartProvider({
   initialItems = EMPTY_ITEMS,
   config = CART_CONFIG,
 }: CartProviderProps) {
-  const [state, dispatch] = useReducer(
-    (current: CartState, action: CartAction) => cartReducer(current, action, config),
+  const [items, dispatch] = useReducer(
+    (current: CartItem[], action: CartAction) => cartReducer(current, action, config),
     initialItems,
-    (items): CartState => ({ items: items.map((item) => ({ ...item })) }),
+    (initial) => initial.map((item) => ({ ...item })),
   );
   const actions = useMemo(() => ({
     addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', product }),
@@ -124,11 +78,11 @@ export function CartProvider({
   }), []);
   const value = useMemo<CartContextValue>(() => ({
     ...actions,
-    items: state.items,
+    items,
     config,
-    itemCount: state.items.reduce((sum, item) => sum + item.quantity, 0),
-    priceSummary: computePriceSummary(state.items, config),
-  }), [actions, state.items, config]);
+    itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
+    priceSummary: computePriceSummary(items, config),
+  }), [actions, items, config]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

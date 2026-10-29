@@ -1,11 +1,12 @@
 import React from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import { CART_COPY, type CartCopy } from '@/constants/config';
-
-import { ICONS } from '@/constants/icons';
 import { AppText } from '@/components/common/AppText';
+import { PriceTag } from '@/components/ui/PriceTag';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
+import { ICONS } from '@/constants/icons';
 import {
   CART_LAYOUT,
   CART_TYPOGRAPHY,
@@ -15,10 +16,9 @@ import {
   UI,
 } from '@/theme';
 import { type Product } from '@/types';
-import { getProductDiscountPercent, formatPaise } from '@/utils/price';
+import { toImageSource } from '@/utils/image';
 
 interface ProductRecommendationCardProps {
-  copy?: CartCopy;
   product: Product;
   onAddToCart: (product: Product) => void;
   onProductPress?: (product: Product) => void;
@@ -27,31 +27,23 @@ interface ProductRecommendationCardProps {
 export function ProductRecommendationCard({
   product,
   onAddToCart,
-  copy = CART_COPY,
   onProductPress,
 }: ProductRecommendationCardProps) {
-  const hasDiscount = product.mrpPaise > product.pricePaise;
-  const imageSource =
-    typeof product.imageUrl === 'string'
-      ? { uri: product.imageUrl }
-      : product.imageUrl;
-
   return (
     <View style={styles.container}>
-      <Pressable
+      <Touchable
         style={styles.imageContainer}
-        onPress={() => onProductPress?.(product)}
-        disabled={!onProductPress}
-        accessibilityRole="button"
-        accessibilityLabel={product.name}
+        onPress={onProductPress ? () => onProductPress(product) : undefined}
+        label={product.name}
+        hitSlop={0}
       >
         <Image
-          source={imageSource}
+          source={toImageSource(product.imageUrl)}
           style={styles.image}
           resizeMode="contain"
           accessibilityLabel={product.name}
         />
-      </Pressable>
+      </Touchable>
 
       <View style={styles.info}>
         <AppText style={styles.productTitle} numberOfLines={1}>
@@ -60,28 +52,14 @@ export function ProductRecommendationCard({
 
         <AppText style={styles.variantText}>{product.variant}</AppText>
 
-        <View style={styles.priceRow}>
-          <AppText style={styles.priceText}>
-            {formatPaise(product.pricePaise, true)}
-          </AppText>
-          {hasDiscount && (
-            <>
-              <AppText style={styles.mrpText}>
-                {formatPaise(product.mrpPaise, true)}
-              </AppText>
-              <AppText style={styles.discountText}>
-                {copy.discount(getProductDiscountPercent(product))}
-              </AppText>
-            </>
-          )}
-        </View>
+        <PriceTag product={product} variant="card" />
       </View>
 
-      <Pressable
+      <Touchable
         onPress={() => onAddToCart(product)}
+        label={CART_COPY.addProduct(product.name)}
+        hitSlop={0}
         style={styles.addButton}
-        accessibilityRole="button"
-        accessibilityLabel={copy.addProduct(product.name)}
       >
         <Ionicons
           name={ICONS.cart}
@@ -90,9 +68,9 @@ export function ProductRecommendationCard({
           style={styles.cartIcon}
         />
         <AppText style={styles.buttonText} numberOfLines={1}>
-          {copy.addToCart}
+          {CART_COPY.addToCart}
         </AppText>
-      </Pressable>
+      </Touchable>
     </View>
   );
 }
@@ -113,7 +91,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: { width: '100%', height: '100%' },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
   info: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -127,24 +108,6 @@ const styles = StyleSheet.create({
   variantText: {
     ...CART_TYPOGRAPHY.recommendationVariant,
     color: COLORS.text.dark,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: UI.compactGap,
-  },
-  priceText: {
-    ...CART_TYPOGRAPHY.recommendationPrice,
-    color: COLORS.purple,
-  },
-  mrpText: {
-    ...CART_TYPOGRAPHY.recommendationMrp,
-    color: COLORS.originalPrice,
-    textDecorationLine: 'line-through',
-  },
-  discountText: {
-    ...CART_TYPOGRAPHY.recommendationDiscount,
-    color: COLORS.purple,
   },
   addButton: {
     width: SIZES.recommendationButtonWidth,

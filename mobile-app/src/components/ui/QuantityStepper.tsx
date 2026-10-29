@@ -1,12 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/common/AppText';
-import { CART_CONFIG, CART_COPY, type CartCopy } from '@/constants/config';
+import { CART_CONFIG, CART_COPY } from '@/constants/config';
 import { CART_TYPOGRAPHY, COLORS, RADIUS, SIZES, UI } from '@/theme';
+import { Touchable } from './Touchable';
 
 interface QuantityStepperProps {
-  copy?: CartCopy;
   quantity: number;
   onIncrement: () => void;
   onDecrement: () => void;
@@ -14,62 +14,17 @@ interface QuantityStepperProps {
   max?: number;
 }
 
-export function QuantityStepper({
-  quantity,
-  onIncrement,
-  onDecrement,
-  min = CART_CONFIG.MIN_QUANTITY_PER_ITEM,
-  max = CART_CONFIG.MAX_QUANTITY_PER_ITEM,
-  copy = CART_COPY,
-}: QuantityStepperProps) {
-  const canDecrement = quantity > min;
-  const canIncrement = quantity < max;
-
+export function QuantityStepper({ quantity, onIncrement, onDecrement, min = CART_CONFIG.MIN_QUANTITY_PER_ITEM, max = CART_CONFIG.MAX_QUANTITY_PER_ITEM }: QuantityStepperProps) {
+  const step = (symbol: string, label: string, onPress: () => void, enabled: boolean, style: StyleProp<ViewStyle>) => (
+    <Touchable onPress={onPress} disabled={!enabled} title={symbol} label={label} textStyle={styles.symbolText} hitSlop={0} style={[styles.cell, styles.button, style]} />
+  );
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={onIncrement}
-        disabled={!canIncrement}
-        accessibilityState={{ disabled: !canIncrement }}
-        style={[styles.button, styles.buttonLeft]}
-        accessibilityRole="button"
-        accessibilityLabel={copy.increaseQuantity}
-      >
-        <AppText
-          variant="bodyMedium"
-          color={COLORS.text.dark}
-          style={styles.symbolText}
-        >
-          {copy.increment}
-        </AppText>
-      </Pressable>
-
-      <View style={styles.countContainer}>
-        <AppText
-          variant="bodyMedium"
-          color={COLORS.text.inverse}
-          style={styles.countText}
-        >
-          {quantity}
-        </AppText>
+      {step(CART_COPY.increment, CART_COPY.increaseQuantity, onIncrement, quantity < max, styles.buttonLeft)}
+      <View style={[styles.cell, styles.countContainer]}>
+        <AppText style={styles.countText}>{quantity}</AppText>
       </View>
-
-      <Pressable
-        onPress={onDecrement}
-        disabled={!canDecrement}
-        accessibilityState={{ disabled: !canDecrement }}
-        style={[styles.button, styles.buttonRight]}
-        accessibilityRole="button"
-        accessibilityLabel={copy.decreaseQuantity}
-      >
-        <AppText
-          variant="bodyMedium"
-          color={COLORS.text.dark}
-          style={styles.symbolText}
-        >
-          {copy.decrement}
-        </AppText>
-      </Pressable>
+      {step(CART_COPY.decrement, CART_COPY.decreaseQuantity, onDecrement, quantity > min, styles.buttonRight)}
     </View>
   );
 }
@@ -86,22 +41,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: COLORS.surface,
   },
-  button: {
-    flex: 1,
-    height: SIZES.stepperHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.surface,
-  },
+  cell: { flex: 1, height: SIZES.stepperHeight, alignItems: 'center', justifyContent: 'center' },
+  button: { backgroundColor: COLORS.surface },
   buttonLeft: { borderRightWidth: UI.borderWidth, borderRightColor: COLORS.stepperGreen },
   buttonRight: { borderLeftWidth: UI.borderWidth, borderLeftColor: COLORS.stepperGreen },
-  countContainer: {
-    flex: 1,
-    height: SIZES.stepperHeight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLORS.stepperGreen,
-  },
-  symbolText: { ...CART_TYPOGRAPHY.quantitySymbol },
-  countText: { ...CART_TYPOGRAPHY.quantity },
+  countContainer: { backgroundColor: COLORS.stepperGreen },
+  symbolText: { ...CART_TYPOGRAPHY.quantitySymbol, color: COLORS.text.dark },
+  countText: { ...CART_TYPOGRAPHY.quantity, color: COLORS.text.inverse },
 });

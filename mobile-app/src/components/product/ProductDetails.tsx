@@ -73,7 +73,7 @@ interface ProductDetailsProps {
   similarProducts?: readonly Product[];
   recommendedProducts?: readonly Product[];
   reviews?: readonly ProductReviewItem[];
-  faqs?: readonly { id: string; question: string; answer?: string }[];
+  faqs?: readonly { id: string; title: string; answer?: string }[];
   onReply?: (reviewId: string) => void;
   onReviewOptions?: (reviewId: string) => void;
   isSaved?: boolean;
@@ -531,11 +531,10 @@ function ProductReview({
           hitSlop={UI.hitSlop}
           style={helpful && styles.helpfulSelected}
         >
-          <Image
-            source={IMAGES.reviewHelpful}
-            style={styles.reviewHelpfulIcon}
-            resizeMode="contain"
-            accessible={false}
+          <Ionicons
+            name={helpful ? ICONS.helpfulFilled : ICONS.helpful}
+            size={SIZES.productActionIconSize}
+            color={helpful ? COLORS.purple : COLORS.text.secondary}
           />
         </Pressable>
       </View>
@@ -546,7 +545,7 @@ function ProductReview({
 function ProductFaqs({
   faqs,
 }: {
-  faqs: readonly { id: string; question: string; answer?: string }[];
+  faqs: readonly { id: string; title: string; answer?: string }[];
 }) {
   const [expandedId, setExpandedId] = useState<string>();
   return (
@@ -561,14 +560,14 @@ function ProductFaqs({
               }
               disabled={!faq.answer}
               accessibilityRole="button"
-              accessibilityLabel={faq.question}
+              accessibilityLabel={faq.title}
               accessibilityState={{
                 expanded: expandedId === faq.id,
                 disabled: !faq.answer,
               }}
               style={styles.faqRow}
             >
-              <AppText style={styles.faqQuestion}>{faq.question}</AppText>
+              <AppText style={styles.faqQuestion}>{faq.title}</AppText>
               <Ionicons
                 name={
                   expandedId === faq.id ? ICONS.chevronDown : ICONS.chevronRight
@@ -629,75 +628,87 @@ export function ProductDetails({
       : product.imageUrl;
 
   const galleryImages = images ?? [imageSource];
+  const totalRatingWeight = PRODUCT_RATING.distribution.reduce(
+    (total, row) => total + row.percent,
+    0,
+  );
+
+  const ratingScore =
+    totalRatingWeight > 0
+      ? PRODUCT_RATING.distribution.reduce(
+          (total, row) => total + row.stars * row.percent,
+          0,
+        ) / totalRatingWeight
+      : 0;
   return (
     <View style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false}>
-<View style={styles.header}>
-  <Pressable
-    onPress={onBack}
-    accessibilityRole="button"
-    accessibilityLabel={CART_COPY.back}
-    hitSlop={UI.hitSlop}
-  >
-    <Ionicons
-      name={ICONS.back}
-      size={SIZES.cartHeaderIconSize}
-      color={COLORS.text.black}
-    />
-  </Pressable>
+        <View style={styles.header}>
+          <Pressable
+            onPress={onBack}
+            accessibilityRole="button"
+            accessibilityLabel={CART_COPY.back}
+            hitSlop={UI.hitSlop}
+          >
+            <Ionicons
+              name={ICONS.back}
+              size={SIZES.cartHeaderIconSize}
+              color={COLORS.text.black}
+            />
+          </Pressable>
 
-  <AppText style={styles.headerTitle}>
-    {PRODUCT_DETAIL_COPY.title}
-  </AppText>
+          <AppText style={styles.headerTitle}>
+            {PRODUCT_DETAIL_COPY.title}
+          </AppText>
 
-  <View style={styles.headerActions}>
-    <Pressable
-      onPress={onSearch}
-      disabled={!onSearch}
-      accessibilityRole="button"
-      accessibilityLabel={CART_COPY.search}
-      hitSlop={UI.hitSlop}
-    >
-      <Image source={IMAGES.headerSearch} style={styles.headerIcon} />
-    </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable
+              onPress={onSearch}
+              disabled={!onSearch}
+              accessibilityRole="button"
+              accessibilityLabel={CART_COPY.search}
+              hitSlop={UI.hitSlop}
+            >
+              <Image source={IMAGES.headerSearch} style={styles.headerIcon} />
+            </Pressable>
 
-    <Pressable
-      onPress={toggleSaved}
-      accessibilityRole="button"
-      accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist}
-      accessibilityState={{ selected: saved }}
-      hitSlop={UI.hitSlop}
-    >
-      <Ionicons
-        name={saved ? ICONS.heartFilled : ICONS.heart}
-        size={SIZES.cartHeaderIconSize}
-        color={saved ? COLORS.purple : COLORS.text.black}
-      />
-    </Pressable>
+            <Pressable
+              onPress={toggleSaved}
+              accessibilityRole="button"
+              accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist}
+              accessibilityState={{ selected: saved }}
+              hitSlop={UI.hitSlop}
+            >
+              <Ionicons
+                name={saved ? ICONS.heartFilled : ICONS.heart}
+                size={SIZES.cartHeaderIconSize}
+                color={saved ? COLORS.purple : COLORS.text.black}
+              />
+            </Pressable>
 
-    <Pressable
-      onPress={onCart}
-      accessibilityRole="button"
-      accessibilityLabel={PRODUCT_DETAIL_COPY.cart}
-      hitSlop={UI.hitSlop}
-    >
-      <Image
-        source={IMAGES.productHeaderCart}
-        style={styles.headerIcon}
-        resizeMode="contain"
-        accessible={false}
-      />
-    </Pressable>
-  </View>
-</View>
+            <Pressable
+              onPress={onCart}
+              accessibilityRole="button"
+              accessibilityLabel={PRODUCT_DETAIL_COPY.cart}
+              hitSlop={UI.hitSlop}
+            >
+              <Image
+                source={IMAGES.productHeaderCart}
+                style={styles.headerIcon}
+                resizeMode="contain"
+                accessible={false}
+              />
+            </Pressable>
+          </View>
+        </View>
 
-<ProductGallery
-  images={galleryImages}
-  name={product.name}
-  onShare={onShare}
-  saved={saved}
-  onSave={toggleSaved}
-/>
+        <ProductGallery
+          images={galleryImages}
+          name={product.name}
+          onShare={onShare}
+          saved={saved}
+          onSave={toggleSaved}
+        />
         <View style={styles.content}>
           <AppText style={styles.name}>{product.name}</AppText>
           <View style={styles.rating}>
@@ -784,12 +795,12 @@ export function ProductDetails({
             <View style={styles.ratingSummary}>
               <View style={styles.ratingScorePanel}>
                 <AppText style={styles.ratingScore}>
-                  {PRODUCT_RATING.score}
+                  {ratingScore.toFixed(1)}
                 </AppText>
                 <View style={styles.summaryStars}>
                   <RatingStars
                     size={SIZES.productStarSize}
-                    filledStars={PRODUCT_RATING.filledStars}
+                    filledStars={ratingScore}
                   />
                 </View>
                 <AppText style={styles.ratingCount}>
