@@ -201,18 +201,12 @@ export function ProductDetailsScreen() {
                 params: { productId: product.id, reviewId },
               })
             }
-          />
-          <Touchable
-            label="Write a review"
-            onPress={() =>
+            onWriteReview={() =>
               router.push({
                 pathname: '/reviews',
                 params: { entryId: String(Date.now()), productId: product.id },
               })
             }
-            style={styles.writeReviewButton}
-            title="Write a review"
-            textStyle={styles.writeReviewButtonText}
           />
           <ProductCarousel
             title={PRODUCT_DETAIL_COPY.recommendedProducts}
@@ -417,16 +411,6 @@ const styles = StyleSheet.create({
   },
   similarSection: { marginTop: PRODUCT_LAYOUT.similarTopGap },
   recommendedSection: { marginTop: PRODUCT_LAYOUT.recommendedTopGap },
-  writeReviewButton: {
-    alignItems: 'center',
-    borderColor: COLORS.purple,
-    borderRadius: RADIUS.xs,
-    borderWidth: UI.borderWidth,
-    justifyContent: 'center',
-    marginTop: PRODUCT_LAYOUT.reviewTopGap,
-    minHeight: 44,
-  },
-  writeReviewButtonText: { ...PRODUCT_TYPOGRAPHY.pack, color: COLORS.purple },
   faqSection: { marginTop: PRODUCT_LAYOUT.faqTopGap },
   faqTitle: {
     ...PRODUCT_TYPOGRAPHY.faqTitle,

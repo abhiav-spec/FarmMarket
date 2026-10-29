@@ -63,6 +63,7 @@ interface ProductReviewsProps {
   onDelete?: (reviewId: string) => void;
   onEdit?: (reviewId: string) => void;
   onReply?: (reviewId: string) => void;
+  onWriteReview?: () => void;
 }
 
 export function ProductReviews({
@@ -71,6 +72,7 @@ export function ProductReviews({
   onDelete,
   onEdit,
   onReply,
+  onWriteReview,
 }: ProductReviewsProps) {
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewItem | null>(null);
@@ -99,6 +101,16 @@ export function ProductReviews({
           ))}
         </View>
       </View>
+      {onWriteReview ? (
+        <Touchable
+          label="Write a review"
+          onPress={onWriteReview}
+          style={styles.writeReviewSection}
+        >
+          <Ionicons color={COLORS.purple} name="create-outline" size={22} />
+          <AppText style={styles.writeReviewTitle}>Write a review</AppText>
+        </Touchable>
+      ) : null}
       {openActionsId ? (
         <Touchable
           label="Close review actions"
@@ -264,6 +276,15 @@ const styles = StyleSheet.create({
   },
   score: { ...PRODUCT_TYPOGRAPHY.ratingScore, color: COLORS.text.black },
   summaryStars: { marginTop: PRODUCT_LAYOUT.ratingStarsTopGap },
+  writeReviewSection: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: PRODUCT_LAYOUT.reviewAuthorGap,
+    justifyContent: 'flex-start',
+    marginTop: PRODUCT_LAYOUT.reviewTopGap,
+    paddingVertical: PRODUCT_LAYOUT.reviewMetaTopGap,
+  },
+  writeReviewTitle: { ...PRODUCT_TYPOGRAPHY.pack, color: COLORS.purple },
   count: {
     ...PRODUCT_TYPOGRAPHY.ratingLabel,
     color: COLORS.text.black,
