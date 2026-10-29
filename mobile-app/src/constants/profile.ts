@@ -10,7 +10,8 @@ export type ProfileMenuItemConfig = {
     | '/help-centre'
     | '/write-to-us'
     | '/account-settings'
-    | '/crop-advisor-history';
+    | '/crop-advisor-history'
+    | '/reviews';
 };
 
 export type ProfileMenuSectionConfig = {

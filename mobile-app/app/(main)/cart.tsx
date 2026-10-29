@@ -59,7 +59,10 @@ import {
 } from '@/theme';
 import { formatPaise } from '@/utils/price';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
-import { MOCK_CART_PRODUCTS, MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
+import {
+  MOCK_CART_PRODUCTS,
+  MOCK_RECOMMENDATION_PRODUCTS,
+} from '@/data/mockProducts';
 import { useWishlist } from '@/context/WishlistContext';
 import { ProductDetails } from '@/components/product/ProductDetails';
 
@@ -88,14 +91,12 @@ export default function CartScreen() {
   const router = useRouter();
   const cart = useCart();
   const wishlist = useWishlist();
-  const { step, productId, walletTab } = useLocalSearchParams<{ step?: string; productId?: string; walletTab?: string }>();
-  const { deleteReview, submittedReviews } = useReviews();
   const { step, productId, walletTab } = useLocalSearchParams<{
     step?: string;
     productId?: string;
     walletTab?: string;
   }>();
-
+  const { deleteReview, submittedReviews } = useReviews();
   if (step === 'wallet') {
     return (
       <WalletView
@@ -130,7 +131,6 @@ export default function CartScreen() {
   }
 
   if (step === 'product') {
-
     const product =
       [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
         (item) => item.id === productId,
@@ -168,7 +168,6 @@ export default function CartScreen() {
         }
       />
     );
-
   }
 
   if (step === 'payment') {
