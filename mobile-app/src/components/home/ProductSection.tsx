@@ -1,7 +1,6 @@
 import React from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
-
-import { ProductCard } from '@/components/common/ProductCard';
+import { ProductCard } from '@/components/category/ProductCard';
 import { AppText } from '@/components/common/AppText';
 import { COLORS, FONT_SIZE, LINE_HEIGHT, SPACING } from '@/theme';
 import type { Product, ProductItem } from '@/types/product';
