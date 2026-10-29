@@ -12,8 +12,8 @@ export function ReviewSuccessScreen() {
   const returnToProduct = () =>
     productId
       ? router.replace({
-          pathname: '/cart',
-          params: { productId, step: 'product' },
+          pathname: '/product/[id]',
+          params: { id: productId },
         })
       : router.replace('/(main)/home');
 
