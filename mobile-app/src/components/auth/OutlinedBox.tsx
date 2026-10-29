@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { AUTH_COLORS, AUTH_LAYOUT, COLORS } from '@/theme';
+import { AUTH_COLORS, AUTH_LAYOUT, COLORS, UI } from '@/theme';
 
 export interface OutlinedBoxProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   box: {
     height: AUTH_LAYOUT.inputBoxHeight,
     borderRadius: AUTH_LAYOUT.inputBoxRadius,
-    borderWidth: 1,
+    borderWidth: UI.borderWidth,
     borderColor: AUTH_COLORS.purpleBorder,
     backgroundColor: COLORS.background,
     alignItems: 'center',

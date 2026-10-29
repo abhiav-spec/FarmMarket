@@ -74,7 +74,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     id: 'crop-guidance',
     title: 'Expert Crop\nGuidance',
     description:
-      'Upload photos and videos of your crops and get\nadvice from our agricultural experts.',
+      'Upload photos and videos of your crops and get advice from our agricultural experts.',
     image: require('@/assets/illustrations/expert-crop.png'),
     imageFrame: { width: 382, height: 573, left: -6, top: -45 },
     clipImage: true,
@@ -83,7 +83,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     id: 'agricultural-products',
     title: 'Trusted Agricultural\nProducts',
     description:
-      'Buy seeds, fertilizers, pesticides and equipment from\nverified suppliers.',
+      'Buy seeds, fertilizers, pesticides and equipment from verified suppliers.',
     image: require('@/assets/illustrations/trusted-products.png'),
     imageFrame: { width: 369, height: 553, left: 0, top: -30 },
     clipImage: true,
@@ -92,7 +92,7 @@ export const ONBOARDING_SLIDES: OnboardingSlide[] = [
     id: 'track-order',
     title: 'Track Every\nOrder',
     description:
-      'Track your orders from purchase to delivery at your\ndoorstep.',
+      'Track your orders from purchase to delivery at your doorstep.',
     image: require('@/assets/illustrations/track-order.png'),
     imageFrame: { width: 371, height: 555, left: 0, top: -28 },
     clipImage: false,
