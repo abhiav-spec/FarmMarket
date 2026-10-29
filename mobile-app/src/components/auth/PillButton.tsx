@@ -5,11 +5,19 @@ import {
   Pressable,
   StyleProp,
   StyleSheet,
+  TextStyle,
   View,
   ViewStyle,
 } from 'react-native';
 import { AppText } from '@/components/common/AppText';
-import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+import {
+  AUTH_COLORS,
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  SPACING,
+  UI,
+} from '@/theme';
 
 export interface PillButtonProps {
   title?: string;
@@ -21,6 +29,8 @@ export interface PillButtonProps {
   showArrow?: boolean;
   arrowPosition?: 'left' | 'right';
   style?: StyleProp<ViewStyle>;
+  /** Overrides the label's text style, e.g. a different size on one screen. */
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export function PillButton({
@@ -33,6 +43,7 @@ export function PillButton({
   showArrow = false,
   arrowPosition,
   style,
+  textStyle,
 }: PillButtonProps) {
   const isDisabled = disabled || loading;
   const buttonText = title || label;
@@ -55,7 +66,7 @@ export function PillButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={COLORS.text.black} />
+        <ActivityIndicator size="small" color={COLORS.text.primary} />
       ) : (
         <View style={styles.content}>
           {shouldShowArrow && resolvedArrowPosition === 'left' && (
@@ -66,7 +77,7 @@ export function PillButton({
             />
           )}
           {buttonText ? (
-            <AppText style={styles.title}>{buttonText}</AppText>
+            <AppText style={[styles.title, textStyle]}>{buttonText}</AppText>
           ) : null}
           {shouldShowArrow && resolvedArrowPosition === 'right' && (
             <Image
@@ -88,17 +99,19 @@ const styles = StyleSheet.create({
     borderRadius: AUTH_LAYOUT.buttonRadius,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 60,
-    paddingVertical: 12,
+    // Buttons have a fixed width, so keep the side padding small enough
+    // for the label and arrow to stay on one line
+    paddingHorizontal: SPACING.xxl,
+    paddingVertical: SPACING.md,
   },
   fullWidth: {
     width: '100%',
   },
   pressed: {
-    opacity: 0.85,
+    opacity: AUTH_LAYOUT.pressedOpacity,
   },
   disabled: {
-    opacity: 0.4,
+    opacity: UI.disabledOpacity,
   },
   content: {
     flexDirection: 'row',
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...AUTH_TYPOGRAPHY.button,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
     textAlign: 'center',
   },
 });
