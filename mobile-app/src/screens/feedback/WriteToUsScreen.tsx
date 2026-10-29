@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Modal,
+  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -121,7 +122,11 @@ export function WriteToUsScreen() {
           >
             {subject || 'Select a subject'}
           </Text>
-          <Text style={styles.dropdownArrow}>⌄</Text>
+          <Image
+            accessible={false}
+            source={require('../../../assets/icons/dropdown-chevron.png')}
+            style={styles.dropdownIcon}
+          />
         </Pressable>
         {errors.subject ? (
           <Text style={styles.errorText}>{errors.subject}</Text>

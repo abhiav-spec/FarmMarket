@@ -30,7 +30,7 @@ export const writeToUsStyles = StyleSheet.create({
     minHeight: 52,
     paddingHorizontal: SPACING.md,
   },
-  dropdownArrow: { color: COLORS.text.secondary, fontSize: 22 },
+  dropdownIcon: { height: 20, resizeMode: 'contain', width: 20 },
   dropdownText: {
     color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.regular,
