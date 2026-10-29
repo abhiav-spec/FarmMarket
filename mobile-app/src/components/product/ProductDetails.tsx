@@ -75,6 +75,9 @@ interface ProductDetailsProps {
   reviews?: readonly ProductReviewItem[];
   faqs?: readonly { id: string; question: string; answer?: string }[];
   onReply?: (reviewId: string) => void;
+  onReviewOptions?: (reviewId: string) => void;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
   onEditReview?: (reviewId: string) => void;
   onDeleteReview?: (reviewId: string) => void;
   onWriteReview?: () => void;
@@ -583,7 +586,6 @@ function ProductFaqs({
     </View>
   );
 }
-
 export function ProductDetails({
   product,
   onBack,
@@ -598,9 +600,12 @@ export function ProductDetails({
   onReturns,
   onProductPress,
   onReply,
+  onReviewOptions,
   onEditReview,
   onDeleteReview,
   onWriteReview,
+  isSaved,
+  onToggleSave,
   packs = PRODUCT_PACKS,
   images,
   reviewLabel = PRODUCT_DETAIL_COPY.reviews,
@@ -611,76 +616,88 @@ export function ProductDetails({
   reviews = PRODUCT_REVIEWS,
   faqs = PRODUCT_FAQS,
 }: ProductDetailsProps) {
-  const [saved, setSaved] = useState(false);
+  const [savedLocal, setSavedLocal] = useState(false);
+
+  const saved = isSaved ?? savedLocal;
+
+  const toggleSaved = () =>
+    onToggleSave ? onToggleSave() : setSavedLocal(!savedLocal);
+
   const imageSource =
     typeof product.imageUrl === 'string'
       ? { uri: product.imageUrl }
       : product.imageUrl;
+
   const galleryImages = images ?? [imageSource];
   return (
     <View style={styles.screen}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Pressable
-            onPress={onBack}
-            accessibilityRole="button"
-            accessibilityLabel={CART_COPY.back}
-            hitSlop={UI.hitSlop}
-          >
-            <Ionicons
-              name={ICONS.back}
-              size={SIZES.cartHeaderIconSize}
-              color={COLORS.text.black}
-            />
-          </Pressable>
-          <AppText style={styles.headerTitle}>
-            {PRODUCT_DETAIL_COPY.title}
-          </AppText>
-          <View style={styles.headerActions}>
-            <Pressable
-              onPress={onSearch}
-              disabled={!onSearch}
-              accessibilityRole="button"
-              accessibilityLabel={CART_COPY.search}
-              hitSlop={UI.hitSlop}
-            >
-              <Image source={IMAGES.headerSearch} style={styles.headerIcon} />
-            </Pressable>
-            <Pressable
-              onPress={() => setSaved(!saved)}
-              accessibilityRole="button"
-              accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist}
-              accessibilityState={{ selected: saved }}
-              hitSlop={UI.hitSlop}
-            >
-              <Ionicons
-                name={saved ? ICONS.heartFilled : ICONS.heart}
-                size={SIZES.cartHeaderIconSize}
-                color={saved ? COLORS.purple : COLORS.text.black}
-              />
-            </Pressable>
-            <Pressable
-              onPress={onCart}
-              accessibilityRole="button"
-              accessibilityLabel={PRODUCT_DETAIL_COPY.cart}
-              hitSlop={UI.hitSlop}
-            >
-              <Image
-                source={IMAGES.productHeaderCart}
-                style={styles.headerIcon}
-                resizeMode="contain"
-                accessible={false}
-              />
-            </Pressable>
-          </View>
-        </View>
-        <ProductGallery
-          images={galleryImages}
-          name={product.name}
-          onShare={onShare}
-          saved={saved}
-          onSave={() => setSaved(!saved)}
-        />
+<View style={styles.header}>
+  <Pressable
+    onPress={onBack}
+    accessibilityRole="button"
+    accessibilityLabel={CART_COPY.back}
+    hitSlop={UI.hitSlop}
+  >
+    <Ionicons
+      name={ICONS.back}
+      size={SIZES.cartHeaderIconSize}
+      color={COLORS.text.black}
+    />
+  </Pressable>
+
+  <AppText style={styles.headerTitle}>
+    {PRODUCT_DETAIL_COPY.title}
+  </AppText>
+
+  <View style={styles.headerActions}>
+    <Pressable
+      onPress={onSearch}
+      disabled={!onSearch}
+      accessibilityRole="button"
+      accessibilityLabel={CART_COPY.search}
+      hitSlop={UI.hitSlop}
+    >
+      <Image source={IMAGES.headerSearch} style={styles.headerIcon} />
+    </Pressable>
+
+    <Pressable
+      onPress={toggleSaved}
+      accessibilityRole="button"
+      accessibilityLabel={PRODUCT_DETAIL_COPY.wishlist}
+      accessibilityState={{ selected: saved }}
+      hitSlop={UI.hitSlop}
+    >
+      <Ionicons
+        name={saved ? ICONS.heartFilled : ICONS.heart}
+        size={SIZES.cartHeaderIconSize}
+        color={saved ? COLORS.purple : COLORS.text.black}
+      />
+    </Pressable>
+
+    <Pressable
+      onPress={onCart}
+      accessibilityRole="button"
+      accessibilityLabel={PRODUCT_DETAIL_COPY.cart}
+      hitSlop={UI.hitSlop}
+    >
+      <Image
+        source={IMAGES.productHeaderCart}
+        style={styles.headerIcon}
+        resizeMode="contain"
+        accessible={false}
+      />
+    </Pressable>
+  </View>
+</View>
+
+<ProductGallery
+  images={galleryImages}
+  name={product.name}
+  onShare={onShare}
+  saved={saved}
+  onSave={toggleSaved}
+/>
         <View style={styles.content}>
           <AppText style={styles.name}>{product.name}</AppText>
           <View style={styles.rating}>

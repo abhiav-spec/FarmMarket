@@ -15,6 +15,10 @@ export const COLORS = {
   purpleButtonBorder: '#CBB0FF',
   purpleBorder: '#A491BF',
   purpleLight: '#F5EEFF',
+  cropAdvisor: '#6A00FF',
+  cropAdvisorBackground: '#F5EEFF',
+  cropAdvisorBorder: '#CBB0FF',
+
   purpleBorder1: '#E2CEFF',
   stepperGreen: '#009411',
   paymentOffer: '#E2FFD3',

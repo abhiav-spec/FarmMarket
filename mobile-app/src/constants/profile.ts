@@ -6,7 +6,12 @@ export type ProfileMenuItemConfig = {
   title: string;
   subtitle: string;
   icon: ProfileMenuIcon;
-  route?: '/help-centre' | '/reviews' | '/write-to-us' | '/account-settings';
+  route?:
+    | '/help-centre'
+    | '/write-to-us'
+    | '/account-settings'
+    | '/crop-advisor-history'
+    | '/reviews';
 };
 
 export type ProfileMenuSectionConfig = {
@@ -31,6 +36,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'Crop Advisory History',
         subtitle: 'View your past consultation',
         icon: 'history',
+        route: '/crop-advisor-history',
       },
       {
         id: 'support',
