@@ -1,1 +1,1 @@
-export { TermsAndConditionsScreen as default } from '@/screens/profile/AccountSettingsScreens';
+export { TermsAndConditionsScreen as default } from '@/screens/profile/TermsAndConditionsScreen';
