@@ -90,11 +90,6 @@ export default function CartScreen() {
   const wishlist = useWishlist();
   const { step, productId, walletTab } = useLocalSearchParams<{ step?: string; productId?: string; walletTab?: string }>();
   const { deleteReview, submittedReviews } = useReviews();
-  const { step, productId, walletTab } = useLocalSearchParams<{
-    step?: string;
-    productId?: string;
-    walletTab?: string;
-  }>();
 
   if (step === 'wallet') {
     return (
