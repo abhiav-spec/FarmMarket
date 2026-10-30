@@ -14,9 +14,10 @@ import { useRouter } from 'expo-router';
 import { AppIcon } from '@/components/common/AppIcon';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
+import { FormField, SelectField } from '@/components/auth/FormField';
 import { PillButton } from '@/components/auth/PillButton';
 import { STATES, districtsOf } from '@/data/geography';
-import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_ROUTES, AUTH_STRINGS } from '@/constants/auth';
 import { LANGUAGES } from '@/data/languages';
 import {
   AUTH_COLORS,
@@ -39,6 +40,7 @@ export function PersonalInfoScreen() {
   const [language, setLanguage] = useState<string>(STRINGS.defaultLanguageKey);
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
+  const [nameFocused, setNameFocused] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [search, setSearch] = useState('');
 
@@ -110,93 +112,71 @@ export function PersonalInfoScreen() {
     handleCloseModal();
   };
 
+  // Every field must be filled before the user can continue
+  const isValid =
+    name.trim().length > 0 && Boolean(state) && Boolean(district) && Boolean(language);
+
   const handleContinue = () => {
-    router.push('/(auth)/onboarding');
+    if (!isValid) return;
+    router.push(AUTH_ROUTES.onboarding);
   };
 
   return (
     <View style={styles.screen}>
-      <AuthHeader title={STRINGS.header} fallbackRoute="/(auth)/otp" />
+      <AuthHeader title={STRINGS.header} fallbackRoute={AUTH_ROUTES.otp} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.formSection}>
-          {/* Name Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.nameLabel}</AppText>
+          <FormField label={STRINGS.nameLabel} focused={nameFocused}>
             <TextInput
               style={styles.input}
               placeholder={STRINGS.namePlaceholder}
               placeholderTextColor={AUTH_COLORS.placeholder}
               value={name}
               onChangeText={setName}
+              onFocus={() => setNameFocused(true)}
+              onBlur={() => setNameFocused(false)}
+              cursorColor={AUTH_COLORS.purple}
+              selectionColor={AUTH_COLORS.purpleLight}
             />
-            <View style={styles.underline} />
-          </View>
+          </FormField>
 
-          {/* State Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.stateLabel}</AppText>
-            <Pressable
-              onPress={() => setActiveModal('state')}
-              style={styles.pickerTrigger}
-            >
-              <AppText
-                style={[styles.pickerText, !state && styles.placeholderText]}
-              >
-                {state || STRINGS.statePlaceholder}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.stateLabel}
+            value={state}
+            placeholder={STRINGS.statePlaceholder}
+            onPress={() => setActiveModal('state')}
+          />
 
-          {/* District Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.districtLabel}</AppText>
-            <Pressable
-              onPress={() => state && setActiveModal('district')}
-              style={styles.pickerTrigger}
-              disabled={!state}
-            >
-              <AppText
-                style={[styles.pickerText, !district && styles.placeholderText]}
-              >
-                {district ||
-                  (state
-                    ? STRINGS.districtPlaceholder
-                    : STRINGS.districtLocked)}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.districtLabel}
+            value={district}
+            placeholder={
+              state ? STRINGS.districtPlaceholder : STRINGS.districtLocked
+            }
+            onPress={() => setActiveModal('district')}
+            disabled={!state}
+          />
 
-          {/* Language Selection */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.languageLabel}</AppText>
-            <Pressable
-              onPress={() => setActiveModal('language')}
-              style={styles.pickerTrigger}
-            >
-              <AppText style={styles.pickerText}>
-                {selectedLanguageLabel}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.languageLabel}
+            value={selectedLanguageLabel}
+            placeholder={STRINGS.defaultLanguageName}
+            onPress={() => setActiveModal('language')}
+          />
         </View>
       </ScrollView>
 
-      {/* Continue Button: fixed near the bottom, as in Figma */}
+      {/* Continue button, fixed near the bottom */}
       <View style={styles.bottomSection}>
         <PillButton
           label={AUTH_STRINGS.continue}
           arrowPosition="left"
           fullWidth={false}
+          disabled={!isValid}
           onPress={handleContinue}
           style={styles.button}
         />
@@ -217,7 +197,7 @@ export function PersonalInfoScreen() {
                 onPress={handleCloseModal}
                 hitSlop={UI.hitSlop}
                 accessibilityRole="button"
-                accessibilityLabel={`Close ${modalTitle} selector`}
+                accessibilityLabel={STRINGS.closeSelector(modalTitle)}
               >
                 <AppIcon name="close" size="md" color={COLORS.text.primary} />
               </Pressable>
@@ -284,7 +264,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Each field: bold label → value → underline, like the team's form screens
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: AUTH_LAYOUT.screenPadding,
@@ -293,44 +272,22 @@ const styles = StyleSheet.create({
   formSection: {
     paddingTop: SPACING.xl,
   },
-  // Full width, like the other forms in the app (Figma's 318px only fits 402)
-  fieldGroup: {
-    width: '100%',
-    marginBottom: SPACING.lg,
-  },
-  // Field titles (Name, State, District, Language) are bold subheadings
-  label: {
-    ...AUTH_TYPOGRAPHY.label,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.md,
-  },
   input: {
     ...AUTH_TYPOGRAPHY.bodySmallMedium,
+    height: '100%',
     color: COLORS.text.primary,
-    paddingVertical: UI.zeroInset,
-    paddingBottom: SPACING.xs,
-  },
-  pickerTrigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBottom: SPACING.xs,
-  },
-  pickerText: {
-    ...AUTH_TYPOGRAPHY.bodySmallMedium,
-    color: COLORS.text.primary,
-  },
-  placeholderText: {
-    color: AUTH_COLORS.placeholder,
-  },
-  underline: {
-    height: UI.borderWidth,
-    backgroundColor: AUTH_COLORS.inputLine,
+    padding: UI.zeroInset,
+    borderWidth: UI.zeroInset,
+    backgroundColor: 'transparent',
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      } as object,
+    }),
   },
   bottomSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    // Figma: 44px from the bottom of the screen
     paddingBottom: AUTH_LAYOUT.bottomGap,
   },
   button: {
@@ -347,9 +304,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopLeftRadius: RADIUS.xl,
     borderTopRightRadius: RADIUS.xl,
-    maxHeight: '60%',
+    maxHeight: AUTH_LAYOUT.sheetMaxHeight,
     paddingTop: SPACING.lg,
-    paddingBottom: Platform.OS === 'ios' ? 40 : SPACING.lg,
+    paddingBottom: Platform.OS === 'ios' ? AUTH_LAYOUT.sheetIosBottomInset : SPACING.lg,
     paddingHorizontal: SPACING.xl,
   },
   modalHeader: {

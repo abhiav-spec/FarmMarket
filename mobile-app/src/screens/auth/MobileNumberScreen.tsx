@@ -12,7 +12,12 @@ import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { OutlinedBox } from '@/components/auth/OutlinedBox';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_STRINGS, COUNTRY_CODE, PHONE_LENGTH } from '@/constants/auth';
+import {
+  AUTH_ROUTES,
+  AUTH_STRINGS,
+  COUNTRY_CODE,
+  PHONE_LENGTH,
+} from '@/constants/auth';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import {
   AUTH_COLORS,
@@ -38,10 +43,7 @@ export function MobileNumberScreen() {
 
   const handleContinue = () => {
     if (!isValid) return;
-    router.push({
-      pathname: '/(auth)/otp',
-      params: { phone },
-    });
+    router.push(AUTH_ROUTES.otp);
   };
 
   return (
@@ -52,7 +54,7 @@ export function MobileNumberScreen() {
         <AuthHeader
           title={STRINGS.header}
           showSurface
-          fallbackRoute="/(auth)/get-started"
+          fallbackRoute={AUTH_ROUTES.getStarted}
         />
 
         <View style={styles.contentContainer}>
@@ -60,13 +62,13 @@ export function MobileNumberScreen() {
 
           {/* Mobile number: country code box next to the number box */}
           <View style={styles.inputRow}>
-            <OutlinedBox style={styles.countryCodeBox}>
+            <OutlinedBox darkBorder style={styles.countryCodeBox}>
               <AppText style={styles.countryCodeText}>
                 {COUNTRY_CODE}
               </AppText>
             </OutlinedBox>
 
-            <OutlinedBox focused={isFocused} style={styles.phoneBox}>
+            <OutlinedBox darkBorder focused={isFocused} style={styles.phoneBox}>
               <TextInput
                 style={[styles.inputText, styles.phoneInput]}
                 keyboardType="phone-pad"
@@ -83,7 +85,7 @@ export function MobileNumberScreen() {
           </View>
         </View>
 
-        {/* Security note + button sit just above the keyboard, as in Figma */}
+        {/* Security note + button sit just above the keyboard */}
         <View
           style={[
             styles.footer,
@@ -113,8 +115,6 @@ export function MobileNumberScreen() {
   );
 }
 
-// Order as in Figma: header → subtitle → number boxes → (space) →
-// security text → button, just above the keyboard
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

@@ -6,6 +6,20 @@ export const OTP_LENGTH = 6;
 export const OTP_RESEND_SECONDS = 30;
 export const PHONE_LENGTH = 10;
 export const COUNTRY_CODE = '+91';
+export const PHONE_MASK_CHAR = 'X';
+// The phone number is never shown on the OTP screen, e.g. XXXXX XXXXX
+export const MASKED_PHONE = Array<string>(2)
+  .fill(PHONE_MASK_CHAR.repeat(PHONE_LENGTH / 2))
+  .join(' ');
+
+export const AUTH_ROUTES = {
+  getStarted: '/(auth)/get-started',
+  mobileNumber: '/(auth)/mobile-number',
+  otp: '/(auth)/otp',
+  personalInfo: '/(auth)/personal-info',
+  onboarding: '/(auth)/onboarding',
+  home: '/(main)/home',
+} as const;
 
 export const AUTH_STRINGS = {
   getStarted: {
@@ -46,6 +60,7 @@ export const AUTH_STRINGS = {
       state: 'Select State',
       district: 'Select District',
     },
+    closeSelector: (title: string) => `Close ${title} selector`,
     search: 'Search...',
     empty: 'No options found',
   },
