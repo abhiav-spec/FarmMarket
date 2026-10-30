@@ -63,6 +63,8 @@ export const AUTH_STRINGS = {
     closeSelector: (title: string) => `Close ${title} selector`,
     search: 'Search...',
     empty: 'No options found',
+    validationAlertTitle: 'Please fill in the required details',
+    validationAlertButton: 'OK',
   },
   onboarding: {
     next: 'Next slide',

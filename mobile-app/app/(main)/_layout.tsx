@@ -151,6 +151,14 @@ export default function MainLayout() {
       />
 
       <Tabs.Screen
+        name="notifications"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+
+      <Tabs.Screen
         name="privacy-policy"
         options={{
           href: null,
