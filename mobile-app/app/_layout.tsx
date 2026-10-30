@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
+import { AddressProvider } from '../src/context/AddressContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { CropAdvisorProvider } from '@/context/CropAdvisorContext';
 import { CartProvider } from '@/context/CartContext';
@@ -47,7 +48,9 @@ export default function RootLayout() {
     >
       <CropAdvisorProvider>
         <WishlistProvider>
-          <Stack screenOptions={{ headerShown: false }} />
+          <AddressProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+          </AddressProvider>
         </WishlistProvider>
       </CropAdvisorProvider>
     </CartProvider>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { shortLocationLabel, useAddress } from '@/context/AddressContext';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 
 import {
@@ -22,6 +23,7 @@ import { COLORS, SPACING } from '@/theme';
 
 export function HomeScreen() {
   const router = useRouter();
+  const { selected } = useAddress();
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -31,9 +33,9 @@ export function HomeScreen() {
         contentContainerStyle={styles.content}
       >
         <HomeHeader
-          location={HOME_HEADER_DATA.location}
+          location={selected ? shortLocationLabel(selected.address) : HOME_HEADER_DATA.location}
           walletBalance={HOME_HEADER_DATA.walletBalance}
-          onLocationPress={() => {}}
+          onLocationPress={() => router.push('/location')}
           onNotificationPress={() => {}}
           onWalletPress={() => {}}
           onCartPress={() => {}}
