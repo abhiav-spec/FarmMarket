@@ -31,7 +31,12 @@ export function AccountSettingsScreen() {
               title="Notifications"
               description="Manage your notification preferences"
               icon="notifications"
-              onPress={() => router.push('/notifications-settings')}
+              onPress={() =>
+                router.push({
+                  pathname: '/(main)/notifications-settings',
+                  params: { from: 'settings' },
+                } as never)
+              }
             />
 
             <SettingsRow

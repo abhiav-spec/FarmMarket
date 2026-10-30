@@ -26,6 +26,7 @@ export const ICONS = {
   share: 'share-social-outline',
   reviewer: 'person-circle-outline',
   reviewOptions: 'ellipsis-vertical',
+  moreVertical: 'ellipsis-vertical',
   helpful: 'thumbs-up-outline',
   helpfulFilled: 'thumbs-up',
   star: 'star-outline',

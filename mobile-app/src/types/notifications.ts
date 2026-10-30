@@ -1,10 +1,25 @@
-export type NotificationCategory = 'all' | 'orders' | 'offers' | 'wallet';
+export type StandardNotificationCategory = 'orders' | 'offers' | 'wallet';
+
+export type NotificationCategory =
+  | 'all'
+  | StandardNotificationCategory
+  | (string & {});
 
 export interface Notification {
   id: string;
-  category: Exclude<NotificationCategory, 'all'>;
+  category: StandardNotificationCategory | string;
   title: string;
   body: string;
   timestamp: string;
+  createdAt?: string;
   read: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+export interface NotificationSettings {
+  orderUpdates: boolean;
+  cropAdvisory: boolean;
+  offers: boolean;
+  walletUpdates: boolean;
+  [key: string]: boolean;
 }
