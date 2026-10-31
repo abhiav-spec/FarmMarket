@@ -312,6 +312,7 @@ export const PRODUCT_LAYOUT = {
   faqTitleGap: 9.8,
   faqRowGap: 10,
 } as const;
+
 export const FEEDBACK_HEADER_LAYOUT = {
   height: 112,
   borderWidth: 5,
@@ -321,9 +322,17 @@ export const FEEDBACK_HEADER_LAYOUT = {
   arrowHeight: 32,
   rightSpacerWidth: 40,
 } as const;
+
 export const FEEDBACK_RATING_LAYOUT = {
   maxCardWidth: 70,
   imageSize: 36,
   selectedBorderWidth: 2,
   borderWidth: 1,
+} as const;
+
+export const SEARCH_LAYOUT = {
+  cardWidthPercent: '48%',
+  emptyIconContainerSize: 64,
+  emptyIconContainerRadius: 32,
+  emptySubtitleMaxWidth: 240,
 } as const;

@@ -13,7 +13,7 @@ import {
   FERTILIZER_BANNER,
   FERTILIZER_PRODUCTS,
 } from '@/constants/fertilizer';
-import { COLORS, SPACING } from '@/theme';
+import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import type { ProductItem } from '@/types/product';
 
 export function FertilizerCategoryScreen() {
@@ -38,7 +38,7 @@ export function FertilizerCategoryScreen() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={styles.row}
+        columnWrapperStyle={filteredProducts.length > 0 ? styles.row : undefined}
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.headerArea}>
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: SPACING.xxxl,
+    flexGrow: 1,
   },
   row: {
     paddingHorizontal: SPACING.lg,
@@ -99,6 +100,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
-    maxWidth: '48%',
+    maxWidth: SEARCH_LAYOUT.cardWidthPercent,
   },
 });
