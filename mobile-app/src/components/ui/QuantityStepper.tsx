@@ -24,7 +24,8 @@ export function QuantityStepper({ quantity, onIncrement, onDecrement, min = CART
   );
   return (
     <View style={[styles.container, sizeStyle.container]}>
-      {step(CART_COPY.decrement, CART_COPY.decreaseQuantity, onDecrement, quantity > min, styles.buttonLeft)}
+      {/* At the minimum, decrement removes the item from the cart. */}
+      {step(CART_COPY.decrement, CART_COPY.decreaseQuantity, onDecrement, quantity >= min, styles.buttonLeft)}
       <View style={[styles.cell, sizeStyle.cell, styles.countContainer]}>
         <AppText style={styles.countText}>{quantity}</AppText>
       </View>
