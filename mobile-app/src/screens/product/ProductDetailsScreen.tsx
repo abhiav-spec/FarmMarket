@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   },
   priceRow: {
     width: SIZES.productPriceRowWidth,
-    height: SIZES.productPriceRowHeight,
+    height: SIZES.productPriceRowHeight + 14,
     marginTop: PRODUCT_LAYOUT.priceTopGap,
   },
   benefits: {

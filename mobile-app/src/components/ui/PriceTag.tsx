@@ -22,14 +22,15 @@ interface PriceTagProps {
 /** Selling price, struck-through MRP and "% off" for a product. */
 export function PriceTag({ product, variant, style }: PriceTagProps) {
   const typography = VARIANTS[variant];
+  const hasDiscount = product.mrpPaise > product.pricePaise;
   return (
-    <View style={[styles.row, style]}>
+    <View style={[styles.row, variant === 'detail' && styles.detailRow, style]}>
       <AppText style={[typography.price, styles.accent]}>{formatPaise(product.pricePaise, variant !== 'cart')}</AppText>
-      {product.mrpPaise > product.pricePaise && (
-        <>
+      {hasDiscount && (
+        <View style={variant === 'detail' ? styles.detailSecondaryRow : styles.inlineSecondaryRow}>
           <AppText style={[typography.mrp, styles.mrp, { color: typography.mrpColor }]}>{formatPaise(product.mrpPaise, true)}</AppText>
           <AppText style={[typography.discount, styles.accent]}>{CART_COPY.discount(getProductDiscountPercent(product))}</AppText>
-        </>
+        </View>
       )}
     </View>
   );
@@ -37,6 +38,9 @@ export function PriceTag({ product, variant, style }: PriceTagProps) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: UI.compactGap },
+  detailRow: { flexDirection: 'column', alignItems: 'flex-start', gap: 1 },
+  inlineSecondaryRow: { flexDirection: 'row', alignItems: 'center', gap: UI.compactGap },
+  detailSecondaryRow: { flexDirection: 'row', alignItems: 'center', gap: UI.compactGap },
   accent: { color: COLORS.purple },
   mrp: { textDecorationLine: 'line-through' },
 });
