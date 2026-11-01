@@ -50,7 +50,12 @@ export function ProductRecommendationCard({
         />
       </Touchable>
 
-      <View style={styles.info}>
+      <Touchable
+        style={styles.info}
+        onPress={onProductPress ? () => onProductPress(product) : undefined}
+        label={product.name}
+        hitSlop={0}
+      >
         <AppText style={styles.productTitle} numberOfLines={1}>
           {product.name}
         </AppText>
@@ -58,7 +63,7 @@ export function ProductRecommendationCard({
         <AppText style={styles.variantText}>{product.variant}</AppText>
 
         <PriceTag product={product} variant="card" />
-      </View>
+      </Touchable>
 
       {cartItem ? (
         <View style={styles.quantityButton}>

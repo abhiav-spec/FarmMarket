@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image, Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { ScreenHeader } from '@/components/common/ScreenHeader';
@@ -84,6 +84,7 @@ function faqInfo(product: (typeof ALL_PRODUCTS)[number], faqId: string): string 
 
 export function ProductDetailsScreen() {
   const router = useRouter();
+  const scrollViewRef = useRef<ScrollView>(null);
   const { addItem, itemCount, items, config, removeItem } = useCart();
   const { isWished, toggle: toggleWishlist } = useWishlist();
   const { deleteReview, submittedReviews } = useReviews();
@@ -91,6 +92,13 @@ export function ProductDetailsScreen() {
   const goBack = useGoBack('/cart');
   const product =
     ALL_PRODUCTS.find((item) => item.id === id) ?? MOCK_CART_PRODUCTS[0];
+  const resetProductPage = useCallback(() => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+  }, []);
+
+  useFocusEffect(resetProductPage);
+  useEffect(resetProductPage, [id, resetProductPage]);
+
   const rating = product.rating ?? 0;
   const images = getProductGallery(product);
   const openProduct = (item: typeof product) =>
@@ -110,7 +118,7 @@ export function ProductDetailsScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
         <ScreenHeader
           title={PRODUCT_DETAIL_COPY.title}
           onBack={goBack}
