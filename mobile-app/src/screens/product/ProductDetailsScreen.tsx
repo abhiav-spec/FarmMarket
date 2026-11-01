@@ -38,6 +38,7 @@ import {
 } from '@/data/mockProducts';
 import { PRODUCT_CATALOG } from '@/data/productCatalog';
 import type { Product, ProductPack } from '@/types';
+import { isSameCartProduct } from '@/utils/cart';
 import {
   COLORS,
   PRODUCT_LAYOUT,
@@ -224,11 +225,11 @@ export function ProductDetailsScreen() {
             ))}
           </View>
           <PurchaseActions
-            quantity={items.find((item) => item.product.id === product.id)?.quantity}
+            quantity={items.find((item) => isSameCartProduct(item.product, product))?.quantity}
             minQuantity={config.MIN_QUANTITY_PER_ITEM}
             maxQuantity={config.MAX_QUANTITY_PER_ITEM}
             onAddToCart={() => addItem(product)}
-            onRemoveFromCart={() => removeItem(product.id)}
+            onRemoveFromCart={() => removeItem(product)}
             onBuyNow={() => {
               addItem(product);
               router.push('/checkout/payment');

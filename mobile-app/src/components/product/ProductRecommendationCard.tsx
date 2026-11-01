@@ -19,6 +19,7 @@ import {
 import { type Product } from '@/types';
 import { toImageSource } from '@/utils/image';
 import { useCart } from '@/context/CartContext';
+import { isSameCartProduct } from '@/utils/cart';
 
 interface ProductRecommendationCardProps {
   product: Product;
@@ -32,7 +33,7 @@ export function ProductRecommendationCard({
   onProductPress,
 }: ProductRecommendationCardProps) {
   const { items, config, removeItem } = useCart();
-  const cartItem = items.find((item) => item.product.id === product.id);
+  const cartItem = items.find((item) => isSameCartProduct(item.product, product));
 
   return (
     <View style={styles.container}>
@@ -71,7 +72,7 @@ export function ProductRecommendationCard({
             quantity={cartItem.quantity}
             min={config.MIN_QUANTITY_PER_ITEM}
             max={config.MAX_QUANTITY_PER_ITEM}
-            onDecrement={() => removeItem(product.id)}
+            onDecrement={() => removeItem(cartItem.product)}
             onIncrement={() => onAddToCart(product)}
           />
         </View>

@@ -2,34 +2,35 @@ import React, { createContext, useContext, useMemo, useReducer } from 'react';
 
 import { CART_CONFIG } from '@/constants/config';
 import { type CartConfig, type CartItem, type CartPriceSummary, type Product } from '@/types';
+import { type CartProductRef, isSameCartProduct } from '@/utils/cart';
 import { computePriceSummary } from '@/utils/price';
 
 type CartAction =
   | { type: 'ADD_ITEM'; product: Product }
-  | { type: 'REMOVE_ITEM'; productId: string }
-  | { type: 'DELETE_ITEM'; productId: string }
-  | { type: 'SET_QUANTITY'; productId: string; quantity: number }
+  | { type: 'REMOVE_ITEM'; product: CartProductRef }
+  | { type: 'DELETE_ITEM'; product: CartProductRef }
+  | { type: 'SET_QUANTITY'; product: CartProductRef; quantity: number }
   | { type: 'CLEAR_CART' };
 
-function updateQuantity(items: CartItem[], productId: string, update: (quantity: number) => number): CartItem[] {
-  return items.map((item) => (item.product.id === productId ? { ...item, quantity: update(item.quantity) } : item));
+function updateQuantity(items: CartItem[], product: CartProductRef, update: (quantity: number) => number): CartItem[] {
+  return items.map((item) => (isSameCartProduct(item.product, product) ? { ...item, quantity: update(item.quantity) } : item));
 }
 
 function cartReducer(items: CartItem[], action: CartAction, config: CartConfig): CartItem[] {
   const { MIN_QUANTITY_PER_ITEM: min, MAX_QUANTITY_PER_ITEM: max } = config;
   switch (action.type) {
     case 'ADD_ITEM':
-      return items.some((item) => item.product.id === action.product.id)
-        ? updateQuantity(items, action.product.id, (quantity) => Math.min(quantity + 1, max))
+      return items.some((item) => isSameCartProduct(item.product, action.product))
+        ? updateQuantity(items, action.product, (quantity) => Math.min(quantity + 1, max))
         : [...items, { product: action.product, quantity: min }];
     case 'REMOVE_ITEM':
       // Decrementing below the minimum removes the item.
-      return updateQuantity(items, action.productId, (quantity) => quantity - 1).filter((item) => item.quantity >= min);
+      return updateQuantity(items, action.product, (quantity) => quantity - 1).filter((item) => item.quantity >= min);
     case 'DELETE_ITEM':
-      return items.filter((item) => item.product.id !== action.productId);
+      return items.filter((item) => !isSameCartProduct(item.product, action.product));
     case 'SET_QUANTITY':
       if (!Number.isFinite(action.quantity)) return items;
-      return updateQuantity(items, action.productId, () => Math.min(Math.max(Math.trunc(action.quantity), min), max));
+      return updateQuantity(items, action.product, () => Math.min(Math.max(Math.trunc(action.quantity), min), max));
     case 'CLEAR_CART':
       return [];
     default:
@@ -42,9 +43,9 @@ interface CartContextValue {
   itemCount: number;
   config: CartConfig;
   addItem: (product: Product) => void;
-  removeItem: (productId: string) => void;
-  deleteItem: (productId: string) => void;
-  setQuantity: (productId: string, quantity: number) => void;
+  removeItem: (product: CartProductRef) => void;
+  deleteItem: (product: CartProductRef) => void;
+  setQuantity: (product: CartProductRef, quantity: number) => void;
   clearCart: () => void;
   priceSummary: CartPriceSummary;
 }
@@ -70,10 +71,10 @@ export function CartProvider({
   );
   const actions = useMemo(() => ({
     addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', product }),
-    removeItem: (productId: string) => dispatch({ type: 'REMOVE_ITEM', productId }),
-    deleteItem: (productId: string) => dispatch({ type: 'DELETE_ITEM', productId }),
-    setQuantity: (productId: string, quantity: number) =>
-      dispatch({ type: 'SET_QUANTITY', productId, quantity }),
+    removeItem: (product: CartProductRef) => dispatch({ type: 'REMOVE_ITEM', product }),
+    deleteItem: (product: CartProductRef) => dispatch({ type: 'DELETE_ITEM', product }),
+    setQuantity: (product: CartProductRef, quantity: number) =>
+      dispatch({ type: 'SET_QUANTITY', product, quantity }),
     clearCart: () => dispatch({ type: 'CLEAR_CART' }),
   }), []);
   const value = useMemo<CartContextValue>(() => ({

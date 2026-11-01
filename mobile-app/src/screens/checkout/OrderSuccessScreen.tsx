@@ -11,6 +11,7 @@ import { useCart } from '@/context/CartContext';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
 import { COLORS, PAYMENT_SUCCESS_LAYOUT as LAYOUT, PAYMENT_SUCCESS_TYPOGRAPHY as TYPOGRAPHY, useResponsive } from '@/theme';
 import { type CartItem, type DeliveryAddress } from '@/types';
+import { cartProductKey } from '@/utils/cart';
 import { toImageSource } from '@/utils/image';
 import { formatPaise } from '@/utils/price';
 
@@ -26,7 +27,7 @@ export function OrderSuccessScreen() {
       <AppText accessibilityRole="header" style={styles.title}>{PAYMENT_SUCCESS_COPY.title}</AppText>
       <AppText style={styles.description}>{PAYMENT_SUCCESS_COPY.description}</AppText>
       <View style={styles.orders}>
-        {items.map((item) => <OrderedItem key={item.product.id} item={item} address={MOCK_ADDRESS} />)}
+        {items.map((item) => <OrderedItem key={cartProductKey(item.product)} item={item} address={MOCK_ADDRESS} />)}
       </View>
       <View style={styles.spacer} />
       <View style={styles.actions}>
