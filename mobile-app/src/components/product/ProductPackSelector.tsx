@@ -7,16 +7,17 @@ import { PRODUCT_DETAIL_CONFIG, PRODUCT_DETAIL_COPY } from '@/constants/config';
 import { COLORS, PRODUCT_LAYOUT, PRODUCT_TYPOGRAPHY, RADIUS, SIZES, UI } from '@/theme';
 import { type ProductPack } from '@/types';
 
-export function ProductPackSelector({ packs, onChange }: { packs: readonly ProductPack[]; onChange?: (pack: ProductPack) => void }) {
-  const [selectedId, setSelectedId] = useState(() => packs.find((pack) => pack.id === PRODUCT_DETAIL_CONFIG.initialPackId)?.id ?? packs[0]?.id);
+export function ProductPackSelector({ packs, selectedId, onChange }: { packs: readonly ProductPack[]; selectedId?: string; onChange?: (pack: ProductPack) => void }) {
+  const [internalSelectedId, setInternalSelectedId] = useState(() => packs.find((pack) => pack.id === PRODUCT_DETAIL_CONFIG.initialPackId)?.id ?? packs[0]?.id);
+  const activeSelectedId = selectedId ?? internalSelectedId;
   return (
     <View>
       <AppText style={styles.title}>{PRODUCT_DETAIL_COPY.selectPack}</AppText>
       <View style={styles.packs} accessibilityRole="radiogroup" accessibilityLabel={PRODUCT_DETAIL_COPY.selectPack}>
         {packs.map((pack) => {
-          const selected = selectedId === pack.id;
+          const selected = activeSelectedId === pack.id;
           return (
-            <Touchable key={pack.id} onPress={() => { setSelectedId(pack.id); onChange?.(pack); }} label={pack.label} accessibilityRole="radio" accessibilityState={{ checked: selected }} hitSlop={0} style={styles.pack}>
+            <Touchable key={pack.id} onPress={() => { setInternalSelectedId(pack.id); onChange?.(pack); }} label={pack.label} accessibilityRole="radio" accessibilityState={{ checked: selected }} hitSlop={0} style={styles.pack}>
               <View style={[styles.packBorder, selected && styles.selected]} />
               <AppText style={[styles.packText, selected && styles.selectedText]} numberOfLines={1}>{pack.label}</AppText>
             </Touchable>
