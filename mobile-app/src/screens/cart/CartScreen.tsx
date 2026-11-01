@@ -56,6 +56,7 @@ export function CartScreen() {
             onIncrement={() => addItem(item.product)}
             onDecrement={() => removeItem(item.product.id)}
             onDelete={() => deleteItem(item.product.id)}
+            onProductPress={() => router.push(`/product/${item.product.id}`)}
           />
         ))}
         <CouponBanner />

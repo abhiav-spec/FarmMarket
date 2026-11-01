@@ -49,6 +49,13 @@ import { useGoBack } from '@/utils/navigation';
 
 const ALL_PRODUCTS = PRODUCT_CATALOG;
 
+function getProductGallery(product: (typeof ALL_PRODUCTS)[number]) {
+  if (product.imageUrl === IMAGES.saaf) return PRODUCT_DETAIL_GALLERY;
+
+  const alternateImage = product.id === 'prod-003' ? IMAGES.gromor : IMAGES.saaf;
+  return [toImageSource(product.imageUrl), alternateImage] as const;
+}
+
 function productUse(category: string): string {
   const normalized = category.toLowerCase();
   if (normalized.includes('seed')) return 'planting and establishing healthy crops';
@@ -85,10 +92,7 @@ export function ProductDetailsScreen() {
   const product =
     ALL_PRODUCTS.find((item) => item.id === id) ?? MOCK_CART_PRODUCTS[0];
   const rating = product.rating ?? 0;
-  const images =
-    product.imageUrl === IMAGES.saaf
-      ? PRODUCT_DETAIL_GALLERY
-      : [toImageSource(product.imageUrl)];
+  const images = getProductGallery(product);
   const openProduct = (item: typeof product) =>
     router.push(`/product/${item.id}`);
   const saved = isWished(product.id);
