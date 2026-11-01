@@ -5,6 +5,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/common/AppText';
 import { PriceTag } from '@/components/ui/PriceTag';
 import { Touchable } from '@/components/ui/Touchable';
+import { QuantityStepper } from '@/components/ui/QuantityStepper';
 import { CART_COPY } from '@/constants/config';
 import { ICONS } from '@/constants/icons';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@/theme';
 import { type Product } from '@/types';
 import { toImageSource } from '@/utils/image';
+import { useCart } from '@/context/CartContext';
 
 interface ProductRecommendationCardProps {
   product: Product;
@@ -29,6 +31,9 @@ export function ProductRecommendationCard({
   onAddToCart,
   onProductPress,
 }: ProductRecommendationCardProps) {
+  const { items, config, removeItem } = useCart();
+  const cartItem = items.find((item) => item.product.id === product.id);
+
   return (
     <View style={styles.container}>
       <Touchable
@@ -55,22 +60,34 @@ export function ProductRecommendationCard({
         <PriceTag product={product} variant="card" />
       </View>
 
-      <Touchable
-        onPress={() => onAddToCart(product)}
-        label={CART_COPY.addProduct(product.name)}
-        hitSlop={0}
-        style={styles.addButton}
-      >
-        <Ionicons
-          name={ICONS.cart}
-          size={SIZES.recommendationIconWidth}
-          color={COLORS.purple}
-          style={styles.cartIcon}
-        />
-        <AppText style={styles.buttonText} numberOfLines={1}>
-          {CART_COPY.addToCart}
-        </AppText>
-      </Touchable>
+      {cartItem ? (
+        <View style={styles.quantityButton}>
+          <QuantityStepper
+            quantity={cartItem.quantity}
+            min={config.MIN_QUANTITY_PER_ITEM}
+            max={config.MAX_QUANTITY_PER_ITEM}
+            onDecrement={() => removeItem(product.id)}
+            onIncrement={() => onAddToCart(product)}
+          />
+        </View>
+      ) : (
+        <Touchable
+          onPress={() => onAddToCart(product)}
+          label={CART_COPY.addProduct(product.name)}
+          hitSlop={0}
+          style={styles.addButton}
+        >
+          <Ionicons
+            name={ICONS.cart}
+            size={SIZES.recommendationIconWidth}
+            color={COLORS.purple}
+            style={styles.cartIcon}
+          />
+          <AppText style={styles.buttonText} numberOfLines={1}>
+            {CART_COPY.addToCart}
+          </AppText>
+        </Touchable>
+      )}
     </View>
   );
 }
@@ -135,5 +152,10 @@ const styles = StyleSheet.create({
     ...CART_TYPOGRAPHY.recommendationButton,
     flexShrink: 0,
     color: COLORS.purple,
+  },
+  quantityButton: {
+    height: SIZES.stepperHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

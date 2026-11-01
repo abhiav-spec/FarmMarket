@@ -24,7 +24,7 @@ export function CartScreen() {
       onBack={() => router.replace('/home')}
       actions={<>
         <Touchable label={CART_COPY.search}><Image source={IMAGES.headerSearch} style={styles.headerIcon} resizeMode="contain" accessible={false} /></Touchable>
-        <Touchable label={CART_COPY.wishlist}><Image source={IMAGES.headerHeart} style={styles.headerIcon} resizeMode="contain" accessible={false} /></Touchable>
+        <Touchable onPress={() => router.push('/wishlist')} label={CART_COPY.wishlist}><Image source={IMAGES.headerHeart} style={styles.headerIcon} resizeMode="contain" accessible={false} /></Touchable>
       </>}
     />
   );
