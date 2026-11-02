@@ -284,7 +284,7 @@ export function ProductDetailsScreen() {
           </View>
           <ProductCarousel
             title={PRODUCT_DETAIL_COPY.similarProducts}
-            products={MOCK_RECOMMENDATION_PRODUCTS}
+            products={MOCK_RECOMMENDATION_PRODUCTS.filter((item) => item.id !== product.id)}
             onAddToCart={addItem}
             onProductPress={openProduct}
             style={styles.similarSection}
