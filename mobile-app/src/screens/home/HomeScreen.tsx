@@ -2,6 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { Product } from '@/types';
+
+import { shortLocationLabel, useAddress } from '@/context/AddressContext';
+
 import {
   CategorySection,
   CropAdvisorBanner,
@@ -39,6 +42,7 @@ function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
 export function HomeScreen() {
   const router = useRouter();
   const cart = useCart();
+  const { selected } = useAddress();
   const [searchQuery, setSearchQuery] = useState('');
 
   const allProducts = useMemo(
@@ -68,10 +72,15 @@ export function HomeScreen() {
         contentContainerStyle={styles.content}
       >
         <HomeHeader
-          location={HOME_HEADER_DATA.location}
+          location={
+            selected
+              ? shortLocationLabel(selected.address)
+              : HOME_HEADER_DATA.location
+          }
           walletBalance={HOME_HEADER_DATA.walletBalance}
-          onLocationPress={() => {}}
+
           onNotificationPress={() => router.push('/(main)/notifications')}
+          onLocationPress={() => router.push('/location')}
           onWalletPress={() => {}}
           onCartPress={() => router.push('/(main)/cart')}
           cartCount={cart.itemCount}

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { router } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +17,8 @@ function formatDate(iso: string) {
 export function CropAdvisorHistoryScreen() {
   const { consultations, ready } = useCropAdvisor();
   const [query, setQuery] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const searchRef = useRef<TextInput>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -31,16 +33,23 @@ export function CropAdvisorHistoryScreen() {
       <CropAdvisorHeader title="Crop Advisor History" />
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={styles.search}>
-          <Ionicons name="search-outline" size={22} color={COLORS.purpleBorder} />
+        <Pressable
+          accessibilityRole="search"
+          onPress={() => searchRef.current?.focus()}
+          style={[styles.search, (searchFocused || query.length > 0) && styles.searchActive]}
+        >
+          <Ionicons name="search-outline" size={22} color={searchFocused || query.length > 0 ? COLORS.cropAdvisor : COLORS.purpleBorder} />
           <TextInput
+            ref={searchRef}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
             value={query}
             onChangeText={setQuery}
             placeholder="Search Consultation"
             placeholderTextColor={COLORS.text.muted}
             style={styles.searchInput}
           />
-        </View>
+        </Pressable>
 
         {filtered.length === 0 ? (
           <AppText variant="body" style={styles.empty}>
@@ -92,14 +101,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 44,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.purpleBorder,
     borderRadius: 8,
     paddingHorizontal: 12,
     gap: 8,
   },
+  searchActive: { borderColor: COLORS.cropAdvisor },
   searchInput: {
     flex: 1,
+    height: '100%',
+    ...({ outlineStyle: 'none', outlineWidth: 0 } as object),
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.sm,
     color: COLORS.text.primary,
