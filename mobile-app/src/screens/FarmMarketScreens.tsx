@@ -12,8 +12,13 @@ export {
 } from './cancellation/CancellationScreens';
 export { AdvisorScreen } from './navigation/NavigationScreens';
 export { ProfileScreen } from './profile/ProfileScreen';
-export { ReviewScreen, ReviewSuccessScreen } from './feedback';
-export { WriteToUsScreen, FeedbackSuccessScreen } from './feedback';
+export {
+  FeedbackSuccessScreen,
+  MyReviewsScreen,
+  ReviewScreen,
+  ReviewSuccessScreen,
+  WriteToUsScreen,
+} from './feedback';
 export { ReferNowScreen } from './profile/ReferNowScreen';
 export { AccountSettingsScreen } from './profile/AccountSettingsScreen';
 export { NotificationSettingsScreen } from './profile/NotificationSettingsScreen';

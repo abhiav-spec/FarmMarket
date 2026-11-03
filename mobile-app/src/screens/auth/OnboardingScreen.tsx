@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   BackHandler,
+  FlatList,
   Image,
-  Platform,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   View,
 } from 'react-native';
@@ -12,7 +14,11 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { WelcomeImage } from '@/components/auth/WelcomeImage';
-import { AUTH_STRINGS, ONBOARDING_SLIDES } from '@/constants/auth';
+import {
+  AUTH_STRINGS,
+  ONBOARDING_SLIDES,
+  OnboardingSlide,
+} from '@/constants/auth';
 import {
   AUTH_COLORS,
   AUTH_LAYOUT,
@@ -20,19 +26,51 @@ import {
   COLORS,
   RADIUS,
   SPACING,
+  UI,
+  useResponsive,
 } from '@/theme';
 
 const STRINGS = AUTH_STRINGS.onboarding;
 const LAST_INDEX = ONBOARDING_SLIDES.length - 1;
 
+// Space above the image + the image + the gap below it, as in Figma
+const IMAGE_AREA =
+  AUTH_LAYOUT.imageTop + AUTH_LAYOUT.imageHeight + AUTH_LAYOUT.imageTextGap;
+
 export function OnboardingScreen() {
   const router = useRouter();
+  const { width, height } = useResponsive();
+  const listRef = useRef<FlatList<OnboardingSlide>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // The image area takes whatever height the text and dots leave, on short
+  // AND tall phones, so the slide keeps Figma's proportions instead of
+  // sitting at the top with empty space underneath.
+  const spaceScale = (height - AUTH_LAYOUT.onboardingTextArea) / IMAGE_AREA;
+  // The picture itself also has to fit the screen width
+  const imageScale = Math.min(
+    spaceScale,
+    (width - 2 * AUTH_LAYOUT.screenPadding) / AUTH_LAYOUT.imageWidth,
+  );
+  // Height the image could not use (narrow phones), shared above and below
+  // it so the picture stays centred in its area
+  const spareHalf =
+    (AUTH_LAYOUT.imageHeight * (spaceScale - imageScale)) / 2;
+  const imageTopSpace = AUTH_LAYOUT.imageTop * spaceScale + spareHalf;
+  const imageBottomSpace = AUTH_LAYOUT.imageTextGap * spaceScale + spareHalf;
+
+  const goToSlide = useCallback(
+    (index: number) => {
+      listRef.current?.scrollToOffset({ offset: index * width, animated: true });
+      setCurrentIndex(index);
+    },
+    [width],
+  );
 
   useEffect(() => {
     const handleHardwareBack = () => {
       if (currentIndex > 0) {
-        setCurrentIndex((prev) => prev - 1);
+        goToSlide(currentIndex - 1);
         return true;
       }
       return false;
@@ -44,129 +82,166 @@ export function OnboardingScreen() {
     );
 
     return () => backHandlerSubscription.remove();
-  }, [currentIndex]);
+  }, [currentIndex, goToSlide]);
+
+  // Keep the dots in step with the slide the user swiped to
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    const clamped = Math.max(0, Math.min(LAST_INDEX, index));
+    if (clamped !== currentIndex) setCurrentIndex(clamped);
+  };
 
   const handleNext = () => {
     if (currentIndex < LAST_INDEX) {
-      setCurrentIndex((prev) => prev + 1);
+      goToSlide(currentIndex + 1);
     } else {
       router.replace('/(main)/home');
     }
   };
 
-  const handleDotPress = (index: number) => {
-    setCurrentIndex(index);
-  };
-
-  const currentItem = ONBOARDING_SLIDES[currentIndex];
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+  const renderSlide: ListRenderItem<OnboardingSlide> = ({ item }) => {
+    const frame = item.imageFrame;
+    return (
+      <View
+        style={[
+          styles.slide,
+          { width, paddingTop: imageTopSpace },
+        ]}
+      >
         {/* Illustration, positioned and cropped per slide as in Figma */}
         <WelcomeImage
-          source={currentItem.image}
+          source={item.image}
           resizeMode="cover"
           containerStyle={[
             styles.imageWindow,
-            { overflow: currentItem.clipImage ? 'hidden' : 'visible' },
+            {
+              width: AUTH_LAYOUT.imageWidth * imageScale,
+              height: AUTH_LAYOUT.imageHeight * imageScale,
+              overflow: item.clipImage ? 'hidden' : 'visible',
+            },
           ]}
-          style={[styles.image, currentItem.imageFrame]}
+          style={[
+            styles.image,
+            {
+              width: frame.width * imageScale,
+              height: frame.height * imageScale,
+              left: frame.left * imageScale,
+              top: frame.top * imageScale,
+            },
+          ]}
         />
 
-        {/* Text Details Section */}
-        <View style={styles.textContainer}>
-          <AppText style={styles.title}>{currentItem.title}</AppText>
-          <AppText style={styles.description}>
-            {currentItem.description}
-          </AppText>
-        </View>
-
-        {/* Bottom Navigation Row: Indicator Dots & Action CTA */}
-        <View style={styles.bottomRow}>
-          <View style={styles.dotsContainer}>
-            {ONBOARDING_SLIDES.map((slide, index) => {
-              const isActive = currentIndex === index;
-              return (
-                <Pressable
-                  key={slide.id}
-                  onPress={() => handleDotPress(index)}
-                  hitSlop={8}
-                  accessibilityRole="button"
-                  accessibilityLabel={STRINGS.goToSlide(index + 1)}
-                  style={[
-                    styles.dot,
-                    isActive ? styles.activeDot : styles.inactiveDot,
-                  ]}
-                />
-              );
-            })}
-          </View>
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              currentIndex === LAST_INDEX ? STRINGS.finish : STRINGS.next
-            }
-            onPress={handleNext}
-            style={({ pressed }) => [
-              styles.arrowButton,
-              pressed && styles.arrowButtonPressed,
-            ]}
-          >
-            <Image
-              source={require('@/assets/auth/arrow-right.png')}
-              style={styles.arrowIcon}
-              resizeMode="contain"
-            />
-          </Pressable>
+        <View style={{ marginTop: imageBottomSpace }}>
+          <AppText style={styles.title}>{item.title}</AppText>
+          <AppText style={styles.description}>{item.description}</AppText>
         </View>
       </View>
-    </SafeAreaView>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Swipe left/right between slides */}
+      <FlatList
+        ref={listRef}
+        data={ONBOARDING_SLIDES}
+        keyExtractor={(slide) => slide.id}
+        renderItem={renderSlide}
+        horizontal
+        pagingEnabled
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        style={styles.list}
+      />
+
+      {/* Bottom Navigation Row: Indicator Dots & Action CTA */}
+      <View style={styles.bottomRow}>
+        <View style={styles.dotsContainer}>
+          {ONBOARDING_SLIDES.map((slide, index) => {
+            const isActive = currentIndex === index;
+            return (
+              <Pressable
+                key={slide.id}
+                onPress={() => goToSlide(index)}
+                hitSlop={UI.hitSlop}
+                accessibilityRole="button"
+                accessibilityLabel={STRINGS.goToSlide(index + 1)}
+                style={[
+                  styles.dot,
+                  isActive ? styles.activeDot : styles.inactiveDot,
+                ]}
+              />
+            );
+          })}
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            currentIndex === LAST_INDEX ? STRINGS.finish : STRINGS.next
+          }
+          onPress={handleNext}
+          style={({ pressed }) => [
+            styles.arrowButton,
+            pressed && styles.arrowButtonPressed,
+          ]}
+        >
+          <Image
+            source={require('@/assets/auth/arrow-right.png')}
+            style={styles.arrowIcon}
+            resizeMode="contain"
+          />
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
+// Order as in Figma: image → title → description → (space) →
+// dots and arrow row near the bottom
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Figma (874-tall frame): image 112–509 → title 559 →
-  // description 659 → dots/button row 793–825
-  container: {
+  list: {
     flex: 1,
+  },
+  slide: {
     paddingHorizontal: AUTH_LAYOUT.screenPadding,
-    paddingBottom: Platform.OS === 'ios' ? 15 : 49,
   },
   imageWindow: {
-    marginTop: AUTH_LAYOUT.imageTop,
-    width: AUTH_LAYOUT.imageWidth,
-    height: AUTH_LAYOUT.imageHeight,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
   image: {
     position: 'absolute',
   },
-  textContainer: {
-    marginTop: 50, // 559 - 509
-  },
   title: {
     ...AUTH_TYPOGRAPHY.onboardingTitle,
-    color: COLORS.text.black,
-    marginBottom: 16.8, // 659 - (559 + 2 × 41.6)
+    color: COLORS.text.primary,
+    marginBottom: SPACING.lg,
   },
   description: {
     ...AUTH_TYPOGRAPHY.bodySmall,
-    width: 344,
-    color: COLORS.text.black,
+    maxWidth: AUTH_LAYOUT.descriptionWidth,
+    color: COLORS.text.primary,
   },
   bottomRow: {
-    marginTop: 'auto',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingTop: SPACING.lg,
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
+    paddingBottom: AUTH_LAYOUT.onboardingBottomGap,
   },
   dotsContainer: {
     flexDirection: 'row',
@@ -174,21 +249,21 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   dot: {
-    height: 12,
+    height: AUTH_LAYOUT.dotSize,
     borderRadius: RADIUS.pill,
   },
   activeDot: {
-    width: 27,
-    backgroundColor: COLORS.text.black,
+    width: AUTH_LAYOUT.activeDotWidth,
+    backgroundColor: COLORS.text.primary,
   },
   inactiveDot: {
-    width: 12,
+    width: AUTH_LAYOUT.dotSize,
     backgroundColor: AUTH_COLORS.dotInactive,
   },
   arrowButton: {
-    width: 60,
-    height: 32,
-    borderRadius: 16,
+    width: AUTH_LAYOUT.arrowButtonWidth,
+    height: AUTH_LAYOUT.arrowButtonHeight,
+    borderRadius: RADIUS.pill,
     backgroundColor: AUTH_COLORS.buttonFill,
     alignItems: 'center',
     justifyContent: 'center',
@@ -198,6 +273,6 @@ const styles = StyleSheet.create({
     height: AUTH_LAYOUT.arrowHeight,
   },
   arrowButtonPressed: {
-    opacity: 0.8,
+    opacity: AUTH_LAYOUT.pressedOpacity,
   },
 });

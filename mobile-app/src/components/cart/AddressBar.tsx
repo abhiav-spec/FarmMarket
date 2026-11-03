@@ -1,36 +1,27 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-
-import { CART_COPY, type CartCopy } from '@/constants/config';
+import { StyleSheet, View } from 'react-native';
 
 import { AppIcon } from '@/components/common/AppIcon';
 import { AppText } from '@/components/common/AppText';
-import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, SIZES, UI } from '@/theme';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
+import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, SIZES } from '@/theme';
 import { type DeliveryAddress } from '@/types';
 import { formatAddress } from '@/utils/address';
 
 interface AddressBarProps {
-  copy?: CartCopy;
   address: DeliveryAddress;
   onChangePress?: () => void;
 }
 
-export function AddressBar({ address, onChangePress, copy = CART_COPY }: AddressBarProps) {
+export function AddressBar({ address, onChangePress }: AddressBarProps) {
   return (
     <View style={styles.container}>
       <AppIcon name="location" size="xs" color={COLORS.text.secondary} />
-
       <View style={styles.addressContainer}>
-        <AppText style={styles.addressLine} numberOfLines={2}>
-          {formatAddress(address)}
-        </AppText>
+        <AppText style={styles.addressLine} numberOfLines={2}>{formatAddress(address)}</AppText>
       </View>
-
-      <Pressable onPress={onChangePress} disabled={!onChangePress} accessibilityRole="button" accessibilityState={{ disabled: !onChangePress }} accessibilityLabel={copy.changeAddress} hitSlop={UI.hitSlop}>
-        <AppText style={styles.changeText}>
-          {copy.changeAddress}
-        </AppText>
-      </Pressable>
+      <Touchable onPress={onChangePress} title={CART_COPY.changeAddress} textStyle={styles.changeText} />
     </View>
   );
 }
@@ -53,13 +44,6 @@ const styles = StyleSheet.create({
     marginLeft: CART_LAYOUT.addressIconGap,
     marginRight: CART_LAYOUT.addressActionGap,
   },
-  addressLine: {
-    ...CART_TYPOGRAPHY.address,
-    color: COLORS.text.dark,
-  },
-  changeText: {
-    ...CART_TYPOGRAPHY.addressAction,
-    color: COLORS.text.primary,
-    textDecorationLine: 'underline',
-  },
+  addressLine: { ...CART_TYPOGRAPHY.address, color: COLORS.text.dark },
+  changeText: { ...CART_TYPOGRAPHY.addressAction, color: COLORS.text.primary, textDecorationLine: 'underline' },
 });

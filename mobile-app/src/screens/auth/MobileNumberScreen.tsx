@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StyleSheet,
   TextInput,
   View,
@@ -14,7 +13,15 @@ import { AuthHeader } from '@/components/auth/AuthHeader';
 import { OutlinedBox } from '@/components/auth/OutlinedBox';
 import { PillButton } from '@/components/auth/PillButton';
 import { AUTH_STRINGS, COUNTRY_CODE, PHONE_LENGTH } from '@/constants/auth';
-import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
+import {
+  AUTH_COLORS,
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  SPACING,
+  UI,
+} from '@/theme';
 
 const STRINGS = AUTH_STRINGS.mobileNumber;
 
@@ -23,6 +30,7 @@ const onlyDigits = (value: string) =>
 
 export function MobileNumberScreen() {
   const router = useRouter();
+  const keyboardVisible = useKeyboardVisible();
   const [phone, setPhone] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -37,11 +45,10 @@ export function MobileNumberScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+    <View style={styles.screen}>
+      {/* "padding" works on both platforms: it only adds the part of the
+          keyboard that actually covers the screen */}
+      <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <AuthHeader
           title={STRINGS.header}
           showSurface
@@ -54,7 +61,9 @@ export function MobileNumberScreen() {
           {/* Mobile number: country code box next to the number box */}
           <View style={styles.inputRow}>
             <OutlinedBox style={styles.countryCodeBox}>
-              <AppText style={styles.inputText}>{COUNTRY_CODE}</AppText>
+              <AppText style={styles.countryCodeText}>
+                {COUNTRY_CODE}
+              </AppText>
             </OutlinedBox>
 
             <OutlinedBox focused={isFocused} style={styles.phoneBox}>
@@ -72,41 +81,50 @@ export function MobileNumberScreen() {
               />
             </OutlinedBox>
           </View>
-
-          <AppText style={styles.securityText}>{STRINGS.security}</AppText>
         </View>
 
-        <View style={styles.buttonWrapper}>
-          <PillButton
-            title={AUTH_STRINGS.continue}
-            showArrow
-            arrowPosition="left"
-            fullWidth={false}
-            disabled={!isValid}
-            onPress={handleContinue}
-            style={styles.button}
-          />
+        {/* Security note + button sit just above the keyboard, as in Figma */}
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingBottom: keyboardVisible
+                ? AUTH_LAYOUT.keyboardGap
+                : AUTH_LAYOUT.bottomGap,
+            },
+          ]}
+        >
+          <AppText style={styles.securityText}>{STRINGS.security}</AppText>
+
+          <View style={styles.buttonWrapper}>
+            <PillButton
+              title={AUTH_STRINGS.continue}
+              showArrow
+              arrowPosition="left"
+              fullWidth={false}
+              disabled={!isValid}
+              onPress={handleContinue}
+              style={styles.button}
+            />
+          </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
-// Figma (402×874 frame): header ends 123 → subtitle 143 → boxes 189 →
-// security text 425 → button 473
+// Order as in Figma: header → subtitle → number boxes → (space) →
+// security text → button, just above the keyboard
 const styles = StyleSheet.create({
-  safeArea: {
+  screen: {
     flex: 1,
     backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
     width: '100%',
-    maxWidth: AUTH_LAYOUT.screenWidth,
-    position: 'relative',
+    alignItems: 'center',
   },
   contentContainer: {
     width: '100%',
@@ -115,12 +133,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...AUTH_TYPOGRAPHY.body,
-    marginTop: 20,
-    color: COLORS.text.black,
+    marginTop: SPACING.xl,
+    color: COLORS.text.primary,
   },
   inputRow: {
     flexDirection: 'row',
-    marginTop: 25,
+    marginTop: SPACING.xxl,
     gap: AUTH_LAYOUT.inputBoxGap,
   },
   countryCodeBox: {
@@ -133,12 +151,17 @@ const styles = StyleSheet.create({
   },
   inputText: {
     ...AUTH_TYPOGRAPHY.body,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
+  },
+  // Figma: "+91" is SemiBold
+  countryCodeText: {
+    ...AUTH_TYPOGRAPHY.bodyStrong,
+    color: COLORS.text.primary,
   },
   phoneInput: {
     height: '100%',
-    padding: 0,
-    borderWidth: 0,
+    padding: UI.zeroInset,
+    borderWidth: UI.zeroInset,
     backgroundColor: 'transparent',
     ...Platform.select({
       web: {
@@ -146,18 +169,17 @@ const styles = StyleSheet.create({
       } as object,
     }),
   },
+  footer: {
+    width: '100%',
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
+  },
   securityText: {
     ...AUTH_TYPOGRAPHY.caption,
-    marginTop: 188,
     color: COLORS.text.dark,
   },
   buttonWrapper: {
-    position: 'absolute',
-    top: 473,
-    left: 0,
-    right: 0,
+    marginTop: SPACING.lg,
     alignItems: 'center',
-    zIndex: 10,
   },
   button: {
     width: AUTH_LAYOUT.continueButtonWidth,

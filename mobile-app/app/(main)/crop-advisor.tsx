@@ -34,8 +34,10 @@ export default function CropAdvisorRoute() {
             await addConsultation(data);
             setScreen('success');
           } catch {
-            if (typeof window !== 'undefined' && window.alert) window.alert('Your request could not be saved. Please try again.');
-            else Alert.alert('Could not save', 'Your request could not be saved. Please try again.');
+            Alert.alert(
+              'Could not save',
+              'Your request could not be saved. Please try again.',
+            );
           }
         }}
       />
@@ -55,9 +57,5 @@ export default function CropAdvisorRoute() {
     );
   }
 
-  return (
-    <CropAdvisorIntroScreen
-      onContinue={() => setScreen('form')}
-    />
-  );
+  return <CropAdvisorIntroScreen onContinue={() => setScreen('form')} />;
 }

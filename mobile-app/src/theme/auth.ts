@@ -1,28 +1,42 @@
-import { FONT_FAMILY, FONT_SIZE } from './typography';
+import { COLORS } from './colors';
+import { RADIUS } from './radius';
+import { SIZES } from './sizes';
+import { SPACING } from './spacing';
 
 // Values for the auth and onboarding screens, taken from Figma.
 // Kept in their own groups (like CART_LAYOUT / WALLET_LAYOUT) so they never
-// clash with shared COLORS / SIZES keys used by other screens.
-// Black, white, body text and green come from the shared COLORS; only the
-// colours used just on these screens live here.
+// clash with shared SIZES keys used by other screens.
 
+// Auth colours point at the shared COLORS so these screens use the same
+// purples, borders and placeholder grey as the rest of the app (AppInput,
+// feedback, referral screens). Only the yellow onboarding dot is auth-only.
 export const AUTH_COLORS = {
-  purple: '#7B4CE2',
-  purpleLight: '#DBC1FE',
-  purpleBorder: 'rgba(123, 76, 226, 0.4)',
-  buttonFill: 'rgba(219, 193, 254, 0.4)',
-  inputLine: 'rgba(0, 0, 0, 0.2)',
-  placeholder: '#CCCCCC',
+  purple: COLORS.purple,
+  purpleLight: COLORS.purpleButtonBorder,
+  purpleBorder: COLORS.purpleBorder1,
+  buttonFill: COLORS.purpleButtonFill,
+  inputLine: COLORS.cardBorder,
+  placeholder: COLORS.text.muted,
   dotInactive: '#F5F378',
 } as const;
 
 export const AUTH_LAYOUT = {
+  // Figma frame (402×874, measured from the very top of the screen)
   screenWidth: 402,
-  screenPadding: 16,
+  frameHeight: 874,
+  screenPadding: SPACING.lg,
+
+  // Space under the bottom button: above the keyboard / above the screen edge
+  keyboardGap: 18,
+  bottomGap: 44,
+
+  // Get Started: title and button tops in Figma (the glow circle is centred)
+  welcomeTitleTop: 313,
+  welcomeButtonTop: 610,
 
   buttonHeight: 45,
-  buttonRadius: 40,
-  buttonGap: 32,
+  buttonRadius: RADIUS.header,
+  buttonGap: SPACING.xxxl,
   arrowWidth: 30,
   arrowHeight: 15,
   // The Figma arrow PNG has 1px of transparent edge on each side
@@ -33,72 +47,39 @@ export const AUTH_LAYOUT = {
 
   // Header band shared by the auth screens
   headerSurfaceHeight: 123,
-  headerSurfaceWidth: 405,
   headerShadowHeight: 138,
   headerContentTop: 83,
   backArrowSize: 30,
 
   // Bordered input boxes (mobile number + OTP)
-  inputBoxHeight: 48,
-  inputBoxRadius: 4,
+  inputBoxHeight: SIZES.inputHeight,
+  inputBoxRadius: RADIUS.xs,
   inputBoxGap: 10,
-  inputBoxPadding: 12,
+  inputBoxPadding: SPACING.md,
   countryCodeWidth: 56,
   otpBoxWidth: 50,
   otpBoxHeight: 56,
+
+  // Get Started subtitle wraps at this width in Figma
+  welcomeSubtitleWidth: 313,
 
   // Onboarding illustration window
   imageWidth: 370,
   imageHeight: 397,
   imageTop: 112,
   imageLeft: 16,
+  imageTextGap: 50,
+  onboardingBottomGap: 49,
+  // Height kept for the title, description and dots row; the illustration
+  // and the space around it share whatever is left
+  onboardingTextArea: 335,
+  descriptionWidth: 344,
+  dotSize: 12,
+  activeDotWidth: 27,
+  arrowButtonWidth: 60,
+  arrowButtonHeight: 32,
+
+  pressedOpacity: 0.85,
 } as const;
 
-export const AUTH_TYPOGRAPHY = {
-  welcomeTitle: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: 28,
-    lineHeight: 36.4,
-  },
-  onboardingTitle: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xxxl,
-    lineHeight: 41.6,
-  },
-  header: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.xl,
-    lineHeight: 26,
-  },
-  body: {
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
-  },
-  bodySmall: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 18.2,
-  },
-  bodySmallStrong: {
-    fontFamily: FONT_FAMILY.semiBold,
-    fontSize: FONT_SIZE.sm,
-    lineHeight: 18.2,
-  },
-  caption: {
-    fontFamily: FONT_FAMILY.medium,
-    fontSize: FONT_SIZE.xs,
-    lineHeight: 15.6,
-  },
-  captionRegular: {
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.xs,
-    lineHeight: 15.6,
-  },
-  button: {
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.md,
-    lineHeight: 20.8,
-  },
-  otpDigit: { fontFamily: FONT_FAMILY.regular, fontSize: FONT_SIZE.xxl },
-} as const;
+// AUTH_TYPOGRAPHY lives in typography.ts with the other screens' text styles.

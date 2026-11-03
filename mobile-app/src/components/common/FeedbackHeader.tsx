@@ -9,7 +9,7 @@ type FeedbackHeaderProps = {
   rightIconSource?: number;
   onRightPress?: () => void;
   rightAccessibilityLabel?: string;
-}
+};
 
 export function FeedbackHeader({
   title,
@@ -31,6 +31,7 @@ export function FeedbackHeader({
           source={require('../../../assets/icons/back-arrow.png')}
           style={styles.backArrow}
           resizeMode="contain"
+          accessible={false}
         />
       </Pressable>
 
@@ -38,11 +39,11 @@ export function FeedbackHeader({
         {title}
       </Text>
 
-      {rightIconSource && onRightPress ? (
+      {rightIconSource != null && onRightPress ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={rightAccessibilityLabel}
-          hitSlop={UI.hitSlop}
+          hitSlop={8}
           onPress={onRightPress}
           style={styles.rightAction}
         >
@@ -50,7 +51,7 @@ export function FeedbackHeader({
             source={rightIconSource}
             style={styles.rightIcon}
             resizeMode="contain"
-            accessibilityLabel={rightAccessibilityLabel}
+            accessible={false}
           />
         </Pressable>
       ) : (
@@ -73,14 +74,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.lg,
   },
-  backButton: {
-    height: 44,
   actionButton: {
-    width: FEEDBACK_HEADER_LAYOUT.backButtonWidth,
-    height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    width: 40,
+    height: 44,
     alignItems: 'flex-start',
     justifyContent: 'center',
-    width: 40,
     zIndex: 1,
   },
   backArrow: {
@@ -96,18 +94,18 @@ const styles = StyleSheet.create({
     right: 0,
     textAlign: 'center',
   },
-  spacer: {
-    width: 40,
-  },
   rightAction: {
-    width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
-    height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    width: 40,
+    height: 44,
     alignItems: 'flex-end',
     justifyContent: 'center',
     zIndex: 1,
   },
+  rightSpacer: {
+    width: 40,
+  },
   rightIcon: {
-    width: ICON_SIZES.lg,
-    height: ICON_SIZES.lg,
+    width: 24,
+    height: 24,
   },
 });

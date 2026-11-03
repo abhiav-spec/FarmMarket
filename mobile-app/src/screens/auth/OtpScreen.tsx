@@ -4,7 +4,6 @@ import {
   NativeSyntheticEvent,
   Platform,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   TextInput,
   TextInputKeyPressEventData,
@@ -23,7 +22,16 @@ import {
   OTP_RESEND_SECONDS,
   PHONE_LENGTH,
 } from '@/constants/auth';
-import { AUTH_COLORS, AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
+import {
+  AUTH_COLORS,
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  SPACING,
+  UI,
+  useResponsive,
+} from '@/theme';
 
 const STRINGS = AUTH_STRINGS.otp;
 const BOX_INDEXES = Array.from({ length: OTP_LENGTH }, (_, i) => i);
@@ -41,6 +49,20 @@ const maskPhone = (phone: string) => {
 export function OtpScreen() {
   const router = useRouter();
   const { phone = '' } = useLocalSearchParams<{ phone?: string }>();
+  const { width, moderateScale } = useResponsive();
+  const keyboardVisible = useKeyboardVisible();
+
+  // Boxes scale gently with the screen like the rest of the app, but never
+  // wider than fits with the side margins.
+  const rowWidth = width - 2 * AUTH_LAYOUT.screenPadding;
+  const boxWidth = Math.min(
+    moderateScale(AUTH_LAYOUT.otpBoxWidth),
+    (rowWidth - (OTP_LENGTH - 1) * AUTH_LAYOUT.inputBoxGap) / OTP_LENGTH,
+  );
+  const boxSize = {
+    width: boxWidth,
+    height: (boxWidth * AUTH_LAYOUT.otpBoxHeight) / AUTH_LAYOUT.otpBoxWidth,
+  };
 
   const [digits, setDigits] = useState<string[]>(emptyDigits);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -110,11 +132,8 @@ export function OtpScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+    <View style={styles.screen}>
+      <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <AuthHeader
           title={STRINGS.header}
           fallbackRoute="/(auth)/mobile-number"
@@ -135,7 +154,7 @@ export function OtpScreen() {
             <OutlinedBox
               key={index}
               focused={focusedIndex === index}
-              style={styles.otpBox}
+              style={boxSize}
             >
               <TextInput
                 ref={(ref) => {
@@ -159,7 +178,19 @@ export function OtpScreen() {
           ))}
         </View>
 
-        <View style={styles.resendContainer}>
+        <View style={styles.spacer} />
+
+        {/* Resend text + button sit just above the keyboard, as in Figma */}
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingBottom: keyboardVisible
+                ? AUTH_LAYOUT.keyboardGap
+                : AUTH_LAYOUT.bottomGap,
+            },
+          ]}
+        >
           <AppText style={styles.resendPrompt}>{STRINGS.notReceived}</AppText>
           {timer > 0 ? (
             <AppText style={styles.timerText}>
@@ -170,50 +201,47 @@ export function OtpScreen() {
               {STRINGS.resendSuffix(timer)}
             </AppText>
           ) : (
-            <Pressable onPress={handleResend} hitSlop={8}>
+            <Pressable onPress={handleResend} hitSlop={UI.hitSlop}>
               <AppText style={styles.resendActiveText}>
                 {STRINGS.resendNow}
               </AppText>
             </Pressable>
           )}
-        </View>
 
-        <View style={styles.buttonWrapper}>
-          <PillButton
-            title={AUTH_STRINGS.continue}
-            showArrow
-            arrowPosition="left"
-            fullWidth={false}
-            disabled={!isComplete}
-            onPress={handleContinue}
-            style={styles.button}
-          />
+          <View style={styles.buttonWrapper}>
+            <PillButton
+              title={AUTH_STRINGS.continue}
+              showArrow
+              arrowPosition="left"
+              fullWidth={false}
+              disabled={!isComplete}
+              onPress={handleContinue}
+              style={styles.button}
+            />
+          </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
-// Figma (402×874 frame): instruction 143 → OTP boxes 205 → resend 408 → button 474
+// Order as in Figma: header → instruction → OTP boxes → (space) →
+// resend text → button, just above the keyboard
 const styles = StyleSheet.create({
-  safeArea: {
+  screen: {
     flex: 1,
     backgroundColor: COLORS.background,
     alignItems: 'center',
   },
   keyboardView: {
     flex: 1,
-    backgroundColor: COLORS.background,
-    alignItems: 'center',
     width: '100%',
-    maxWidth: AUTH_LAYOUT.screenWidth,
-    position: 'relative',
+    alignItems: 'center',
   },
   instructionContainer: {
-    position: 'absolute',
-    top: 143,
-    left: AUTH_LAYOUT.screenPadding,
-    right: AUTH_LAYOUT.screenPadding,
+    width: '100%',
+    marginTop: SPACING.xl,
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
   },
   instructionText: {
     ...AUTH_TYPOGRAPHY.bodySmall,
@@ -222,30 +250,23 @@ const styles = StyleSheet.create({
   },
   phoneSpan: {
     ...AUTH_TYPOGRAPHY.bodySmallStrong,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
   },
   otpInputContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 205,
+    marginTop: SPACING.xxl,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: AUTH_LAYOUT.inputBoxGap,
-  },
-  otpBox: {
-    width: AUTH_LAYOUT.otpBoxWidth,
-    height: AUTH_LAYOUT.otpBoxHeight,
   },
   otpBoxInput: {
     ...AUTH_TYPOGRAPHY.otpDigit,
     width: '100%',
     height: '100%',
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
     textAlign: 'center',
     textAlignVertical: 'center',
-    padding: 0,
-    margin: 0,
+    padding: UI.zeroInset,
+    margin: UI.zeroInset,
     backgroundColor: 'transparent',
     ...Platform.select({
       web: {
@@ -253,23 +274,25 @@ const styles = StyleSheet.create({
       } as object,
     }),
   },
-  resendContainer: {
-    position: 'absolute',
-    left: AUTH_LAYOUT.screenPadding,
-    right: AUTH_LAYOUT.screenPadding,
-    top: 408,
+  spacer: {
+    flex: 1,
+  },
+  footer: {
+    width: '100%',
+    paddingHorizontal: AUTH_LAYOUT.screenPadding,
   },
   resendPrompt: {
     ...AUTH_TYPOGRAPHY.captionRegular,
-    color: COLORS.text.black,
-    marginBottom: 4.4, // next line starts at 428 in Figma
+    color: COLORS.text.primary,
+    marginBottom: SPACING.xs,
   },
   timerText: {
     ...AUTH_TYPOGRAPHY.bodySmall,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
   },
+  // Nested text still gets AppText's default size, so set it here
   resendHighlight: {
-    fontFamily: AUTH_TYPOGRAPHY.body.fontFamily,
+    ...AUTH_TYPOGRAPHY.bodySmallMedium,
     color: COLORS.success,
   },
   resendActiveText: {
@@ -277,12 +300,8 @@ const styles = StyleSheet.create({
     color: COLORS.success,
   },
   buttonWrapper: {
-    position: 'absolute',
-    top: 474,
-    left: 0,
-    right: 0,
+    marginTop: SPACING.xxl,
     alignItems: 'center',
-    zIndex: 10,
   },
   button: {
     width: AUTH_LAYOUT.continueButtonWidth,

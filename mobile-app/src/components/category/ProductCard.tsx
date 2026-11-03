@@ -3,9 +3,12 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/common/AppText';
 import { AppIcon } from '@/components/common/AppIcon';
+import { QuantityStepper } from '@/components/ui/QuantityStepper';
 import { APP_CONFIG, CATEGORY_STRINGS } from '@/constants/categoryStrings';
-import { COLORS, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import { COLORS, FONT_SIZE, RADIUS, SIZES, SPACING } from '@/theme';
 import type { ProductItem } from '@/types/product';
+import { useCart } from '@/context/CartContext';
+import { isSameCartProduct } from '@/utils/cart';
 
 interface ProductCardProps {
   product: ProductItem;
@@ -14,6 +17,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps) {
+  const { items, config, removeItem } = useCart();
+  const cartItem = items.find((item) => isSameCartProduct(item.product, product));
   const priceRupees =
     product.pricePaise % 100 === 0
       ? (product.pricePaise / 100).toString()
@@ -74,17 +79,30 @@ export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps)
         </View>
       </Pressable>
 
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`${CATEGORY_STRINGS.addToCart} ${product.name}`}
-        onPress={() => onAddToCart?.(product)}
-        style={styles.addButton}
-      >
-        <AppIcon name="cart" size="sm" color={COLORS.purple} />
-        <AppText variant="caption" style={styles.addButtonText}>
-          {CATEGORY_STRINGS.addToCart}
-        </AppText>
-      </Pressable>
+      {cartItem ? (
+        <View style={styles.quantityButton}>
+          <QuantityStepper
+            quantity={cartItem.quantity}
+            size="card"
+            min={config.MIN_QUANTITY_PER_ITEM}
+            max={config.MAX_QUANTITY_PER_ITEM}
+            onDecrement={() => removeItem(cartItem.product)}
+            onIncrement={() => onAddToCart?.(product)}
+          />
+        </View>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${CATEGORY_STRINGS.addToCart} ${product.name}`}
+          onPress={() => onAddToCart?.(product)}
+          style={styles.addButton}
+        >
+          <AppIcon name="cart" size="sm" color={COLORS.purple} />
+          <AppText variant="caption" style={styles.addButtonText}>
+            {CATEGORY_STRINGS.addToCart}
+          </AppText>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -168,5 +186,11 @@ const styles = StyleSheet.create({
     color: COLORS.purple,
     fontWeight: '600',
     fontSize: FONT_SIZE.sm,
+  },
+  quantityButton: {
+    height: SIZES.stepperHeight,
+    marginTop: SPACING.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

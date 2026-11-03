@@ -1,95 +1,120 @@
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
 import { AUTH_STRINGS } from '@/constants/auth';
-import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+import {
+  AUTH_LAYOUT,
+  AUTH_TYPOGRAPHY,
+  COLORS,
+  SPACING,
+  UI,
+  useResponsive,
+} from '@/theme';
 
 const STRINGS = AUTH_STRINGS.getStarted;
+const FRAME_CENTER = AUTH_LAYOUT.frameHeight / 2;
 
 export function GetStartedScreen() {
   const router = useRouter();
+  const { width, height } = useResponsive();
+
+  // The glow image covers the screen with its circle centred, so place the
+  // title and button by their Figma distance from the centre, scaled the
+  // same way as the image. On the 402×874 Figma frame this gives 313 / 610.
+  const scale = Math.max(
+    width / AUTH_LAYOUT.screenWidth,
+    height / AUTH_LAYOUT.frameHeight,
+  );
+  const fromCenter = (figmaTop: number) =>
+    height / 2 + (figmaTop - FRAME_CENTER) * scale;
 
   const handleGetStarted = () => {
     router.push('/(auth)/mobile-number');
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* Figma white circle with yellow/orange glow, exported as PNG */}
-        <Image
-          source={require('@/assets/auth/get-started-glow.png')}
-          style={styles.backgroundImage}
-          resizeMode="stretch"
-        />
+    <View style={styles.container}>
+      {/* Figma white circle with yellow/orange glow, exported as PNG */}
+      <Image
+        source={require('@/assets/auth/get-started-glow.png')}
+        style={styles.glow}
+        resizeMode="cover"
+      />
 
-        <View style={styles.content}>
-          <AppText style={styles.title}>{STRINGS.title}</AppText>
-          <AppText style={styles.subtitle}>{STRINGS.subtitle}</AppText>
-
-          <View style={styles.buttonWrapper}>
-            <PillButton
-              title={STRINGS.button}
-              showArrow
-              arrowPosition="left"
-              fullWidth={false}
-              onPress={handleGetStarted}
-              style={styles.button}
-            />
-          </View>
-        </View>
+      <View
+        style={[styles.textBlock, { top: fromCenter(AUTH_LAYOUT.welcomeTitleTop) }]}
+      >
+        <AppText style={styles.title}>{STRINGS.title}</AppText>
+        <AppText style={styles.subtitle}>{STRINGS.subtitle}</AppText>
       </View>
-    </SafeAreaView>
+
+      <View
+        style={[
+          styles.buttonWrapper,
+          { top: fromCenter(AUTH_LAYOUT.welcomeButtonTop) },
+        ]}
+      >
+        <PillButton
+          title={STRINGS.button}
+          showArrow
+          arrowPosition="left"
+          fullWidth={false}
+          onPress={handleGetStarted}
+          style={styles.button}
+          textStyle={styles.buttonText}
+        />
+      </View>
+    </View>
   );
 }
 
-// Figma (402×874 frame): title 313 → subtitle 361 → button 610
+// Title and button are placed from the Figma positions in AUTH_LAYOUT
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    alignItems: 'center',
   },
-  backgroundImage: {
+  // Explicit 100% size: without it, web keeps the PNG at its own 402×874
+  // and leaves white strips on bigger phones
+  glow: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: UI.zeroInset,
+    left: UI.zeroInset,
     width: '100%',
-    aspectRatio: 402 / 874,
+    height: '100%',
   },
-  content: {
-    width: '100%',
-    maxWidth: AUTH_LAYOUT.screenWidth,
+  textBlock: {
+    position: 'absolute',
+    left: AUTH_LAYOUT.screenPadding,
+    right: AUTH_LAYOUT.screenPadding,
     alignItems: 'center',
-    paddingTop: 313,
   },
   title: {
     ...AUTH_TYPOGRAPHY.welcomeTitle,
-    width: 231,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
     textAlign: 'center',
   },
   subtitle: {
-    ...AUTH_TYPOGRAPHY.body,
-    marginTop: 12,
-    width: 313,
+    ...AUTH_TYPOGRAPHY.welcomeSubtitle,
+    marginTop: SPACING.md,
+    maxWidth: AUTH_LAYOUT.welcomeSubtitleWidth,
     color: COLORS.text.dark,
     textAlign: 'center',
   },
   buttonWrapper: {
-    marginTop: 207,
+    position: 'absolute',
+    left: UI.zeroInset,
+    right: UI.zeroInset,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   button: {
     width: AUTH_LAYOUT.getStartedButtonWidth,
     height: AUTH_LAYOUT.buttonHeight,
+  },
+  buttonText: {
+    ...AUTH_TYPOGRAPHY.welcomeButton,
   },
 });

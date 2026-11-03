@@ -1,96 +1,50 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import { CART_CONFIG, CART_COPY, type CartCopy } from '@/constants/config';
-
-import { IMAGES } from '@/constants/images';
 import { AppText } from '@/components/common/AppText';
+import { PriceTag } from '@/components/ui/PriceTag';
 import { QuantityStepper } from '@/components/ui/QuantityStepper';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
+import { IMAGES } from '@/constants/images';
 import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, RADIUS, SIZES, UI } from '@/theme';
 import { type CartItem } from '@/types';
-import { getProductDiscountPercent, formatPaise } from '@/utils/price';
+import { toImageSource } from '@/utils/image';
 
 interface CartItemCardProps {
-  copy?: CartCopy;
   item: CartItem;
   minQuantity?: number;
   maxQuantity?: number;
   onIncrement: () => void;
   onDecrement: () => void;
   onDelete: () => void;
+  onProductPress?: () => void;
 }
 
-export function CartItemCard({
-  item,
-  onIncrement,
-  onDecrement,
-  onDelete,
-  minQuantity = CART_CONFIG.MIN_QUANTITY_PER_ITEM,
-  maxQuantity = CART_CONFIG.MAX_QUANTITY_PER_ITEM,
-  copy = CART_COPY,
-}: CartItemCardProps) {
-  const { product, quantity } = item;
-  const hasDiscount = product.mrpPaise > product.pricePaise;
-  const imageSource = typeof product.imageUrl === 'string' ? { uri: product.imageUrl } : product.imageUrl;
-
+export function CartItemCard({ item: { product, quantity }, minQuantity, maxQuantity, onIncrement, onDecrement, onDelete, onProductPress }: CartItemCardProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={imageSource}
-          style={styles.image}
-          resizeMode="contain"
-          accessibilityLabel={product.name}
-        />
-      </View>
-
+      <Touchable
+        style={styles.imageContainer}
+        onPress={onProductPress}
+        label={`Open ${product.name}`}
+        hitSlop={0}
+      >
+        <Image source={toImageSource(product.imageUrl)} style={styles.image} resizeMode="contain" accessibilityLabel={product.name} />
+      </Touchable>
       <View style={styles.details}>
-        <View style={styles.topRow}>
-          <AppText style={styles.productName} numberOfLines={1}>
-            {product.name}
-          </AppText>
-          <Pressable
-            onPress={onDelete}
-            hitSlop={UI.hitSlop}
-            accessibilityRole="button"
-            accessibilityLabel={copy.removeProduct(product.name)}
-          >
+        <View style={styles.row}>
+          <Touchable onPress={onProductPress} label={`Open ${product.name}`} hitSlop={0} style={styles.productSummary}>
+            <AppText style={styles.productName} numberOfLines={1}>{product.name}</AppText>
+            <PriceTag product={product} variant="cart" style={styles.spaced} />
+          </Touchable>
+          <Touchable onPress={onDelete} label={CART_COPY.removeProduct(product.name)}>
             <Image source={IMAGES.trashIcon} style={styles.trashIcon} resizeMode="contain" accessible={false} />
-          </Pressable>
+          </Touchable>
         </View>
-
-        <View style={styles.priceRow}>
-          <AppText variant="bodyMedium" color={COLORS.text.purple} style={styles.priceText}>
-            {formatPaise(product.pricePaise)}
-          </AppText>
-          {hasDiscount && (
-            <>
-              <AppText
-                variant="caption"
-                color={COLORS.text.muted}
-                style={styles.mrpText}
-              >
-                {formatPaise(product.mrpPaise, true)}
-              </AppText>
-              <AppText color={COLORS.text.purple} style={styles.discountText}>
-                {copy.discount(getProductDiscountPercent(product))}
-              </AppText>
-            </>
-          )}
-        </View>
-
-        <View style={styles.bottomRow}>
-          <AppText color={COLORS.text.dark} style={styles.variantText}>
-            {product.variant}
-          </AppText>
-          <QuantityStepper
-            quantity={quantity}
-            min={minQuantity}
-            max={maxQuantity}
-            copy={copy}
-            onIncrement={onIncrement}
-            onDecrement={onDecrement}
-          />
+        <View style={[styles.row, styles.spaced]}>
+          <AppText style={styles.variantText}>{product.variant}</AppText>
+          <QuantityStepper quantity={quantity} min={minQuantity} max={maxQuantity} onIncrement={onIncrement} onDecrement={onDecrement} />
         </View>
       </View>
     </View>
@@ -103,8 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: COLORS.purpleSurface,
-    paddingHorizontal: CART_LAYOUT.itemPadding,
-    paddingVertical: CART_LAYOUT.itemPadding,
+    padding: CART_LAYOUT.itemPadding,
   },
   imageContainer: {
     width: SIZES.cartItemImageContainerSize,
@@ -115,47 +68,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {
-    width: SIZES.cartItemImageWidth,
-    height: SIZES.cartItemImageHeight,
-  },
-  details: {
-    flex: 1,
-    marginLeft: CART_LAYOUT.itemDetailsGap,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  trashIcon: {
-    width: SIZES.cartTrashIconSize,
-    height: SIZES.cartTrashIconSize,
-  },
-  productName: {
-    ...CART_TYPOGRAPHY.itemName,
-    flex: 1,
-    color: COLORS.text.black,
-    marginRight: CART_LAYOUT.cardPadding,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: UI.compactGap,
-    marginTop: CART_LAYOUT.cardPadding,
-  },
-  priceText: { ...CART_TYPOGRAPHY.itemPrice },
-  mrpText: {
-    ...CART_TYPOGRAPHY.itemMrp,
-    color: COLORS.originalPrice,
-    textDecorationLine: 'line-through',
-  },
-  discountText: { ...CART_TYPOGRAPHY.itemDiscount },
-  variantText: { ...CART_TYPOGRAPHY.body },
-  bottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: CART_LAYOUT.cardPadding,
-  },
+  image: { width: SIZES.cartItemImageWidth, height: SIZES.cartItemImageHeight },
+  details: { flex: 1, marginLeft: CART_LAYOUT.itemDetailsGap },
+  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  spaced: { marginTop: CART_LAYOUT.cardPadding },
+  trashIcon: { width: SIZES.cartTrashIconSize, height: SIZES.cartTrashIconSize },
+  productSummary: { flex: 1, marginRight: CART_LAYOUT.cardPadding },
+  productName: { ...CART_TYPOGRAPHY.itemName, color: COLORS.text.black },
+  variantText: { ...CART_TYPOGRAPHY.body, color: COLORS.text.dark },
 });

@@ -4,7 +4,7 @@ import { Href, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { AUTH_STRINGS } from '@/constants/auth';
-import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS } from '@/theme';
+import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS, SPACING, UI } from '@/theme';
 
 export interface AuthHeaderProps {
   title?: string;
@@ -50,7 +50,7 @@ export function AuthHeader({
           accessibilityRole="button"
           accessibilityLabel={AUTH_STRINGS.back}
           onPress={handleBack}
-          hitSlop={12}
+          hitSlop={SPACING.md}
           style={styles.backButton}
         >
           <Image
@@ -75,15 +75,14 @@ const TITLE_SIDE_INSET =
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    maxWidth: AUTH_LAYOUT.headerSurfaceWidth,
     height: AUTH_LAYOUT.headerSurfaceHeight,
     position: 'relative',
   },
   headerSurfaceBg: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    top: UI.zeroInset,
+    left: UI.zeroInset,
+    right: UI.zeroInset,
     height: AUTH_LAYOUT.headerShadowHeight,
     width: '100%',
   },
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     top:
       AUTH_LAYOUT.headerContentTop +
       (AUTH_LAYOUT.backArrowSize - AUTH_TYPOGRAPHY.header.lineHeight) / 2,
-    color: COLORS.text.black,
+    color: COLORS.text.primary,
     textAlign: 'center',
   },
 });
