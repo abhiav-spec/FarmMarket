@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image, Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { ScreenHeader } from '@/components/common/ScreenHeader';
@@ -20,6 +20,7 @@ import {
   CART_COPY,
   PRODUCT_BENEFITS,
   PRODUCT_DETAIL_ADDRESS,
+  PRODUCT_DETAIL_CONFIG,
   PRODUCT_DETAIL_COPY,
   PRODUCT_DETAIL_SECTIONS,
   PRODUCT_FAQS,
@@ -36,6 +37,8 @@ import {
   MOCK_RECOMMENDATION_PRODUCTS,
 } from '@/data/mockProducts';
 import { PRODUCT_CATALOG } from '@/data/productCatalog';
+import type { Product, ProductPack } from '@/types';
+import { isSameCartProduct } from '@/utils/cart';
 import {
   COLORS,
   PRODUCT_LAYOUT,
@@ -48,6 +51,23 @@ import { toImageSource } from '@/utils/image';
 import { useGoBack } from '@/utils/navigation';
 
 const ALL_PRODUCTS = PRODUCT_CATALOG;
+
+const PACK_PRICE_MULTIPLIERS: Record<string, number> = {
+  '100g': 0.4,
+  '250g': 1,
+  '500g': 1.9,
+  '1kg': 3.6,
+};
+
+function productForPack(product: Product, pack: ProductPack): Product {
+  const multiplier = PACK_PRICE_MULTIPLIERS[pack.id] ?? 1;
+  return {
+    ...product,
+    variant: pack.label,
+    pricePaise: Math.round(product.pricePaise * multiplier),
+    mrpPaise: Math.round(product.mrpPaise * multiplier),
+  };
+}
 
 function getProductGallery(product: (typeof ALL_PRODUCTS)[number]) {
   if (product.imageUrl === IMAGES.saaf) return PRODUCT_DETAIL_GALLERY;
@@ -84,13 +104,30 @@ function faqInfo(product: (typeof ALL_PRODUCTS)[number], faqId: string): string 
 
 export function ProductDetailsScreen() {
   const router = useRouter();
+  const scrollViewRef = useRef<ScrollView>(null);
   const { addItem, itemCount, items, config, removeItem } = useCart();
   const { isWished, toggle: toggleWishlist } = useWishlist();
   const { deleteReview, submittedReviews } = useReviews();
   const { id } = useLocalSearchParams<{ id: string }>();
   const goBack = useGoBack('/cart');
-  const product =
+  const baseProduct =
     ALL_PRODUCTS.find((item) => item.id === id) ?? MOCK_CART_PRODUCTS[0];
+  const [selectedPackId, setSelectedPackId] = useState(
+    PRODUCT_DETAIL_CONFIG.initialPackId,
+  );
+  const resetProductPage = useCallback(() => {
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+  }, []);
+
+  useFocusEffect(resetProductPage);
+  useEffect(() => {
+    setSelectedPackId(PRODUCT_DETAIL_CONFIG.initialPackId);
+    resetProductPage();
+  }, [id, resetProductPage]);
+  useEffect(resetProductPage, [selectedPackId, resetProductPage]);
+
+  const selectedPack = PRODUCT_PACKS.find((pack) => pack.id === selectedPackId) ?? PRODUCT_PACKS[0];
+  const product = productForPack(baseProduct, selectedPack);
   const rating = product.rating ?? 0;
   const images = getProductGallery(product);
   const openProduct = (item: typeof product) =>
@@ -110,7 +147,7 @@ export function ProductDetailsScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
         <ScreenHeader
           title={PRODUCT_DETAIL_COPY.title}
           onBack={goBack}
@@ -170,7 +207,12 @@ export function ProductDetailsScreen() {
             variant="detail"
             style={styles.priceRow}
           />
-          <ProductPackSelector packs={PRODUCT_PACKS} />
+          <ProductPackSelector
+            key={baseProduct.id}
+            packs={PRODUCT_PACKS}
+            selectedId={selectedPackId}
+            onChange={(pack) => setSelectedPackId(pack.id)}
+          />
           <View style={styles.benefits}>
             {PRODUCT_BENEFITS.map((benefit) => (
               <Image
@@ -183,11 +225,11 @@ export function ProductDetailsScreen() {
             ))}
           </View>
           <PurchaseActions
-            quantity={items.find((item) => item.product.id === product.id)?.quantity}
+            quantity={items.find((item) => isSameCartProduct(item.product, product))?.quantity}
             minQuantity={config.MIN_QUANTITY_PER_ITEM}
             maxQuantity={config.MAX_QUANTITY_PER_ITEM}
             onAddToCart={() => addItem(product)}
-            onRemoveFromCart={() => removeItem(product.id)}
+            onRemoveFromCart={() => removeItem(product)}
             onBuyNow={() => {
               addItem(product);
               router.push('/checkout/payment');
@@ -242,7 +284,7 @@ export function ProductDetailsScreen() {
           </View>
           <ProductCarousel
             title={PRODUCT_DETAIL_COPY.similarProducts}
-            products={MOCK_RECOMMENDATION_PRODUCTS}
+            products={MOCK_RECOMMENDATION_PRODUCTS.filter((item) => item.id !== product.id)}
             onAddToCart={addItem}
             onProductPress={openProduct}
             style={styles.similarSection}
@@ -438,7 +480,7 @@ const styles = StyleSheet.create({
   },
   priceRow: {
     width: SIZES.productPriceRowWidth,
-    height: SIZES.productPriceRowHeight,
+    height: SIZES.productPriceRowHeight + 14,
     marginTop: PRODUCT_LAYOUT.priceTopGap,
   },
   benefits: {

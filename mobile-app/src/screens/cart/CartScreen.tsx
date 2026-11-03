@@ -49,13 +49,13 @@ export function CartScreen() {
         <AddressBar address={MOCK_ADDRESS} />
         {items.map((item) => (
           <CartItemCard
-            key={item.product.id}
+            key={`${item.product.id}-${item.product.variant}`}
             item={item}
             minQuantity={config.MIN_QUANTITY_PER_ITEM}
             maxQuantity={config.MAX_QUANTITY_PER_ITEM}
             onIncrement={() => addItem(item.product)}
-            onDecrement={() => removeItem(item.product.id)}
-            onDelete={() => deleteItem(item.product.id)}
+            onDecrement={() => removeItem(item.product)}
+            onDelete={() => deleteItem(item.product)}
             onProductPress={() => router.push(`/product/${item.product.id}`)}
           />
         ))}

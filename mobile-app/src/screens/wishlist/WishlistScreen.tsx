@@ -132,7 +132,7 @@ export function WishlistScreen() {
                         accessibilityLabel={`${CART_COPY.moveToCart} ${product.name}`}
                         onPress={() => {
                           cart.addItem(product);
-                          cart.setQuantity(product.id, quantity);
+                          cart.setQuantity(product, quantity);
                           remove(product.id);
                         }}
                         style={styles.addButton}

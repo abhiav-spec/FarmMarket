@@ -8,6 +8,7 @@ import { APP_CONFIG, CATEGORY_STRINGS } from '@/constants/categoryStrings';
 import { COLORS, FONT_SIZE, RADIUS, SIZES, SPACING } from '@/theme';
 import type { ProductItem } from '@/types/product';
 import { useCart } from '@/context/CartContext';
+import { isSameCartProduct } from '@/utils/cart';
 
 interface ProductCardProps {
   product: ProductItem;
@@ -17,7 +18,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps) {
   const { items, config, removeItem } = useCart();
-  const cartItem = items.find((item) => item.product.id === product.id);
+  const cartItem = items.find((item) => isSameCartProduct(item.product, product));
   const priceRupees =
     product.pricePaise % 100 === 0
       ? (product.pricePaise / 100).toString()
@@ -85,7 +86,7 @@ export function ProductCard({ product, onPress, onAddToCart }: ProductCardProps)
             size="card"
             min={config.MIN_QUANTITY_PER_ITEM}
             max={config.MAX_QUANTITY_PER_ITEM}
-            onDecrement={() => removeItem(product.id)}
+            onDecrement={() => removeItem(cartItem.product)}
             onIncrement={() => onAddToCart?.(product)}
           />
         </View>
