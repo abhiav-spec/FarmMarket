@@ -22,4 +22,4 @@ export const IMAGES = {
   walletUsageIllustration: require('../../assets/images/wallet/usage-illustration.png'),
 } as const;
 
-export const PRODUCT_DETAIL_GALLERY = [IMAGES.saaf, IMAGES.saaf] as const;
+export const PRODUCT_DETAIL_GALLERY = [IMAGES.saaf, IMAGES.nativo] as const;

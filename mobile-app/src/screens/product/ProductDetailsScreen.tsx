@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
@@ -13,9 +13,9 @@ import {
   ProductReviews,
   RatingStars,
 } from '@/components/product';
-import { Accordion } from '@/components/ui/Accordion';
 import { PriceTag } from '@/components/ui/PriceTag';
 import { Touchable } from '@/components/ui/Touchable';
+import { QuantityStepper } from '@/components/ui/QuantityStepper';
 import {
   CART_COPY,
   PRODUCT_BENEFITS,
@@ -29,11 +29,13 @@ import {
 import { ICONS } from '@/constants/icons';
 import { IMAGES, PRODUCT_DETAIL_GALLERY } from '@/constants/images';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { useReviews } from '@/context/ReviewContext';
 import {
   MOCK_CART_PRODUCTS,
   MOCK_RECOMMENDATION_PRODUCTS,
 } from '@/data/mockProducts';
+import { PRODUCT_CATALOG } from '@/data/productCatalog';
 import {
   COLORS,
   PRODUCT_LAYOUT,
@@ -45,25 +47,62 @@ import {
 import { toImageSource } from '@/utils/image';
 import { useGoBack } from '@/utils/navigation';
 
-const ALL_PRODUCTS = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS];
+const ALL_PRODUCTS = PRODUCT_CATALOG;
+
+function getProductGallery(product: (typeof ALL_PRODUCTS)[number]) {
+  if (product.imageUrl === IMAGES.saaf) return PRODUCT_DETAIL_GALLERY;
+
+  const alternateImage = product.id === 'prod-003' ? IMAGES.gromor : IMAGES.saaf;
+  return [toImageSource(product.imageUrl), alternateImage] as const;
+}
+
+function productUse(category: string): string {
+  const normalized = category.toLowerCase();
+  if (normalized.includes('seed')) return 'planting and establishing healthy crops';
+  if (normalized.includes('fertil')) return 'supporting crop nutrition and stronger growth';
+  if (normalized.includes('equipment')) return 'everyday field work and farm operations';
+  return 'protecting crops from common field threats';
+}
+
+function productInfo(product: (typeof ALL_PRODUCTS)[number], sectionId: string): string {
+  if (sectionId === 'about') {
+    return `${product.name}\n\nCategory: ${product.category}\nPack size: ${product.variant}\n\nDesigned for ${productUse(product.category)}. This product is selected for dependable performance and practical use on the farm.`;
+  }
+
+  return `${product.name} is supplied in the ${product.variant} pack. Use it only for its intended agricultural purpose and follow the instructions printed on the product label.\n\nStore in a cool, dry place away from children, food, and animal feed. Use the recommended protective equipment when handling the product.`;
+}
+
+function faqInfo(product: (typeof ALL_PRODUCTS)[number], faqId: string): string {
+  const answers: Record<string, string> = {
+    crop: `Check the product label to confirm that ${product.name} is approved for your crop and target issue before use.`,
+    usage: `Use ${product.name} only as directed on the label. Follow the recommended application method, timing, and safety precautions.`,
+    dosage: `Use the dosage printed on the product label for your crop and application method. Do not exceed the recommended dose.`,
+    help: 'Our Crop Advisor can help you choose the right product and usage plan for your crop. Open Crop Advisor from the main navigation for assistance.',
+  };
+  return answers[faqId] ?? 'Please follow the product label or contact our Crop Advisor for help.';
+}
 
 export function ProductDetailsScreen() {
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addItem, itemCount, items, config, removeItem } = useCart();
+  const { isWished, toggle: toggleWishlist } = useWishlist();
   const { deleteReview, submittedReviews } = useReviews();
   const { id } = useLocalSearchParams<{ id: string }>();
   const goBack = useGoBack('/cart');
-  const [saved, setSaved] = useState(false);
   const product =
     ALL_PRODUCTS.find((item) => item.id === id) ?? MOCK_CART_PRODUCTS[0];
   const rating = product.rating ?? 0;
-  const images =
-    product.imageUrl === IMAGES.saaf
-      ? PRODUCT_DETAIL_GALLERY
-      : [toImageSource(product.imageUrl)];
+  const images = getProductGallery(product);
   const openProduct = (item: typeof product) =>
     router.push(`/product/${item.id}`);
-  const toggleSaved = () => setSaved(!saved);
+  const saved = isWished(product.id);
+  const toggleSaved = () => toggleWishlist(product.id);
+  const [activeInfo, setActiveInfo] = useState<{ title: string; body: string } | null>(null);
+  const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
+  const shareProduct = () => Share.share({
+    title: product.name,
+    message: `Check out ${product.name} (${product.variant}) on FarmMarket: /product/${product.id}`,
+  });
   const reviews = [
     ...submittedReviews.filter((review) => review.productId === product.id),
     ...PRODUCT_REVIEWS,
@@ -97,12 +136,15 @@ export function ProductDetailsScreen() {
                 onPress={() => router.navigate('/cart')}
                 label={PRODUCT_DETAIL_COPY.cart}
               >
-                <Image
-                  source={IMAGES.productHeaderCart}
-                  style={styles.headerIcon}
-                  resizeMode="contain"
-                  accessible={false}
-                />
+                <View style={styles.cartAction}>
+                  <Image
+                    source={IMAGES.productHeaderCart}
+                    style={styles.headerIcon}
+                    resizeMode="contain"
+                    accessible={false}
+                  />
+                  <AppText style={styles.cartCount}>{itemCount}</AppText>
+                </View>
               </Touchable>
             </>
           }
@@ -113,6 +155,7 @@ export function ProductDetailsScreen() {
           name={product.name}
           saved={saved}
           onSave={toggleSaved}
+          onShare={shareProduct}
         />
         <View style={styles.content}>
           <AppText style={styles.name}>{product.name}</AppText>
@@ -140,7 +183,11 @@ export function ProductDetailsScreen() {
             ))}
           </View>
           <PurchaseActions
+            quantity={items.find((item) => item.product.id === product.id)?.quantity}
+            minQuantity={config.MIN_QUANTITY_PER_ITEM}
+            maxQuantity={config.MAX_QUANTITY_PER_ITEM}
             onAddToCart={() => addItem(product)}
+            onRemoveFromCart={() => removeItem(product.id)}
             onBuyNow={() => {
               addItem(product);
               router.push('/checkout/payment');
@@ -151,15 +198,24 @@ export function ProductDetailsScreen() {
             <AppText style={styles.sectionTitle}>
               {PRODUCT_DETAIL_COPY.productDetails}
             </AppText>
-            <Accordion
-              items={PRODUCT_DETAIL_SECTIONS}
-              style={styles.detailRows}
-              rowStyle={styles.detailRow}
-              titleStyle={styles.detailRowText}
-              contentStyle={styles.detailContent}
-              iconSize={SIZES.productActionIconSize}
-              iconColor={COLORS.text.black}
-            />
+            <View style={styles.detailRows}>
+              {PRODUCT_DETAIL_SECTIONS.map((section) => (
+                <Touchable
+                  key={section.id}
+                  onPress={() => setActiveInfo({
+                    title: section.title,
+                    body: productInfo(product, section.id)
+                  })}
+                  label={section.title}
+                  accessibilityState={{ expanded: activeInfo?.title === section.title }}
+                  hitSlop={0}
+                  style={styles.detailRow}
+                >
+                  <AppText style={styles.detailRowText}>{section.title}</AppText>
+                  <Ionicons name={ICONS.chevronRight} size={SIZES.productActionIconSize} color={COLORS.text.black} />
+                </Touchable>
+              ))}
+            </View>
           </View>
           <View style={styles.videoSection}>
             <AppText style={styles.videoTitle}>
@@ -217,27 +273,67 @@ export function ProductDetailsScreen() {
           />
           <View style={styles.faqSection}>
             <AppText style={styles.faqTitle}>{PRODUCT_DETAIL_COPY.faq}</AppText>
-            <Accordion
-              items={PRODUCT_FAQS}
-              style={styles.faqRows}
-              rowStyle={styles.faqRow}
-              titleStyle={styles.faqQuestion}
-              contentStyle={styles.faqAnswer}
-              iconSize={SIZES.reviewStarSize}
-              iconColor={COLORS.text.secondary}
-            />
+            <View style={styles.faqRows}>
+              {PRODUCT_FAQS.map((faq) => (
+                <React.Fragment key={faq.id}>
+                  <Touchable
+                  onPress={() => setExpandedFaqId((current) => current === faq.id ? null : faq.id)}
+                  label={faq.title}
+                  accessibilityState={{ expanded: expandedFaqId === faq.id }}
+                  hitSlop={0}
+                  style={styles.faqRow}
+                  >
+                    <AppText style={styles.faqQuestion}>{faq.title}</AppText>
+                    <Ionicons name={expandedFaqId === faq.id ? ICONS.chevronDown : ICONS.chevronRight} size={SIZES.reviewStarSize} color={COLORS.text.secondary} />
+                  </Touchable>
+                  {expandedFaqId === faq.id ? (
+                    <AppText style={styles.faqAnswer}>{faqInfo(product, faq.id)}</AppText>
+                  ) : null}
+                </React.Fragment>
+              ))}
+            </View>
           </View>
         </View>
       </ScrollView>
+      <Modal
+        visible={activeInfo !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setActiveInfo(null)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setActiveInfo(null)}>
+          <Pressable style={styles.modalCard} onPress={(event) => event.stopPropagation()}>
+            <View style={styles.modalHeader}>
+              <AppText style={styles.modalTitle}>{activeInfo?.title}</AppText>
+              <Touchable
+                title="×"
+                label="Close"
+                hitSlop={0}
+                onPress={() => setActiveInfo(null)}
+                textStyle={styles.modalClose}
+              />
+            </View>
+            <AppText style={styles.modalBody}>{activeInfo?.body}</AppText>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
 function PurchaseActions({
+  quantity,
+  minQuantity,
+  maxQuantity,
   onAddToCart,
+  onRemoveFromCart,
   onBuyNow,
 }: {
+  quantity?: number;
+  minQuantity: number;
+  maxQuantity: number;
   onAddToCart: () => void;
+  onRemoveFromCart: () => void;
   onBuyNow: () => void;
 }) {
   const [buttonWidth, setButtonWidth] = useState<number>(
@@ -252,20 +348,33 @@ function PurchaseActions({
         )
       }
     >
-      <Touchable
-        onPress={onAddToCart}
-        label={PRODUCT_DETAIL_COPY.addToCart}
-        hitSlop={0}
-        style={[
-          styles.purchaseButton,
-          styles.addButton,
-          { width: buttonWidth },
-        ]}
-      >
-        <AppText style={styles.addButtonText} numberOfLines={1}>
-          {PRODUCT_DETAIL_COPY.addToCart}
-        </AppText>
-      </Touchable>
+      {quantity ? (
+        <View style={[styles.quantityButton, { width: buttonWidth }]}>
+          <QuantityStepper
+            quantity={quantity}
+            size="card"
+            min={minQuantity}
+            max={maxQuantity}
+            onDecrement={onRemoveFromCart}
+            onIncrement={onAddToCart}
+          />
+        </View>
+      ) : (
+        <Touchable
+          onPress={onAddToCart}
+          label={PRODUCT_DETAIL_COPY.addToCart}
+          hitSlop={0}
+          style={[
+            styles.purchaseButton,
+            styles.addButton,
+            { width: buttonWidth },
+          ]}
+        >
+          <AppText style={styles.addButtonText} numberOfLines={1}>
+            {PRODUCT_DETAIL_COPY.addToCart}
+          </AppText>
+        </Touchable>
+      )}
       <Touchable
         onPress={onBuyNow}
         label={PRODUCT_DETAIL_COPY.buyNow}
@@ -296,6 +405,21 @@ const styles = StyleSheet.create({
   headerIcon: {
     width: SIZES.cartHeaderIconSize,
     height: SIZES.cartHeaderIconSize,
+  },
+  cartAction: { position: 'relative' },
+  cartCount: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 3,
+    borderRadius: 8,
+    backgroundColor: COLORS.purple,
+    color: COLORS.text.inverse,
+    fontSize: 9,
+    lineHeight: 16,
+    textAlign: 'center',
   },
   content: {
     paddingHorizontal: PRODUCT_LAYOUT.contentPadding,
@@ -346,6 +470,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: PRODUCT_LAYOUT.purchasePaddingHorizontal,
   },
   addButton: { backgroundColor: COLORS.productActionSurface },
+  quantityButton: {
+    height: SIZES.stepperHeight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   buyButton: {
     backgroundColor: COLORS.purple,
     paddingHorizontal: PRODUCT_LAYOUT.buyNowPaddingHorizontal,
@@ -385,6 +514,32 @@ const styles = StyleSheet.create({
     ...PRODUCT_TYPOGRAPHY.detailRow,
     padding: PRODUCT_LAYOUT.detailRowPadding,
     color: COLORS.text.dark,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: COLORS.overlay,
+    justifyContent: 'center',
+    paddingHorizontal: PRODUCT_LAYOUT.contentPadding,
+  },
+  modalCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    padding: PRODUCT_LAYOUT.contentPadding,
+    boxShadow: UI.headerShadow,
+    elevation: UI.elevation,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: PRODUCT_LAYOUT.detailRowPadding,
+  },
+  modalTitle: { ...PRODUCT_TYPOGRAPHY.section, color: COLORS.text.black },
+  modalClose: { fontSize: 28, lineHeight: 28, color: COLORS.text.secondary },
+  modalBody: {
+    ...PRODUCT_TYPOGRAPHY.detailRow,
+    color: COLORS.text.dark,
+    lineHeight: 22,
   },
   videoSection: { marginTop: PRODUCT_LAYOUT.videoTopGap },
   videoTitle: { ...PRODUCT_TYPOGRAPHY.pack, color: COLORS.text.black },

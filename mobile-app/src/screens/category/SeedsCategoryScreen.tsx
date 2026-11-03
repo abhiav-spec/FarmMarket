@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import {
   CategoryHeroBanner,
@@ -14,9 +15,25 @@ import {
   SEEDS_PRODUCTS,
 } from '@/constants/seeds';
 import { COLORS, SPACING } from '@/theme';
+import { useCart } from '@/context/CartContext';
 import type { ProductItem } from '@/types/product';
 
+function toCartProduct(product: ProductItem) {
+  return {
+    id: product.id,
+    name: product.name,
+    imageUrl: product.image as number,
+    variant: product.specs,
+    pricePaise: product.pricePaise,
+    mrpPaise: product.originalPricePaise,
+    discountPercent: product.discountPercentage,
+    category: product.category,
+  };
+}
+
 export function SeedsCategoryScreen() {
+  const router = useRouter();
+  const { addItem, itemCount } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = SEEDS_PRODUCTS.filter((product) =>
@@ -24,11 +41,11 @@ export function SeedsCategoryScreen() {
   );
 
   const handleProductPress = (product: ProductItem) => {
-    // Navigate / handle product press
+    router.push(`/product/${product.id}`);
   };
 
   const handleAddToCart = (product: ProductItem) => {
-    // Add to cart handler
+    addItem(toCartProduct(product));
   };
 
   return (
@@ -49,6 +66,7 @@ export function SeedsCategoryScreen() {
               onNotificationPress={() => {}}
               onWalletPress={() => {}}
               onCartPress={() => {}}
+              cartCount={itemCount}
             />
 
             <HomeSearchBar
@@ -57,7 +75,7 @@ export function SeedsCategoryScreen() {
               placeholder={CATEGORY_STRINGS.searchPlaceholder}
               onVoicePress={() => {}}
               onScanPress={() => {}}
-              onWishlistPress={() => {}}
+              onWishlistPress={() => router.push('/wishlist')}
             />
 
             <CategoryHeroBanner

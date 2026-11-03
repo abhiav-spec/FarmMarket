@@ -38,6 +38,7 @@ export function HomeScreen() {
           onNotificationPress={() => {}}
           onWalletPress={() => {}}
           onCartPress={() => router.push('/(main)/cart')}
+          cartCount={cart.itemCount}
         />
 
         <HomeSearchBar
@@ -45,6 +46,7 @@ export function HomeScreen() {
           onChangeText={setSearchQuery}
           onVoicePress={() => {}}
           onScanPress={() => {}}
+          onWishlistPress={() => router.push('/wishlist')}
         />
 
         <CategorySection
@@ -79,12 +81,14 @@ export function HomeScreen() {
         <ProductSection
           title="Recommended for you"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
           onAddToCart={(product) => cart.addItem(product)}
         />
 
         <ProductSection
           title="Seeds Section"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/seeds')}
           onAddToCart={(product) => cart.addItem(product)}
         />
@@ -92,6 +96,7 @@ export function HomeScreen() {
         <ProductSection
           title="Fertilizers"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/fertilizers')}
           onAddToCart={(product) => cart.addItem(product)}
         />
@@ -99,6 +104,7 @@ export function HomeScreen() {
         <ProductSection
           title="Pesticides"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/pesticides')}
           onAddToCart={(product) => cart.addItem(product)}
         />
@@ -106,6 +112,7 @@ export function HomeScreen() {
         <ProductSection
           title="Equipment and Tools"
           products={MOCK_RECOMMENDATION_PRODUCTS}
+          onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/equipments')}
           onAddToCart={(product) => cart.addItem(product)}
         />

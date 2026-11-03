@@ -9,7 +9,7 @@ import {
   MOCK_RECOMMENDATION_PRODUCTS,
 } from '../../data/mockProducts';
 import type { FarmOrder } from '../../types/order';
-import { colors, spacing } from '../../../themes';
+import { colors } from '../../../themes';
 import { styles } from './cancellationStyles';
 
 const packedStatusDot = require('../../components/images/Rectangle 66.png');
@@ -26,7 +26,16 @@ export function CancellationProductCard({
   );
 
   return (
-    <View style={styles.product}>
+    <Pressable
+      style={styles.product}
+      onPress={() =>
+        router.push({
+          pathname: '/product/[id]',
+          params: { id: product?.id ?? 'prod-001' },
+        })
+      }
+      accessibilityLabel={`Open ${order.product}`}
+    >
       <ProductBag small />
       <View style={styles.copy}>
         <Text style={styles.productName}>{order.product}</Text>
@@ -39,23 +48,12 @@ export function CancellationProductCard({
           <Text style={styles.productStatus}>{order.status}</Text>
         </View>
       </View>
-      <Pressable
-        onPress={() =>
-          router.push({
-            pathname: '/cart',
-            params: { productId: product?.id ?? 'prod-001', step: 'product' },
-          })
-        }
-        hitSlop={spacing.sm}
-        accessibilityLabel="Open product"
-      >
-        <Ionicons
-          name="chevron-forward-outline"
-          size={22}
-          color={colors.black}
-        />
-      </Pressable>
-    </View>
+      <Ionicons
+        name="chevron-forward-outline"
+        size={22}
+        color={colors.black}
+      />
+    </Pressable>
   );
 }
 

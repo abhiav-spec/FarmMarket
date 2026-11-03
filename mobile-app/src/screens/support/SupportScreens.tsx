@@ -12,6 +12,10 @@ import {
   View,
 } from 'react-native';
 import { HELP_ISSUES } from '../../constants/orders';
+import {
+  MOCK_CART_PRODUCTS,
+  MOCK_RECOMMENDATION_PRODUCTS,
+} from '../../data/mockProducts';
 import { useOrder } from '../../hooks/useOrder';
 import {
   colors,
@@ -34,6 +38,9 @@ const caretRightImage = require('../../components/images/caret-right (1) 8.png')
 
 export function HelpCentreScreen() {
   const order = useOrder();
+  const product = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
+    (item) => item.name === order.product,
+  );
   return (
     <ScrollView style={styles.page}>
       <Header
@@ -55,8 +62,8 @@ export function HelpCentreScreen() {
           style={styles.product}
           onPress={() =>
             router.push({
-              pathname: '/(main)/help-upload',
-              params: { orderId: order.id },
+              pathname: '/product/[id]',
+              params: { id: product?.id ?? 'prod-001' },
             })
           }
         >

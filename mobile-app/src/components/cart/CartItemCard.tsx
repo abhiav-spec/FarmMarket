@@ -18,22 +18,30 @@ interface CartItemCardProps {
   onIncrement: () => void;
   onDecrement: () => void;
   onDelete: () => void;
+  onProductPress?: () => void;
 }
 
-export function CartItemCard({ item: { product, quantity }, minQuantity, maxQuantity, onIncrement, onDecrement, onDelete }: CartItemCardProps) {
+export function CartItemCard({ item: { product, quantity }, minQuantity, maxQuantity, onIncrement, onDecrement, onDelete, onProductPress }: CartItemCardProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
+      <Touchable
+        style={styles.imageContainer}
+        onPress={onProductPress}
+        label={`Open ${product.name}`}
+        hitSlop={0}
+      >
         <Image source={toImageSource(product.imageUrl)} style={styles.image} resizeMode="contain" accessibilityLabel={product.name} />
-      </View>
+      </Touchable>
       <View style={styles.details}>
         <View style={styles.row}>
-          <AppText style={styles.productName} numberOfLines={1}>{product.name}</AppText>
+          <Touchable onPress={onProductPress} label={`Open ${product.name}`} hitSlop={0} style={styles.productSummary}>
+            <AppText style={styles.productName} numberOfLines={1}>{product.name}</AppText>
+            <PriceTag product={product} variant="cart" style={styles.spaced} />
+          </Touchable>
           <Touchable onPress={onDelete} label={CART_COPY.removeProduct(product.name)}>
             <Image source={IMAGES.trashIcon} style={styles.trashIcon} resizeMode="contain" accessible={false} />
           </Touchable>
         </View>
-        <PriceTag product={product} variant="cart" style={styles.spaced} />
         <View style={[styles.row, styles.spaced]}>
           <AppText style={styles.variantText}>{product.variant}</AppText>
           <QuantityStepper quantity={quantity} min={minQuantity} max={maxQuantity} onIncrement={onIncrement} onDecrement={onDecrement} />
@@ -65,6 +73,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   spaced: { marginTop: CART_LAYOUT.cardPadding },
   trashIcon: { width: SIZES.cartTrashIconSize, height: SIZES.cartTrashIconSize },
-  productName: { ...CART_TYPOGRAPHY.itemName, flex: 1, color: COLORS.text.black, marginRight: CART_LAYOUT.cardPadding },
+  productSummary: { flex: 1, marginRight: CART_LAYOUT.cardPadding },
+  productName: { ...CART_TYPOGRAPHY.itemName, color: COLORS.text.black },
   variantText: { ...CART_TYPOGRAPHY.body, color: COLORS.text.dark },
 });
