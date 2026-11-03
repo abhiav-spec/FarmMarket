@@ -1,8 +1,9 @@
 import { useWindowDimensions } from 'react-native';
 
+import { AUTH_LAYOUT } from './auth';
 import { RADIUS } from './radius';
 import { SPACING } from './spacing';
-import { FONT_SIZE, LINE_HEIGHT } from './typography';
+import { AUTH_TYPOGRAPHY, FONT_SIZE, LINE_HEIGHT } from './typography';
 
 export const BREAKPOINTS = {
   small: 360,
@@ -106,6 +107,53 @@ export function useResponsive() {
     walletLineHeight: isSmall ? 16 : 18,
   };
 
+  // Auth + onboarding screens. Text and sizes follow the screen width; the
+  // onboarding picture follows both width and height so it always fits.
+  const scaledText = (style: { fontSize: number; lineHeight: number }) => ({
+    fontSize: moderateScale(style.fontSize),
+    lineHeight: moderateScale(style.lineHeight),
+  });
+
+  // Height of the picture area (space above + picture + gap below). The text
+  // and dots below it shrink or grow with the screen height.
+  const authImageArea =
+    AUTH_LAYOUT.imageTop + AUTH_LAYOUT.imageHeight + AUTH_LAYOUT.imageTextGap;
+  const authTextArea =
+    (AUTH_LAYOUT.onboardingTextArea * height) / AUTH_LAYOUT.frameHeight;
+  const authSpaceScale = (height - authTextArea) / authImageArea;
+  const authWidthScale =
+    (width - 2 * AUTH_LAYOUT.screenPadding) / AUTH_LAYOUT.imageWidth;
+  const authImageScale = Math.min(authSpaceScale, authWidthScale);
+  // Height the picture could not use (narrow phones), shared above and below
+  // it so it stays centred in its area
+  const authSpareHalf =
+    (AUTH_LAYOUT.imageHeight * (authSpaceScale - authImageScale)) / 2;
+
+  const auth = {
+    // Onboarding picture
+    imageScale: authImageScale,
+    imageWidth: AUTH_LAYOUT.imageWidth * authImageScale,
+    imageHeight: AUTH_LAYOUT.imageHeight * authImageScale,
+    imageTopSpace: AUTH_LAYOUT.imageTop * authSpaceScale + authSpareHalf,
+    imageBottomSpace: AUTH_LAYOUT.imageTextGap * authSpaceScale + authSpareHalf,
+
+    // Text
+    welcomeTitle: scaledText(AUTH_TYPOGRAPHY.welcomeTitle),
+    welcomeSubtitle: scaledText(AUTH_TYPOGRAPHY.welcomeSubtitle),
+    welcomeButton: scaledText(AUTH_TYPOGRAPHY.welcomeButton),
+    onboardingTitle: scaledText(AUTH_TYPOGRAPHY.onboardingTitle),
+    onboardingDescription: scaledText(AUTH_TYPOGRAPHY.bodySmall),
+    welcomeSubtitleWidth: moderateScale(AUTH_LAYOUT.welcomeSubtitleWidth),
+    descriptionWidth: moderateScale(AUTH_LAYOUT.descriptionWidth),
+
+    // Buttons and dots
+    getStartedButtonWidth: moderateScale(AUTH_LAYOUT.getStartedButtonWidth),
+    dotSize: moderateScale(AUTH_LAYOUT.dotSize),
+    activeDotWidth: moderateScale(AUTH_LAYOUT.activeDotWidth),
+    arrowButtonWidth: moderateScale(AUTH_LAYOUT.arrowButtonWidth),
+    arrowButtonHeight: moderateScale(AUTH_LAYOUT.arrowButtonHeight),
+  };
+
   return {
     width,
     height,
@@ -120,5 +168,6 @@ export function useResponsive() {
     moderateScale,
     horizontalPadding,
     home,
+    auth,
   };
 }

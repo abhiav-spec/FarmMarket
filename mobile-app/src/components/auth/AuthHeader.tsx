@@ -3,7 +3,7 @@ import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { Href, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
-import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_ROUTES, AUTH_STRINGS } from '@/constants/auth';
 import { AUTH_LAYOUT, AUTH_TYPOGRAPHY, COLORS, SPACING, UI } from '@/theme';
 
 export interface AuthHeaderProps {
@@ -12,7 +12,7 @@ export interface AuthHeaderProps {
   showBack?: boolean;
   /** Where to go when there is no screen to go back to. */
   fallbackRoute?: Href;
-  /** Figma shows the white shadowed band only on the Mobile Number screen. */
+  /** White shadowed band behind the header (Mobile Number screen only). */
   showSurface?: boolean;
 }
 
@@ -20,7 +20,7 @@ export function AuthHeader({
   title,
   onBack,
   showBack = true,
-  fallbackRoute = '/(auth)/get-started',
+  fallbackRoute = AUTH_ROUTES.getStarted,
   showSurface = false,
 }: AuthHeaderProps) {
   const router = useRouter();
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: TITLE_SIDE_INSET,
     right: TITLE_SIDE_INSET,
-    // Centre the 26px title on the 30px back arrow
+    // Centre the title on the back arrow
     top:
       AUTH_LAYOUT.headerContentTop +
       (AUTH_LAYOUT.backArrowSize - AUTH_TYPOGRAPHY.header.lineHeight) / 2,

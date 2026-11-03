@@ -16,6 +16,8 @@ export const AUTH_COLORS = {
   purpleBorder: COLORS.purpleBorder1,
   buttonFill: COLORS.purpleButtonFill,
   inputLine: COLORS.cardBorder,
+  // Mobile number and personal info input boxes: light purple outline when idle
+  inputBorder: COLORS.purpleButtonBorder,
   placeholder: COLORS.text.muted,
   dotInactive: '#F5F378',
 } as const;
@@ -56,7 +58,7 @@ export const AUTH_LAYOUT = {
   inputBoxRadius: RADIUS.xs,
   inputBoxGap: 10,
   inputBoxPadding: SPACING.md,
-  countryCodeWidth: 56,
+  countryCodeWidth: 68,
   otpBoxWidth: 50,
   otpBoxHeight: 56,
 
@@ -78,6 +80,10 @@ export const AUTH_LAYOUT = {
   activeDotWidth: 27,
   arrowButtonWidth: 60,
   arrowButtonHeight: 32,
+
+  // Selection sheet (state / district / language)
+  sheetMaxHeight: '60%',
+  sheetIosBottomInset: 40,
 
   pressedOpacity: 0.85,
 } as const;

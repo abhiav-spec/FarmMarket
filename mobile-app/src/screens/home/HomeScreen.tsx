@@ -61,7 +61,7 @@ export function HomeScreen() {
           location={HOME_HEADER_DATA.location}
           walletBalance={HOME_HEADER_DATA.walletBalance}
           onLocationPress={() => {}}
-          onNotificationPress={() => {}}
+          onNotificationPress={() => router.push('/(main)/notifications')}
           onWalletPress={() => {}}
           onCartPress={() => router.push('/(main)/cart')}
           cartCount={cart.itemCount}

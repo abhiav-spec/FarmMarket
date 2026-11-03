@@ -121,6 +121,12 @@ export default function MainLayout() {
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
 
+      {/* Ravi's additional routes */}
+      <Tabs.Screen
+        name="notifications"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+
       {/* Existing secondary routes */}
       <Tabs.Screen name="order-detail" options={{ href: null }} />
       <Tabs.Screen name="help-centre" options={{ href: null }} />
