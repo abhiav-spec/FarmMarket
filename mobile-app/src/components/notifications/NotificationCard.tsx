@@ -27,7 +27,6 @@ const CATEGORY_ICON: Record<string, Parameters<typeof AppIcon>[0]['name']> = {
   wallet: 'wallet',
 };
 
-// Unread indicator dot size
 const UNREAD_DOT = 9;
 
 export function NotificationCard({
@@ -38,62 +37,67 @@ export function NotificationCard({
   const iconName = CATEGORY_ICON[item.category] ?? 'notifications';
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={item.title}
-      onPress={() => onPress?.(item.id)}
-      style={({ pressed }) => [
-        styles.card,
-        !item.read && styles.cardUnread,
-        pressed && styles.cardPressed,
-      ]}
-    >
-      <View style={styles.iconBadge}>
-        <AppIcon name={iconName} size="lg" color={COLORS.purple} />
-      </View>
-
-      <View style={styles.body}>
-        <View style={styles.titleRow}>
-          <AppText style={styles.title} numberOfLines={1}>
-            {item.title}
-          </AppText>
-          <View style={styles.titleActions}>
-            {!item.read && <View style={styles.unreadDot} />}
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Notification options"
-              hitSlop={UI.hitSlop}
-              onPress={() => onOptionsPress?.(item)}
-              style={({ pressed }) => [
-                styles.optionsButton,
-                pressed && styles.optionsButtonPressed,
-              ]}
-            >
-              <AppIcon name="moreVertical" size="lg" color={COLORS.text.muted} />
-            </Pressable>
-          </View>
+    <View style={[styles.card, !item.read && styles.cardUnread]}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={item.title}
+        onPress={() => onPress?.(item.id)}
+        style={({ pressed }) => [styles.content, pressed && styles.cardPressed]}
+      >
+        <View style={styles.iconBadge}>
+          <AppIcon name={iconName} size="lg" color={COLORS.purple} />
         </View>
 
-        <AppText style={styles.bodyText} numberOfLines={2}>
-          {item.body}
-        </AppText>
+        <View style={styles.body}>
+          <View style={styles.titleRow}>
+            <AppText style={styles.title} numberOfLines={1}>
+              {item.title}
+            </AppText>
 
-        <AppText style={styles.timestamp}>{item.timestamp}</AppText>
-      </View>
-    </Pressable>
+            <View style={styles.titleActions}>
+              {!item.read && <View style={styles.unreadDot} />}
+            </View>
+          </View>
+
+          <AppText style={styles.bodyText} numberOfLines={2}>
+            {item.body}
+          </AppText>
+
+          <AppText style={styles.timestamp}>{item.timestamp}</AppText>
+        </View>
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Notification options"
+        hitSlop={UI.hitSlop}
+        onPress={() => onOptionsPress?.(item)}
+        style={({ pressed }) => [
+          styles.optionsButton,
+          pressed && styles.optionsButtonPressed,
+        ]}
+      >
+        <AppIcon name="moreVertical" size="lg" color={COLORS.text.muted} />
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: SPACING.md,
+    alignItems: 'center',
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.lg,
     backgroundColor: COLORS.background,
     borderBottomWidth: UI.borderWidth,
     borderBottomColor: COLORS.divider,
+  },
+  content: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.md,
   },
   cardUnread: {
     backgroundColor: COLORS.purpleSurface,

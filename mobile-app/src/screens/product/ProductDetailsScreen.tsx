@@ -1,6 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  Share,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
@@ -72,19 +80,26 @@ function productForPack(product: Product, pack: ProductPack): Product {
 function getProductGallery(product: (typeof ALL_PRODUCTS)[number]) {
   if (product.imageUrl === IMAGES.saaf) return PRODUCT_DETAIL_GALLERY;
 
-  const alternateImage = product.id === 'prod-003' ? IMAGES.gromor : IMAGES.saaf;
+  const alternateImage =
+    product.id === 'prod-003' ? IMAGES.gromor : IMAGES.saaf;
   return [toImageSource(product.imageUrl), alternateImage] as const;
 }
 
 function productUse(category: string): string {
   const normalized = category.toLowerCase();
-  if (normalized.includes('seed')) return 'planting and establishing healthy crops';
-  if (normalized.includes('fertil')) return 'supporting crop nutrition and stronger growth';
-  if (normalized.includes('equipment')) return 'everyday field work and farm operations';
+  if (normalized.includes('seed'))
+    return 'planting and establishing healthy crops';
+  if (normalized.includes('fertil'))
+    return 'supporting crop nutrition and stronger growth';
+  if (normalized.includes('equipment'))
+    return 'everyday field work and farm operations';
   return 'protecting crops from common field threats';
 }
 
-function productInfo(product: (typeof ALL_PRODUCTS)[number], sectionId: string): string {
+function productInfo(
+  product: (typeof ALL_PRODUCTS)[number],
+  sectionId: string,
+): string {
   if (sectionId === 'about') {
     return `${product.name}\n\nCategory: ${product.category}\nPack size: ${product.variant}\n\nDesigned for ${productUse(product.category)}. This product is selected for dependable performance and practical use on the farm.`;
   }
@@ -92,14 +107,20 @@ function productInfo(product: (typeof ALL_PRODUCTS)[number], sectionId: string):
   return `${product.name} is supplied in the ${product.variant} pack. Use it only for its intended agricultural purpose and follow the instructions printed on the product label.\n\nStore in a cool, dry place away from children, food, and animal feed. Use the recommended protective equipment when handling the product.`;
 }
 
-function faqInfo(product: (typeof ALL_PRODUCTS)[number], faqId: string): string {
+function faqInfo(
+  product: (typeof ALL_PRODUCTS)[number],
+  faqId: string,
+): string {
   const answers: Record<string, string> = {
     crop: `Check the product label to confirm that ${product.name} is approved for your crop and target issue before use.`,
     usage: `Use ${product.name} only as directed on the label. Follow the recommended application method, timing, and safety precautions.`,
     dosage: `Use the dosage printed on the product label for your crop and application method. Do not exceed the recommended dose.`,
     help: 'Our Crop Advisor can help you choose the right product and usage plan for your crop. Open Crop Advisor from the main navigation for assistance.',
   };
-  return answers[faqId] ?? 'Please follow the product label or contact our Crop Advisor for help.';
+  return (
+    answers[faqId] ??
+    'Please follow the product label or contact our Crop Advisor for help.'
+  );
 }
 
 export function ProductDetailsScreen() {
@@ -112,7 +133,7 @@ export function ProductDetailsScreen() {
   const goBack = useGoBack('/cart');
   const baseProduct =
     ALL_PRODUCTS.find((item) => item.id === id) ?? MOCK_CART_PRODUCTS[0];
-  const [selectedPackId, setSelectedPackId] = useState(
+  const [selectedPackId, setSelectedPackId] = useState<string>(
     PRODUCT_DETAIL_CONFIG.initialPackId,
   );
   const resetProductPage = useCallback(() => {
@@ -120,13 +141,14 @@ export function ProductDetailsScreen() {
   }, []);
 
   useFocusEffect(resetProductPage);
-  useEffect(() => {
-    setSelectedPackId(PRODUCT_DETAIL_CONFIG.initialPackId);
-    resetProductPage();
-  }, [id, resetProductPage]);
+  useFocusEffect(resetProductPage);
+
+  useEffect(resetProductPage, [selectedPackId, resetProductPage]);
   useEffect(resetProductPage, [selectedPackId, resetProductPage]);
 
-  const selectedPack = PRODUCT_PACKS.find((pack) => pack.id === selectedPackId) ?? PRODUCT_PACKS[0];
+  const selectedPack =
+    PRODUCT_PACKS.find((pack) => pack.id === selectedPackId) ??
+    PRODUCT_PACKS[0];
   const product = productForPack(baseProduct, selectedPack);
   const rating = product.rating ?? 0;
   const images = getProductGallery(product);
@@ -134,12 +156,16 @@ export function ProductDetailsScreen() {
     router.push(`/product/${item.id}`);
   const saved = isWished(product.id);
   const toggleSaved = () => toggleWishlist(product.id);
-  const [activeInfo, setActiveInfo] = useState<{ title: string; body: string } | null>(null);
+  const [activeInfo, setActiveInfo] = useState<{
+    title: string;
+    body: string;
+  } | null>(null);
   const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
-  const shareProduct = () => Share.share({
-    title: product.name,
-    message: `Check out ${product.name} (${product.variant}) on FarmMarket: /product/${product.id}`,
-  });
+  const shareProduct = () =>
+    Share.share({
+      title: product.name,
+      message: `Check out ${product.name} (${product.variant}) on FarmMarket: /product/${product.id}`,
+    });
   const reviews = [
     ...submittedReviews.filter((review) => review.productId === product.id),
     ...PRODUCT_REVIEWS,
@@ -225,7 +251,10 @@ export function ProductDetailsScreen() {
             ))}
           </View>
           <PurchaseActions
-            quantity={items.find((item) => isSameCartProduct(item.product, product))?.quantity}
+            quantity={
+              items.find((item) => isSameCartProduct(item.product, product))
+                ?.quantity
+            }
             minQuantity={config.MIN_QUANTITY_PER_ITEM}
             maxQuantity={config.MAX_QUANTITY_PER_ITEM}
             onAddToCart={() => addItem(product)}
@@ -244,17 +273,27 @@ export function ProductDetailsScreen() {
               {PRODUCT_DETAIL_SECTIONS.map((section) => (
                 <Touchable
                   key={section.id}
-                  onPress={() => setActiveInfo({
-                    title: section.title,
-                    body: productInfo(product, section.id)
-                  })}
+                  onPress={() =>
+                    setActiveInfo({
+                      title: section.title,
+                      body: productInfo(product, section.id),
+                    })
+                  }
                   label={section.title}
-                  accessibilityState={{ expanded: activeInfo?.title === section.title }}
+                  accessibilityState={{
+                    expanded: activeInfo?.title === section.title,
+                  }}
                   hitSlop={0}
                   style={styles.detailRow}
                 >
-                  <AppText style={styles.detailRowText}>{section.title}</AppText>
-                  <Ionicons name={ICONS.chevronRight} size={SIZES.productActionIconSize} color={COLORS.text.black} />
+                  <AppText style={styles.detailRowText}>
+                    {section.title}
+                  </AppText>
+                  <Ionicons
+                    name={ICONS.chevronRight}
+                    size={SIZES.productActionIconSize}
+                    color={COLORS.text.black}
+                  />
                 </Touchable>
               ))}
             </View>
@@ -284,7 +323,9 @@ export function ProductDetailsScreen() {
           </View>
           <ProductCarousel
             title={PRODUCT_DETAIL_COPY.similarProducts}
-            products={MOCK_RECOMMENDATION_PRODUCTS.filter((item) => item.id !== product.id)}
+            products={MOCK_RECOMMENDATION_PRODUCTS.filter(
+              (item) => item.id !== product.id,
+            )}
             onAddToCart={addItem}
             onProductPress={openProduct}
             style={styles.similarSection}
@@ -319,17 +360,31 @@ export function ProductDetailsScreen() {
               {PRODUCT_FAQS.map((faq) => (
                 <React.Fragment key={faq.id}>
                   <Touchable
-                  onPress={() => setExpandedFaqId((current) => current === faq.id ? null : faq.id)}
-                  label={faq.title}
-                  accessibilityState={{ expanded: expandedFaqId === faq.id }}
-                  hitSlop={0}
-                  style={styles.faqRow}
+                    onPress={() =>
+                      setExpandedFaqId((current) =>
+                        current === faq.id ? null : faq.id,
+                      )
+                    }
+                    label={faq.title}
+                    accessibilityState={{ expanded: expandedFaqId === faq.id }}
+                    hitSlop={0}
+                    style={styles.faqRow}
                   >
                     <AppText style={styles.faqQuestion}>{faq.title}</AppText>
-                    <Ionicons name={expandedFaqId === faq.id ? ICONS.chevronDown : ICONS.chevronRight} size={SIZES.reviewStarSize} color={COLORS.text.secondary} />
+                    <Ionicons
+                      name={
+                        expandedFaqId === faq.id
+                          ? ICONS.chevronDown
+                          : ICONS.chevronRight
+                      }
+                      size={SIZES.reviewStarSize}
+                      color={COLORS.text.secondary}
+                    />
                   </Touchable>
                   {expandedFaqId === faq.id ? (
-                    <AppText style={styles.faqAnswer}>{faqInfo(product, faq.id)}</AppText>
+                    <AppText style={styles.faqAnswer}>
+                      {faqInfo(product, faq.id)}
+                    </AppText>
                   ) : null}
                 </React.Fragment>
               ))}
@@ -343,8 +398,14 @@ export function ProductDetailsScreen() {
         animationType="fade"
         onRequestClose={() => setActiveInfo(null)}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setActiveInfo(null)}>
-          <Pressable style={styles.modalCard} onPress={(event) => event.stopPropagation()}>
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setActiveInfo(null)}
+        >
+          <Pressable
+            style={styles.modalCard}
+            onPress={(event) => event.stopPropagation()}
+          >
             <View style={styles.modalHeader}>
               <AppText style={styles.modalTitle}>{activeInfo?.title}</AppText>
               <Touchable

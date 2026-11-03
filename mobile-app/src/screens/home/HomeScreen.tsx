@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import type { Product } from '@/types';
 import {
   CategorySection,
   CropAdvisorBanner,
@@ -11,8 +11,7 @@ import {
   ProductCard,
   ProductSection,
 } from '@/components';
-import { RecommendationCarousel } from '@/components/cart';
-import { CART_COPY } from '@/constants/config';
+
 import {
   EQUIPMENT_PRODUCTS,
   FERTILIZER_PRODUCTS,
@@ -25,7 +24,18 @@ import {
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
-
+function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
+  return {
+    id: product.id,
+    name: product.name,
+    imageUrl: product.image as number,
+    variant: product.specs,
+    pricePaise: product.pricePaise,
+    mrpPaise: product.originalPricePaise,
+    discountPercent: product.discountPercentage,
+    category: product.category,
+  };
+}
 export function HomeScreen() {
   const router = useRouter();
   const cart = useCart();
@@ -38,7 +48,7 @@ export function HomeScreen() {
       ...PESTICIDE_PRODUCTS,
       ...EQUIPMENT_PRODUCTS,
     ],
-    []
+    [],
   );
 
   const trimmedQuery = searchQuery.trim().toLowerCase();
@@ -47,7 +57,7 @@ export function HomeScreen() {
   const searchResults = useMemo(() => {
     if (!isSearching) return [];
     return allProducts.filter((product) =>
-      product.name.toLowerCase().includes(trimmedQuery)
+      product.name.toLowerCase().includes(trimmedQuery),
     );
   }, [allProducts, trimmedQuery, isSearching]);
 
@@ -85,7 +95,7 @@ export function HomeScreen() {
                   <ProductCard
                     product={product}
                     onPress={() => router.push(`/product/${product.id}`)}
-                    onAddToCart={() => cart.addItem(product)}
+                    onAddToCart={() => cart.addItem(toCartProduct(product))}
                   />
                 </View>
               ))}
@@ -169,15 +179,6 @@ export function HomeScreen() {
               }
               onViewAllPress={() => router.push('/category/equipments')}
               onAddToCart={(product) => cart.addItem(product)}
-            />
-
-            <RecommendationCarousel
-              title={CART_COPY.recommendations}
-              products={MOCK_RECOMMENDATION_PRODUCTS}
-              onAddToCart={cart.addItem}
-              onProductPress={(product) =>
-                router.push(`/product/${product.id}`)
-              }
             />
           </>
         )}
