@@ -1,56 +1,32 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-
-import { CART_COPY, type CartCopy } from '@/constants/config';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/common/AppText';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
 import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, RADIUS, SIZES, UI } from '@/theme';
 import { formatPaise } from '@/utils/price';
 
 interface CartBottomBarProps {
-  copy?: CartCopy;
   totalPaise: number;
   onContinue?: () => void;
   disabled?: boolean;
-  actionWidth?: number;
-  actionTopMargin?: number;
-  rightPadding?: number;
+  /** Button text. */
+  title?: string;
+  /** Button accessibility label. */
+  label?: string;
+  style?: StyleProp<ViewStyle>;
+  actionStyle?: StyleProp<ViewStyle>;
 }
 
-export function CartBottomBar({
-  totalPaise,
-  onContinue,
-  disabled = false,
-  copy = CART_COPY,
-  actionWidth = SIZES.continueButtonWidth,
-  actionTopMargin,
-  rightPadding = CART_LAYOUT.footerPaddingHorizontal,
-}: CartBottomBarProps) {
-  const isDisabled = disabled || !onContinue;
-
+export function CartBottomBar({ totalPaise, onContinue, disabled, title = CART_COPY.continue, label = CART_COPY.checkout, style, actionStyle }: CartBottomBarProps) {
   return (
-    <View style={[styles.container, { paddingRight: rightPadding }]}>
+    <View style={[styles.container, style]}>
       <View style={styles.priceSection}>
-        <AppText style={styles.priceText}>
-          {formatPaise(totalPaise)}
-        </AppText>
-        <AppText color={COLORS.text.black} style={styles.priceLabel}>
-          {copy.viewPrice}
-        </AppText>
+        <AppText style={styles.priceText}>{formatPaise(totalPaise)}</AppText>
+        <AppText style={styles.priceLabel}>{CART_COPY.viewPrice}</AppText>
       </View>
-
-      <Pressable
-        onPress={onContinue}
-        disabled={isDisabled}
-        accessibilityState={{ disabled: isDisabled }}
-        style={[styles.continueButton, { width: actionWidth, marginTop: actionTopMargin }]}
-        accessibilityRole="button"
-        accessibilityLabel={copy.checkout}
-      >
-        <AppText style={styles.continueButtonText}>
-          {copy.continue}
-        </AppText>
-      </Pressable>
+      <Touchable onPress={onContinue} disabled={disabled || !onContinue} title={title} label={label} textStyle={styles.continueButtonText} hitSlop={0} style={[styles.continueButton, actionStyle]} />
     </View>
   );
 }
@@ -69,7 +45,7 @@ const styles = StyleSheet.create({
   },
   priceSection: { flex: 1, gap: CART_LAYOUT.footerTextGap },
   priceText: { ...CART_TYPOGRAPHY.itemPrice, color: COLORS.purple },
-  priceLabel: { ...CART_TYPOGRAPHY.footerLabel, alignSelf: 'flex-start' },
+  priceLabel: { ...CART_TYPOGRAPHY.footerLabel, color: COLORS.text.black, alignSelf: 'flex-start' },
   continueButton: {
     width: SIZES.continueButtonWidth,
     height: SIZES.continueButtonHeight,

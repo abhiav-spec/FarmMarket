@@ -11,6 +11,7 @@ interface HomeHeaderProps {
   onNotificationPress?: () => void;
   onWalletPress?: () => void;
   onCartPress?: () => void;
+  cartCount?: number;
   onProfilePress?: () => void;
 }
 
@@ -21,6 +22,7 @@ export function HomeHeader({
   onNotificationPress,
   onWalletPress,
   onCartPress,
+  cartCount = 0,
   onProfilePress,
 }: HomeHeaderProps) {
   const { home } = useResponsive();
@@ -116,7 +118,10 @@ export function HomeHeader({
             },
           ]}
         >
-          <AppIcon name="cart" size="lg" />
+          <View style={styles.cartIconWrap}>
+            <AppIcon name="cart" size="lg" />
+            <AppText style={styles.cartCount}>{cartCount}</AppText>
+          </View>
         </Pressable>
       </View>
     </View>
@@ -153,6 +158,21 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cartIconWrap: { position: 'relative' },
+  cartCount: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 3,
+    borderRadius: 8,
+    backgroundColor: COLORS.purple,
+    color: COLORS.text.inverse,
+    fontSize: 9,
+    lineHeight: 16,
+    textAlign: 'center',
   },
 
   walletButton: {

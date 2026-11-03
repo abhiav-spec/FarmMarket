@@ -1,27 +1,12 @@
-export const FEEDBACK_RATINGS = [
-  {
-    value: 1,
-    label: 'Very bad',
-    image: require('../../assets/icons/feedback-very-bad.png'),
-  },
-  {
-    value: 2,
-    label: 'Bad',
-    image: require('../../assets/icons/feedback-bad.png'),
-  },
-  {
-    value: 3,
-    label: 'Okay',
-    image: require('../../assets/icons/feedback-neutral.png'),
-  },
-  {
-    value: 4,
-    label: 'Good',
-    image: require('../../assets/icons/feedback-good.png'),
-  },
-  {
-    value: 5,
-    label: 'Excellent',
-    image: require('../../assets/icons/feedback-excellent.png'),
-  },
-] as const;
+export const REVIEW_RATING_VALUES = [1, 2, 3, 4, 5] as const;
+
+export const REVIEW_RATING_LABELS: Record<
+  (typeof REVIEW_RATING_VALUES)[number],
+  string
+> = {
+  1: 'Very bad',
+  2: 'Bad',
+  3: 'Average',
+  4: 'Good',
+  5: 'Excellent',
+};

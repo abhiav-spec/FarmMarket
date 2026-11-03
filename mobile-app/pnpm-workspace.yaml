@@ -1,2 +1,5 @@
 allowBuilds:
   unrs-resolver: true
+
+# Metro needs a conventional node_modules tree to resolve Expo Router on Windows.
+nodeLinker: hoisted

@@ -9,10 +9,12 @@ import {
   ProfileReferralBanner,
 } from '@/components/profile';
 import { useRouter } from 'expo-router';
+import { useWishlist } from '@/context/WishlistContext';
 import { styles } from './styles';
 
 export function ProfileScreen() {
   const router = useRouter();
+  const wishlist = useWishlist();
   const showNotConnectedMessage = (feature: string) => {
     Alert.alert(feature, 'This feature is not connected yet.');
   };
@@ -40,7 +42,8 @@ export function ProfileScreen() {
         />
 
         <ProfileQuickActions
-          onWishlistPress={() => showNotConnectedMessage('Wishlist')}
+          wishlistCount={wishlist.count}
+          onWishlistPress={() => router.push('/wishlist')}
           onWalletPress={() => showNotConnectedMessage('Wallet')}
         />
 

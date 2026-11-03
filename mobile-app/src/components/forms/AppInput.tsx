@@ -52,12 +52,6 @@ export function AppInput({
 }: AppInputProps) {
   const [focused, setFocused] = useState(false);
 
-  const borderColor = error
-    ? COLORS.error
-    : focused
-      ? COLORS.purple
-      : COLORS.purpleBorder1;
-
   const isDisabled = props.editable === false;
 
   return (
@@ -74,8 +68,9 @@ export function AppInput({
       <View
         style={[
           styles.inputContainer,
+          focused && styles.focused,
           inputContainerStyle,
-          { borderColor },
+          error && styles.errorBorder,
           isDisabled && styles.disabled,
         ]}
       >
@@ -85,6 +80,7 @@ export function AppInput({
             name={leftIcon}
             size="sm"
             color={focused ? COLORS.primary : COLORS.text.secondary}
+            style={styles.leftIcon}
           />
         )}
 
@@ -157,6 +153,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+
+  focused: {
+    borderColor: COLORS.primary,
+  },
+
+  errorBorder: {
+    borderColor: COLORS.error,
   },
 
   input: {

@@ -1,46 +1,37 @@
 import React from 'react';
-import { Image, Pressable, SafeAreaView, Text, View } from 'react-native';
+import { Image, SafeAreaView, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { AppButton } from '@/components/ui/AppButton';
-import { FeedbackHeader } from '@/components/common/FeedbackHeader';
-import { COLORS } from '@/theme';
+import { AppText } from '@/components/common/AppText';
 
-import { styles } from './styles';
+import { writeToUsStyles as styles } from './writeToUsStyles';
 
 export function FeedbackSuccessScreen() {
   const router = useRouter();
 
   return (
     <SafeAreaView style={styles.successScreen}>
-      <FeedbackHeader
-        title="Write to us"
-        onBackPress={() => router.replace('/(main)/home')}
-      />
-
       <View style={styles.successContent}>
         <Image
+          accessibilityLabel="Feedback sent successfully"
+          resizeMode="contain"
           source={require('../../../assets/images/feedback-success.png')}
           style={styles.successIllustration}
-          resizeMode="contain"
-          accessibilityLabel="Feedback sent successfully illustration"
         />
-
-        <Text style={styles.successTitle}>Thank you!</Text>
-
-        <Text style={styles.successDescription}>
-          Your message has been sent successfully.
-        </Text>
+        <AppText style={styles.successTitle}>Thank you!</AppText>
+        <AppText style={styles.successDescription}>
+          We appreciate you taking the time to share your feedback with us. Your
+          thoughts help us improve your FarmMarket experience.
+        </AppText>
       </View>
-
       <View style={styles.successFooter}>
-        <Pressable
-          accessibilityRole="button"
+        <AppButton
+          fullWidth
           onPress={() => router.replace('/(main)/home')}
-          style={styles.returnHomeButton}
-        >
-          <Text style={styles.returnHomeButtonText}>Return to home</Text>
-        </Pressable>
+          size="large"
+          title="Return to home"
+        />
       </View>
     </SafeAreaView>
   );

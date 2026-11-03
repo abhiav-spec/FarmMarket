@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import {
   CategoryHeroBanner,
@@ -7,15 +8,32 @@ import {
   HomeSearchBar,
   ProductCard,
 } from '@/components';
-import { APP_CONFIG, CATEGORY_STRINGS } from '@/constants/categoryStrings';
+import { CATEGORY_STRINGS } from '@/constants/categoryStrings';
+import { HOME_HEADER_DATA } from '@/constants/home';
 import {
   FERTILIZER_BANNER,
   FERTILIZER_PRODUCTS,
 } from '@/constants/fertilizer';
-import { COLORS, SPACING } from '@/theme';
+import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
+import { useCart } from '@/context/CartContext';
 import type { ProductItem } from '@/types/product';
 
+function toCartProduct(product: ProductItem) {
+  return {
+    id: product.id,
+    name: product.name,
+    imageUrl: product.image as number,
+    variant: product.specs,
+    pricePaise: product.pricePaise,
+    mrpPaise: product.originalPricePaise,
+    discountPercent: product.discountPercentage,
+    category: product.category,
+  };
+}
+
 export function FertilizerCategoryScreen() {
+  const router = useRouter();
+  const { addItem, itemCount } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = FERTILIZER_PRODUCTS.filter((product) =>
@@ -23,11 +41,11 @@ export function FertilizerCategoryScreen() {
   );
 
   const handleProductPress = (product: ProductItem) => {
-    // Navigate / handle product press
+    router.push(`/product/${product.id}`);
   };
 
   const handleAddToCart = (product: ProductItem) => {
-    // Add to cart handler
+    addItem(toCartProduct(product));
   };
 
   return (
@@ -37,14 +55,18 @@ export function FertilizerCategoryScreen() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={styles.row}
+        columnWrapperStyle={filteredProducts.length > 0 ? styles.row : undefined}
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.headerArea}>
             <HomeHeader
-              location={APP_CONFIG.defaultLocation}
+              location={HOME_HEADER_DATA.location}
+              walletBalance={HOME_HEADER_DATA.walletBalance}
+              onLocationPress={() => {}}
               onNotificationPress={() => {}}
-              onProfilePress={() => {}}
+              onWalletPress={() => {}}
+              onCartPress={() => {}}
+              cartCount={itemCount}
             />
 
             <HomeSearchBar
@@ -53,6 +75,7 @@ export function FertilizerCategoryScreen() {
               placeholder={CATEGORY_STRINGS.searchPlaceholder}
               onVoicePress={() => {}}
               onScanPress={() => {}}
+              onWishlistPress={() => router.push('/wishlist')}
             />
 
             <CategoryHeroBanner
@@ -86,6 +109,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: SPACING.xxxl,
+    flexGrow: 1,
   },
   row: {
     paddingHorizontal: SPACING.lg,
@@ -94,5 +118,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
+    maxWidth: SEARCH_LAYOUT.cardWidthPercent,
   },
 });

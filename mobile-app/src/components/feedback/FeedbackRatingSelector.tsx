@@ -1,38 +1,47 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { FEEDBACK_RATINGS } from '@/constants/feedback';
-import { COLORS, FEEDBACK_RATING_LAYOUT, RADIUS, SPACING } from '@/theme';
+import {
+  REVIEW_RATING_LABELS,
+  REVIEW_RATING_VALUES,
+} from '@/constants/feedback';
+import { COLORS, SPACING } from '@/theme';
 
-interface FeedbackRatingSelectorProps {
+type FeedbackRatingSelectorProps = {
   value: number | null;
   onChange: (rating: number) => void;
-}
+};
 
 export function FeedbackRatingSelector({
   value,
   onChange,
 }: FeedbackRatingSelectorProps) {
   return (
-    <View style={styles.container}>
-      {FEEDBACK_RATINGS.map((rating) => {
-        const selected = value === rating.value;
+    <View accessibilityRole="radiogroup" style={styles.container}>
+      {REVIEW_RATING_VALUES.map((rating) => {
+        const selected = value === rating;
+        const filled = value !== null && rating <= value;
 
         return (
           <Pressable
-            key={rating.value}
+            key={rating}
+            accessibilityLabel={`${rating} star${rating === 1 ? '' : 's'}: ${REVIEW_RATING_LABELS[rating]}`}
             accessibilityRole="radio"
-            accessibilityLabel={rating.label}
             accessibilityState={{ selected }}
-            onPress={() => onChange(rating.value)}
-            style={[styles.ratingOption, selected && styles.ratingSelected]}
+            onPress={() => onChange(rating)}
+            style={[styles.starButton, selected && styles.selectedStarButton]}
           >
-            <Image
-              source={rating.image}
-              style={styles.ratingImage}
-              resizeMode="contain"
-              accessibilityIgnoresInvertColors
+            <Ionicons
+              name={filled ? 'star' : 'star-outline'}
+              color={filled ? COLORS.ratingStar : COLORS.purpleButtonBorder}
+              size={42}
             />
+            <Text
+              style={[styles.starLabel, selected && styles.selectedStarLabel]}
+            >
+              {REVIEW_RATING_LABELS[rating]}
+            </Text>
           </Pressable>
         );
       })}
@@ -42,29 +51,28 @@ export function FeedbackRatingSelector({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: SPACING.sm,
+    flexDirection: 'row',
+    gap: SPACING.xs,
+    justifyContent: 'center',
   },
-  ratingOption: {
-    flex: 1,
-    aspectRatio: 1,
-    maxWidth: FEEDBACK_RATING_LAYOUT.maxCardWidth,
+  starButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.purpleLight,
-    borderWidth: FEEDBACK_RATING_LAYOUT.borderWidth,
-    borderColor: 'transparent',
-    borderRadius: RADIUS.xxl,
-    padding: SPACING.sm,
+    minHeight: 70,
+    minWidth: 52,
+    padding: SPACING.xs,
   },
-  ratingSelected: {
-    borderColor: COLORS.purple,
-    borderWidth: FEEDBACK_RATING_LAYOUT.selectedBorderWidth,
+  starLabel: {
+    color: COLORS.text.secondary,
+    fontSize: 12,
+    marginTop: 2,
   },
-  ratingImage: {
-    width: FEEDBACK_RATING_LAYOUT.imageSize,
-    height: FEEDBACK_RATING_LAYOUT.imageSize,
+  selectedStarLabel: {
+    color: COLORS.purple,
+    fontWeight: '700',
+  },
+  selectedStarButton: {
+    transform: [{ scale: 1.08 }],
   },
 });
