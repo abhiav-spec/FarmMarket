@@ -17,6 +17,7 @@ import {
   MOCK_RECOMMENDATION_PRODUCTS,
 } from '../../data/mockProducts';
 import { useOrder } from '../../hooks/useOrder';
+import { updateOrderStatus } from '../../data/defaultOrder';
 import {
   colors,
   fonts,
@@ -339,6 +340,7 @@ export function ReturnSuccessScreen() {
   const { reason = order.returnRequest.reason } = useLocalSearchParams<{
     reason?: string;
   }>();
+  useEffect(() => { updateOrderStatus(order.id, 'Return Requested'); }, [order.id]);
   const supportCallRoute = '/(main)/support-call' as never;
   const supportChatRoute = '/(main)/chat-support' as never;
   return (

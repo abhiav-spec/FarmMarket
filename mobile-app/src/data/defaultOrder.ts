@@ -1,4 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FarmOrder } from '../types/order';
+
+const ORDERS_STORAGE_KEY = 'farmmarket.orders.v1';
 
 export const DEFAULT_ORDER: FarmOrder = {
   id: '#ORD123456770',
@@ -49,3 +52,67 @@ export const PACKED_ORDER: FarmOrder = {
 };
 
 export const ORDERS: FarmOrder[] = [DEFAULT_ORDER, PACKED_ORDER];
+
+function persistOrders(): void {
+  void AsyncStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(ORDERS));
+}
+
+export async function loadPersistedOrders(): Promise<void> {
+  try {
+    const stored = await AsyncStorage.getItem(ORDERS_STORAGE_KEY);
+    if (!stored) return;
+    const parsed = JSON.parse(stored) as FarmOrder[];
+    if (!Array.isArray(parsed)) return;
+    ORDERS.splice(0, ORDERS.length, ...parsed);
+  } catch {
+    // Keep the built-in order list if storage is unavailable or corrupted.
+  }
+}
+
+export function updateOrderStatus(orderId: string, status: FarmOrder['status']): void {
+  const order = ORDERS.find((item) => item.id === orderId);
+  if (!order) return;
+  order.status = status;
+  if (status === 'Cancelled') {
+    order.deliveredAt = 'Cancelled';
+    order.deliveryTimelineLabel = 'Order cancelled';
+  } else if (status === 'Return Requested') {
+    order.deliveredAt = 'Return requested';
+    order.deliveryTimelineLabel = 'Return request submitted';
+  }
+  persistOrders();
+}
+
+export function addOrderFromCart(input: {
+  product: string;
+  weight?: string;
+  totalPaise: number;
+  paymentMethod: string;
+}): FarmOrder {
+  const now = new Date();
+  const date = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  const order: FarmOrder = {
+    ...DEFAULT_ORDER,
+    id: `#ORD${Date.now()}`,
+    status: 'Order Placed',
+    date,
+    product: input.product,
+    weight: input.weight ?? '1 unit',
+    price: `₹ ${(input.totalPaise / 100).toFixed(2)}`,
+    amount: (input.totalPaise / 100).toFixed(2),
+    paymentMethod: input.paymentMethod,
+    deliveredAt: `placed on ${date}`,
+    deliveryTimelineLabel: `Order placed on ${date}`,
+    requestDate: `${date} at ${now.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })}`,
+    events: [
+      { name: 'Confirmed', date, completed: false },
+      { name: 'Packed', date: '', completed: false },
+      { name: 'Dispatched', date: '', completed: false },
+      { name: 'Out for Delivery', date: '', completed: false },
+      { name: 'Delivery', date: '', completed: false },
+    ],
+  };
+  ORDERS.unshift(order);
+  persistOrders();
+  return order;
+}

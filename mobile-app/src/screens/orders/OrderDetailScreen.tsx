@@ -23,6 +23,7 @@ const caretRightImage = require('../../components/images/caret-right (1) 8.png')
 export function OrderDetailScreen() {
   const order = useOrder();
   const isDelivered = order.status === 'Delivered';
+  const canCancel = order.status === 'Order Placed' || order.status === 'Packed';
   const phoneDigits = order.deliveryAddress.phone.replace(/\D/g, '');
   const phoneLabel = order.deliveryAddress.phone.replace(phoneDigits, '');
   const product = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
@@ -105,7 +106,7 @@ export function OrderDetailScreen() {
         <KeyValue label="Payment Method" value={order.paymentMethod} />
         <KeyValue label="Total Amount" value={order.price} strong />
       </InfoCard>
-      {!isDelivered && (
+      {canCancel && (
         <Pressable
           style={styles.cancelButton}
           onPress={() =>

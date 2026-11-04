@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -24,6 +25,7 @@ export function HomeScreen() {
   const router = useRouter();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
+  const searchResults = MOCK_RECOMMENDATION_PRODUCTS.filter((product) => product.name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,12 +46,19 @@ export function HomeScreen() {
         <HomeSearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          onVoicePress={() => {}}
-          onScanPress={() => {}}
+          onVoicePress={() => Alert.alert('Voice search', 'Please type your search in the search bar.')}
+          onScanPress={() => Alert.alert('QR scanner', 'QR scanning will be available when camera access is enabled.')}
           onWishlistPress={() => router.push('/wishlist')}
         />
 
-        <CategorySection
+        {searchQuery.trim() ? (
+          <ProductSection
+            title="Search results"
+            products={searchResults}
+            onProductPress={(product) => router.push(`/product/${product.id}`)}
+            onAddToCart={(product) => cart.addItem(product)}
+          />
+        ) : <CategorySection
           title="Shop by Category"
           categories={HOME_CATEGORIES}
           onCategoryPress={(category) => {
@@ -66,7 +75,7 @@ export function HomeScreen() {
               router.push('/category/seeds');
             }
           }}
-        />
+        />}
 
         <CropAdvisorBanner
           onPress={() => router.push('/(main)/crop-advisor')}
@@ -78,51 +87,51 @@ export function HomeScreen() {
           marginTop={-70}
         />
 
-        <ProductSection
+        {!searchQuery.trim() && <ProductSection
           title="Recommended for you"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
           onAddToCart={(product) => cart.addItem(product)}
-        />
+        />}
 
-        <ProductSection
+        {!searchQuery.trim() && <ProductSection
           title="Seeds Section"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/seeds')}
           onAddToCart={(product) => cart.addItem(product)}
-        />
+        />}
 
-        <ProductSection
+        {!searchQuery.trim() && <ProductSection
           title="Fertilizers"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/fertilizers')}
           onAddToCart={(product) => cart.addItem(product)}
-        />
+        />}
 
-        <ProductSection
+        {!searchQuery.trim() && <ProductSection
           title="Pesticides"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/pesticides')}
           onAddToCart={(product) => cart.addItem(product)}
-        />
+        />}
 
-        <ProductSection
+        {!searchQuery.trim() && <ProductSection
           title="Equipment and Tools"
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
           onViewAllPress={() => router.push('/category/equipments')}
           onAddToCart={(product) => cart.addItem(product)}
-        />
+        />}
 
-        <RecommendationCarousel
+        {!searchQuery.trim() && <RecommendationCarousel
           title={CART_COPY.recommendations}
           products={MOCK_RECOMMENDATION_PRODUCTS}
           onAddToCart={cart.addItem}
           onProductPress={(product) => router.push(`/product/${product.id}`)}
-        />
+        />}
       </ScrollView>
     </SafeAreaView>
   );

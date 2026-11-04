@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useOrder } from '../../hooks/useOrder';
+import { updateOrderStatus } from '../../data/defaultOrder';
 import { Header } from '../../components/orders/Header';
 import { colors } from '../../../themes';
 import {
@@ -155,6 +156,7 @@ export function CancellationSuccessScreen() {
   const { reason = order.cancellationReason } = useLocalSearchParams<{
     reason?: string;
   }>();
+  useEffect(() => { updateOrderStatus(order.id, 'Cancelled'); }, [order.id]);
 
   return (
     <View style={styles.page}>
