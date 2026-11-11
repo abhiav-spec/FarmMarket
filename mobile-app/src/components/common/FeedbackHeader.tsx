@@ -1,15 +1,24 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
+import {
+  COLORS,
+  FEEDBACK_HEADER_LAYOUT,
+  FONT_FAMILY,
+  FONT_SIZE,
+  ICON_SIZES,
+  RADIUS,
+  SPACING,
+  UI,
+} from '@/theme';
 
-type FeedbackHeaderProps = {
+interface FeedbackHeaderProps {
   title: string;
   onBackPress: () => void;
   rightIconSource?: number;
   onRightPress?: () => void;
   rightAccessibilityLabel?: string;
-};
+}
 
 export function FeedbackHeader({
   title,
@@ -23,7 +32,7 @@ export function FeedbackHeader({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Go back"
-        hitSlop={8}
+        hitSlop={UI.hitSlop}
         onPress={onBackPress}
         style={styles.actionButton}
       >
@@ -32,6 +41,7 @@ export function FeedbackHeader({
           style={styles.backArrow}
           resizeMode="contain"
           accessible={false}
+          accessibilityLabel="Back arrow"
         />
       </Pressable>
 
@@ -63,16 +73,16 @@ export function FeedbackHeader({
 
 const styles = StyleSheet.create({
   container: {
-    height: 112,
-    alignItems: 'center',
+    height: FEEDBACK_HEADER_LAYOUT.height,
     backgroundColor: COLORS.purpleSurface,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.lg,
+    borderBottomWidth: FEEDBACK_HEADER_LAYOUT.borderWidth,
     borderBottomColor: COLORS.purple,
     borderBottomLeftRadius: RADIUS.header,
     borderBottomRightRadius: RADIUS.header,
-    borderBottomWidth: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.lg,
   },
   actionButton: {
     width: 40,
@@ -82,17 +92,20 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backArrow: {
-    height: 32,
-    width: 32,
+    width: FEEDBACK_HEADER_LAYOUT.arrowWidth,
+    height: ICON_SIZES.xl,
   },
   title: {
-    color: COLORS.text.primary,
+    position: 'absolute',
+    left: UI.zeroInset,
+    right: UI.zeroInset,
+    textAlign: 'center',
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.md,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    textAlign: 'center',
+    color: COLORS.text.primary,
+  },
+  rightSpacer: {
+    width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
   },
   rightAction: {
     width: 40,
@@ -101,9 +114,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 1,
   },
-  rightSpacer: {
-    width: 40,
-  },
+
   rightIcon: {
     width: 24,
     height: 24,

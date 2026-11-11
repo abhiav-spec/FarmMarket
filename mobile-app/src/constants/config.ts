@@ -22,13 +22,19 @@ export const PAYMENT_SUCCESS_COPY = {
   orderOptions: 'Order options',
   unit: '/unit',
 } as const;
-
+export const PAYMENT_SUCCESS_ORDER = {
+  name: 'Backpack Sprayer',
+  price: '466.6',
+  unit: '/unit',
+  location: 'Kolar, Karnataka',
+} as const;
 export const WALLET_COPY = {
   enterAmount: 'Enter Amount',
   selectPaymentMethod: 'Select Payment Method',
   proceed: 'Proceed to pay',
   usageTitle: 'Pay using Wallet',
-  usageDescription: 'Use your wallet balance to make purchases quickly and securely within the app. At checkout, select wallet as your payment method, and the available balance will be automatically applied to your order. If your wallet balance is insufficient, you can add money or choose another payment method to complete the purchase.',
+  usageDescription:
+    'Use your wallet balance to make purchases quickly and securely within the app. At checkout, select wallet as your payment method, and the available balance will be automatically applied to your order. If your wallet balance is insufficient, you can add money or choose another payment method to complete the purchase.',
   gotIt: 'Got it',
   title: 'Wallet',
   addMoney: 'Add Money to Wallet',
@@ -36,11 +42,26 @@ export const WALLET_COPY = {
   howToUse: 'How to use',
 } as const;
 
-export const WALLET_DATA: { balance: string; transactions: readonly WalletTransaction[] } = {
+export const WALLET_DATA: {
+  balance: string;
+  transactions: readonly WalletTransaction[];
+} = {
   balance: '500',
   transactions: [
-    { id: 'refund-03-may', title: 'Refund credited', date: '03 MAY', amount: '+244', credited: true },
-    { id: 'order-02-may', title: 'Order debited', date: '02 MAY', amount: '-100', credited: false },
+    {
+      id: 'refund-03-may',
+      title: 'Refund credited',
+      date: '03 MAY',
+      amount: '+244',
+      credited: true,
+    },
+    {
+      id: 'order-02-may',
+      title: 'Order debited',
+      date: '02 MAY',
+      amount: '-100',
+      credited: false,
+    },
   ],
 };
 
@@ -79,7 +100,7 @@ export const CART_COPY = {
   decrement: '−',
   pricePrefix: '+ ',
 } as const;
-
+export type CartCopy = typeof CART_COPY;
 export const SCREEN_TITLES = {
   home: 'Home',
   products: 'Products',
@@ -95,7 +116,12 @@ export const PAYMENT_COPY = {
 
 export const PAYMENT_OPTIONS: readonly PaymentOption[] = [
   { id: 'cash', label: 'Cash on delivery', discountPaise: 0 },
-  { id: 'cash-offer', label: 'Cash on delivery', discountPaise: 1000, offer: 'Extra 10 rupees off' },
+  {
+    id: 'cash-offer',
+    label: 'Cash on delivery',
+    discountPaise: 1000,
+    offer: 'Extra 10 rupees off',
+  },
 ] as const;
 
 export const PRODUCT_DETAIL_COPY = {
@@ -115,7 +141,8 @@ export const PRODUCT_DETAIL_COPY = {
   watchVideo: 'Watch Product Video',
   videoDescription: 'Watch product usage, dosage, and application guide.',
   returns: 'Ease 4 days returns and exchanges',
-  returnsDescription: 'Return or exchange eligible products within 4 days of delivery.',
+  returnsDescription:
+    'Return or exchange eligible products within 4 days of delivery.',
   similarProducts: 'Similar Products',
   ratingReview: 'Rating & Review',
   ratingReviewCount: '(100+ Reviews)',
