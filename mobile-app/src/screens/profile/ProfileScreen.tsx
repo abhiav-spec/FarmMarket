@@ -1,23 +1,41 @@
 import React from 'react';
 import { Alert, SafeAreaView, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { PROFILE_MENU_SECTIONS } from '@/constants/profile';
+import { AUTH_ROUTES } from '@/constants/auth';
 import {
   ProfileHeader,
   ProfileMenuSection,
   ProfileQuickActions,
   ProfileReferralBanner,
 } from '@/components/profile';
-import { useRouter } from 'expo-router';
 import { useWishlist } from '@/context/WishlistContext';
+import { useUserProfile } from '@/context/UserProfileContext';
+
 import { styles } from './styles';
 
 export function ProfileScreen() {
   const router = useRouter();
+  const { profile, isProfileLoaded } = useUserProfile();
   const wishlist = useWishlist();
+
   const showNotConnectedMessage = (feature: string) => {
     Alert.alert(feature, 'This feature is not connected yet.');
   };
+
+  const profileName = isProfileLoaded
+    ? profile.name || 'Your Name'
+    : 'Loading...';
+
+  const profilePhone = isProfileLoaded
+    ? profile.phone || 'Mobile number not added'
+    : 'Loading...';
+
+  const profileLocation = isProfileLoaded
+    ? [profile.district, profile.state].filter(Boolean).join(', ') ||
+      'Location not added'
+    : 'Loading...';
 
   const accountSection = PROFILE_MENU_SECTIONS.find(
     (section) => section.id === 'account',
@@ -34,11 +52,16 @@ export function ProfileScreen() {
         contentContainerStyle={styles.content}
       >
         <ProfileHeader
-          name="Jagadeesh"
-          phone="+91 12345 67890"
-          location="Bengaluru, Karnataka"
+          name={profileName}
+          phone={profilePhone}
+          location={profileLocation}
           onBackPress={() => {}}
-          onEditPress={() => {}}
+          onEditPress={() =>
+            router.push({
+              pathname: AUTH_ROUTES.personalInfo,
+              params: { mode: 'edit' },
+            })
+          }
         />
 
         <ProfileQuickActions

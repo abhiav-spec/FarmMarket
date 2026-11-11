@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   Modal,
@@ -9,8 +9,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useUserProfile } from '@/context/UserProfileContext';
 import { AppIcon } from '@/components/common/AppIcon';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
@@ -37,7 +37,10 @@ type ModalType = keyof typeof STRINGS.modalTitles | null;
 
 export function PersonalInfoScreen() {
   const router = useRouter();
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const isEditMode = mode === 'edit';
 
+  const { profile, isProfileLoaded, saveProfile } = useUserProfile();
   const [name, setName] = useState('');
   const [language, setLanguage] = useState<string>(STRINGS.defaultLanguageKey);
   const [state, setState] = useState('');
@@ -51,7 +54,16 @@ export function PersonalInfoScreen() {
     district: '',
   });
   const [missingFields, setMissingFields] = useState<string[]>([]);
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!isProfileLoaded) return;
 
+    setName(profile.name);
+    setState(profile.state);
+    setDistrict(profile.district);
+    setLanguage(profile.language || STRINGS.defaultLanguageKey);
+  }, [isProfileLoaded, profile]);
+  /* eslint-enable react-hooks/set-state-in-effect */
   const selectedLanguageLabel =
     LANGUAGES.find((lang) => lang.key === language)?.name ||
     STRINGS.defaultLanguageName;
@@ -122,7 +134,7 @@ export function PersonalInfoScreen() {
     handleCloseModal();
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     const missing: string[] = [];
     const nextErrors = { name: '', state: '', district: '' };
 
@@ -130,10 +142,12 @@ export function PersonalInfoScreen() {
       nextErrors.name = `${STRINGS.nameLabel} is required.`;
       missing.push(STRINGS.nameLabel);
     }
+
     if (!state) {
       nextErrors.state = `${STRINGS.stateLabel} is required.`;
       missing.push(STRINGS.stateLabel);
     }
+
     if (!district) {
       nextErrors.district = `${STRINGS.districtLabel} is required.`;
       missing.push(STRINGS.districtLabel);
@@ -145,12 +159,31 @@ export function PersonalInfoScreen() {
       return;
     }
 
-    router.push(AUTH_ROUTES.onboarding);
+    try {
+      await saveProfile({
+        name: name.trim(),
+        state,
+        district,
+        language,
+      });
+
+      if (isEditMode) {
+        router.back();
+        return;
+      }
+
+      router.push(AUTH_ROUTES.onboarding);
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+    }
   };
 
   return (
     <View style={styles.screen}>
-      <AuthHeader title={STRINGS.header} fallbackRoute={AUTH_ROUTES.otp} />
+      <AuthHeader
+        title={isEditMode ? 'Edit Profile' : STRINGS.header}
+        fallbackRoute={isEditMode ? '/(main)/profile' : AUTH_ROUTES.otp}
+      />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -212,7 +245,7 @@ export function PersonalInfoScreen() {
       {/* Continue button, fixed near the bottom */}
       <View style={styles.bottomSection}>
         <PillButton
-          label={AUTH_STRINGS.continue}
+          label={isEditMode ? 'Save Changes' : AUTH_STRINGS.continue}
           arrowPosition="left"
           fullWidth={false}
           onPress={handleContinue}
@@ -381,7 +414,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: RADIUS.xl,
     maxHeight: AUTH_LAYOUT.sheetMaxHeight,
     paddingTop: SPACING.lg,
-    paddingBottom: Platform.OS === 'ios' ? AUTH_LAYOUT.sheetIosBottomInset : SPACING.lg,
+    paddingBottom:
+      Platform.OS === 'ios' ? AUTH_LAYOUT.sheetIosBottomInset : SPACING.lg,
     paddingHorizontal: SPACING.xl,
   },
   modalHeader: {

@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { useUserProfile } from '@/context/UserProfileContext';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { OutlinedBox } from '@/components/auth/OutlinedBox';
@@ -38,9 +38,13 @@ const STRINGS = AUTH_STRINGS.otp;
 const BOX_INDEXES = Array.from({ length: OTP_LENGTH }, (_, i) => i);
 const emptyDigits = () => Array<string>(OTP_LENGTH).fill('');
 
-
 export function OtpScreen() {
   const router = useRouter();
+  const { pendingPhone, saveProfile } = useUserProfile();
+
+  const maskedPhone = pendingPhone
+    ? `${'X'.repeat(Math.max(0, pendingPhone.length - 4))}${pendingPhone.slice(-4)}`
+    : MASKED_PHONE;
   const { width, moderateScale } = useResponsive();
   const keyboardVisible = useKeyboardVisible();
 
@@ -117,10 +121,16 @@ export function OtpScreen() {
     }
   };
 
-  const handleContinue = () => {
-    if (isComplete) {
-      router.push(AUTH_ROUTES.personalInfo);
+  const handleContinue = async () => {
+    if (!isComplete) return;
+
+    if (pendingPhone) {
+      await saveProfile({
+        phone: `${COUNTRY_CODE} ${pendingPhone}`,
+      });
     }
+
+    router.push(AUTH_ROUTES.personalInfo);
   };
 
   return (
@@ -136,7 +146,7 @@ export function OtpScreen() {
             {STRINGS.sentPrefix}
             <AppText
               style={styles.phoneSpan}
-            >{`${COUNTRY_CODE} ${MASKED_PHONE}`}</AppText>
+            >{`${COUNTRY_CODE} ${maskedPhone}`}</AppText>
             {STRINGS.sentSuffix}
           </AppText>
         </View>
