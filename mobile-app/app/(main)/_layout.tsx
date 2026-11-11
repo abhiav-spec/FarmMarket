@@ -90,10 +90,13 @@ export default function MainLayout() {
           ),
         }}
       />
-      {/* Cart */}
+      {/* Cart - hidden from bottom navigation */}
       <Tabs.Screen
-        name="cart/index"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
+        name="cart"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
       />
       {/* Checkout */}
       <Tabs.Screen
@@ -121,6 +124,12 @@ export default function MainLayout() {
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
 
+      {/* Ravi's additional routes */}
+      <Tabs.Screen
+        name="notifications"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+
       {/* Existing secondary routes */}
       <Tabs.Screen name="order-detail" options={{ href: null }} />
       <Tabs.Screen name="help-centre" options={{ href: null }} />
@@ -143,6 +152,18 @@ export default function MainLayout() {
       <Tabs.Screen name="wishlist" options={{ href: null }} />
       <Tabs.Screen name="crop-advisor-history" options={{ href: null }} />
       <Tabs.Screen name="consultation-details" options={{ href: null }} />
+      <Tabs.Screen
+        name="location"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="add-address"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="fill-address"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
     </Tabs>
   );
 }

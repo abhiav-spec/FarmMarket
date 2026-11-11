@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 
 import { AppText } from '@/components/common/AppText';
 import { PillButton } from '@/components/auth/PillButton';
-import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_ROUTES, AUTH_STRINGS } from '@/constants/auth';
 import {
   AUTH_LAYOUT,
   AUTH_TYPOGRAPHY,
@@ -19,7 +19,7 @@ const FRAME_CENTER = AUTH_LAYOUT.frameHeight / 2;
 
 export function GetStartedScreen() {
   const router = useRouter();
-  const { width, height } = useResponsive();
+  const { width, height, auth } = useResponsive();
 
   // The glow image covers the screen with its circle centred, so place the
   // title and button by their Figma distance from the centre, scaled the
@@ -32,7 +32,7 @@ export function GetStartedScreen() {
     height / 2 + (figmaTop - FRAME_CENTER) * scale;
 
   const handleGetStarted = () => {
-    router.push('/(auth)/mobile-number');
+    router.push(AUTH_ROUTES.mobileNumber);
   };
 
   return (
@@ -47,8 +47,18 @@ export function GetStartedScreen() {
       <View
         style={[styles.textBlock, { top: fromCenter(AUTH_LAYOUT.welcomeTitleTop) }]}
       >
-        <AppText style={styles.title}>{STRINGS.title}</AppText>
-        <AppText style={styles.subtitle}>{STRINGS.subtitle}</AppText>
+        <AppText style={[styles.title, auth.welcomeTitle]}>
+          {STRINGS.title}
+        </AppText>
+        <AppText
+          style={[
+            styles.subtitle,
+            auth.welcomeSubtitle,
+            { maxWidth: auth.welcomeSubtitleWidth },
+          ]}
+        >
+          {STRINGS.subtitle}
+        </AppText>
       </View>
 
       <View
@@ -63,8 +73,8 @@ export function GetStartedScreen() {
           arrowPosition="left"
           fullWidth={false}
           onPress={handleGetStarted}
-          style={styles.button}
-          textStyle={styles.buttonText}
+          style={[styles.button, { width: auth.getStartedButtonWidth }]}
+          textStyle={[styles.buttonText, auth.welcomeButton]}
         />
       </View>
     </View>
@@ -100,7 +110,6 @@ const styles = StyleSheet.create({
   subtitle: {
     ...AUTH_TYPOGRAPHY.welcomeSubtitle,
     marginTop: SPACING.md,
-    maxWidth: AUTH_LAYOUT.welcomeSubtitleWidth,
     color: COLORS.text.dark,
     textAlign: 'center',
   },
@@ -111,7 +120,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    width: AUTH_LAYOUT.getStartedButtonWidth,
     height: AUTH_LAYOUT.buttonHeight,
   },
   buttonText: {

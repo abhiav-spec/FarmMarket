@@ -1,31 +1,73 @@
-import React, { useState } from 'react';
+
 import { Alert } from 'react-native';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+
 import { useRouter } from 'expo-router';
+import type { Product } from '@/types';
+
+import { shortLocationLabel, useAddress } from '@/context/AddressContext';
 
 import {
   CategorySection,
   CropAdvisorBanner,
+  EmptyState,
   HomeHeader,
   HomeSearchBar,
+  ProductCard,
   ProductSection,
 } from '@/components';
-import { RecommendationCarousel } from '@/components/cart';
-import { CART_COPY } from '@/constants/config';
+
 import {
+  EQUIPMENT_PRODUCTS,
+  FERTILIZER_PRODUCTS,
   HOME_CATEGORIES,
   HOME_HEADER_DATA,
   HOME_TOP_COMPANIES,
-} from '@/constants/home';
+  PESTICIDE_PRODUCTS,
+  SEEDS_PRODUCTS,
+} from '@/constants';
+import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
-import { COLORS, SPACING } from '@/theme';
-
+function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
+  return {
+    id: product.id,
+    name: product.name,
+    imageUrl: product.image as number,
+    variant: product.specs,
+    pricePaise: product.pricePaise,
+    mrpPaise: product.originalPricePaise,
+    discountPercent: product.discountPercentage,
+    category: product.category,
+  };
+}
 export function HomeScreen() {
   const router = useRouter();
   const cart = useCart();
+  const { selected } = useAddress();
   const [searchQuery, setSearchQuery] = useState('');
   const searchResults = MOCK_RECOMMENDATION_PRODUCTS.filter((product) => product.name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
+
+  const allProducts = useMemo(
+    () => [
+      ...SEEDS_PRODUCTS,
+      ...FERTILIZER_PRODUCTS,
+      ...PESTICIDE_PRODUCTS,
+      ...EQUIPMENT_PRODUCTS,
+    ],
+    [],
+  );
+
+  const trimmedQuery = searchQuery.trim().toLowerCase();
+  const isSearching = trimmedQuery.length > 0;
+
+  const searchResults = useMemo(() => {
+    if (!isSearching) return [];
+    return allProducts.filter((product) =>
+      product.name.toLowerCase().includes(trimmedQuery),
+    );
+  }, [allProducts, trimmedQuery, isSearching]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,10 +76,15 @@ export function HomeScreen() {
         contentContainerStyle={styles.content}
       >
         <HomeHeader
-          location={HOME_HEADER_DATA.location}
+          location={
+            selected
+              ? shortLocationLabel(selected.address)
+              : HOME_HEADER_DATA.location
+          }
           walletBalance={HOME_HEADER_DATA.walletBalance}
-          onLocationPress={() => {}}
-          onNotificationPress={() => {}}
+
+          onNotificationPress={() => router.push('/(main)/notifications')}
+          onLocationPress={() => router.push('/location')}
           onWalletPress={() => {}}
           onCartPress={() => router.push('/(main)/cart')}
           cartCount={cart.itemCount}
@@ -51,87 +98,112 @@ export function HomeScreen() {
           onWishlistPress={() => router.push('/wishlist')}
         />
 
-        {searchQuery.trim() ? (
-          <ProductSection
-            title="Search results"
-            products={searchResults}
-            onProductPress={(product) => router.push(`/product/${product.id}`)}
-            onAddToCart={(product) => cart.addItem(product)}
-          />
-        ) : <CategorySection
-          title="Shop by Category"
-          categories={HOME_CATEGORIES}
-          onCategoryPress={(category) => {
-            if (category.id === 'farming-tools') {
-              router.push('/category/equipments');
-            } else if (
-              category.id === 'pesticides' ||
-              category.id === 'fungicides'
-            ) {
-              router.push('/category/pesticides');
-            } else if (category.id === 'fertilizers') {
-              router.push('/category/fertilizers');
-            } else if (category.id === 'seeds') {
-              router.push('/category/seeds');
-            }
-          }}
-        />}
+        {isSearching ? (
+          searchResults.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <View style={styles.grid}>
+              {searchResults.map((product) => (
+                <View key={product.id} style={styles.cardWrapper}>
+                  <ProductCard
+                    product={product}
+                    onPress={() => router.push(`/product/${product.id}`)}
+                    onAddToCart={() => cart.addItem(toCartProduct(product))}
+                  />
+                </View>
+              ))}
+            </View>
+          )
+        ) : (
+          <>
+            <CategorySection
+              title="Shop by Category"
+              categories={HOME_CATEGORIES}
+              onCategoryPress={(category) => {
+                if (category.id === 'farming-tools') {
+                  router.push('/category/equipments');
+                } else if (
+                  category.id === 'pesticides' ||
+                  category.id === 'fungicides'
+                ) {
+                  router.push('/category/pesticides');
+                } else if (category.id === 'fertilizers') {
+                  router.push('/category/fertilizers');
+                } else if (category.id === 'seeds') {
+                  router.push('/category/seeds');
+                }
+              }}
+            />
 
-        <CropAdvisorBanner
-          onPress={() => router.push('/(main)/crop-advisor')}
-        />
+            <CropAdvisorBanner
+              onPress={() => router.push('/(main)/crop-advisor')}
+            />
 
-        <CategorySection
-          title="Top Companies"
-          categories={HOME_TOP_COMPANIES}
-          marginTop={-70}
-        />
+            <CategorySection
+              title="Top Companies"
+              categories={HOME_TOP_COMPANIES}
+              marginTop={-70}
+            />
 
-        {!searchQuery.trim() && <ProductSection
-          title="Recommended for you"
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-          onAddToCart={(product) => cart.addItem(product)}
-        />}
+            <ProductSection
+              title="Recommended for you"
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+              onAddToCart={(product) => cart.addItem(product)}
+            />
 
-        {!searchQuery.trim() && <ProductSection
-          title="Seeds Section"
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-          onViewAllPress={() => router.push('/category/seeds')}
-          onAddToCart={(product) => cart.addItem(product)}
-        />}
+            <ProductSection
+              title="Seeds Section"
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+              onViewAllPress={() => router.push('/category/seeds')}
+              onAddToCart={(product) => cart.addItem(product)}
+            />
 
-        {!searchQuery.trim() && <ProductSection
-          title="Fertilizers"
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-          onViewAllPress={() => router.push('/category/fertilizers')}
-          onAddToCart={(product) => cart.addItem(product)}
-        />}
+            <ProductSection
+              title="Fertilizers"
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+              onViewAllPress={() => router.push('/category/fertilizers')}
+              onAddToCart={(product) => cart.addItem(product)}
+            />
 
-        {!searchQuery.trim() && <ProductSection
-          title="Pesticides"
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-          onViewAllPress={() => router.push('/category/pesticides')}
-          onAddToCart={(product) => cart.addItem(product)}
-        />}
+            <ProductSection
+              title="Pesticides"
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+              onViewAllPress={() => router.push('/category/pesticides')}
+              onAddToCart={(product) => cart.addItem(product)}
+            />
 
-        {!searchQuery.trim() && <ProductSection
-          title="Equipment and Tools"
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-          onViewAllPress={() => router.push('/category/equipments')}
-          onAddToCart={(product) => cart.addItem(product)}
-        />}
+            <ProductSection
+              title="Equipment and Tools"
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+              onViewAllPress={() => router.push('/category/equipments')}
+              onAddToCart={(product) => cart.addItem(product)}
+            />
 
-        {!searchQuery.trim() && <RecommendationCarousel
-          title={CART_COPY.recommendations}
-          products={MOCK_RECOMMENDATION_PRODUCTS}
-          onAddToCart={cart.addItem}
-          onProductPress={(product) => router.push(`/product/${product.id}`)}
-        />}
+            <RecommendationCarousel
+              title={CART_COPY.recommendations}
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onAddToCart={cart.addItem}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
+            />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -144,5 +216,17 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: SPACING.xxxl,
+    flexGrow: 1,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: SPACING.lg,
+    gap: SPACING.md,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.xxxl,
+  },
+  cardWrapper: {
+    width: SEARCH_LAYOUT.cardWidthPercent,
   },
 });

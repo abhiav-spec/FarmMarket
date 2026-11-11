@@ -14,15 +14,18 @@ import { useRouter } from 'expo-router';
 import { AppIcon } from '@/components/common/AppIcon';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
+import { FormField, SelectField } from '@/components/auth/FormField';
 import { PillButton } from '@/components/auth/PillButton';
 import { STATES, districtsOf } from '@/data/geography';
-import { AUTH_STRINGS } from '@/constants/auth';
+import { AUTH_ROUTES, AUTH_STRINGS } from '@/constants/auth';
 import { LANGUAGES } from '@/data/languages';
 import {
   AUTH_COLORS,
   AUTH_LAYOUT,
   AUTH_TYPOGRAPHY,
   COLORS,
+  FONT_FAMILY,
+  FONT_SIZE,
   RADIUS,
   SPACING,
   UI,
@@ -39,8 +42,15 @@ export function PersonalInfoScreen() {
   const [language, setLanguage] = useState<string>(STRINGS.defaultLanguageKey);
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
+  const [nameFocused, setNameFocused] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [search, setSearch] = useState('');
+  const [errors, setErrors] = useState({
+    name: '',
+    state: '',
+    district: '',
+  });
+  const [missingFields, setMissingFields] = useState<string[]>([]);
 
   const selectedLanguageLabel =
     LANGUAGES.find((lang) => lang.key === language)?.name ||
@@ -103,95 +113,103 @@ export function PersonalInfoScreen() {
       setLanguage(key);
     } else if (activeModal === 'state') {
       setState(key);
-      setDistrict(''); // Changing state clears previously selected district
+      setDistrict('');
+      setErrors((e) => ({ ...e, state: '' }));
     } else if (activeModal === 'district') {
       setDistrict(key);
+      setErrors((e) => ({ ...e, district: '' }));
     }
     handleCloseModal();
   };
 
   const handleContinue = () => {
-    router.push('/(auth)/onboarding');
+    const missing: string[] = [];
+    const nextErrors = { name: '', state: '', district: '' };
+
+    if (!name.trim()) {
+      nextErrors.name = `${STRINGS.nameLabel} is required.`;
+      missing.push(STRINGS.nameLabel);
+    }
+    if (!state) {
+      nextErrors.state = `${STRINGS.stateLabel} is required.`;
+      missing.push(STRINGS.stateLabel);
+    }
+    if (!district) {
+      nextErrors.district = `${STRINGS.districtLabel} is required.`;
+      missing.push(STRINGS.districtLabel);
+    }
+
+    if (missing.length > 0) {
+      setErrors(nextErrors);
+      setMissingFields(missing);
+      return;
+    }
+
+    router.push(AUTH_ROUTES.onboarding);
   };
 
   return (
     <View style={styles.screen}>
-      <AuthHeader title={STRINGS.header} fallbackRoute="/(auth)/otp" />
+      <AuthHeader title={STRINGS.header} fallbackRoute={AUTH_ROUTES.otp} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.formSection}>
-          {/* Name Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.nameLabel}</AppText>
+          <FormField label={STRINGS.nameLabel} focused={nameFocused}>
             <TextInput
               style={styles.input}
               placeholder={STRINGS.namePlaceholder}
               placeholderTextColor={AUTH_COLORS.placeholder}
               value={name}
-              onChangeText={setName}
+              onChangeText={(text) => {
+                setName(text);
+                if (errors.name) setErrors((e) => ({ ...e, name: '' }));
+              }}
+              onFocus={() => setNameFocused(true)}
+              onBlur={() => setNameFocused(false)}
+              cursorColor={AUTH_COLORS.purple}
+              selectionColor={AUTH_COLORS.purpleLight}
             />
-            <View style={styles.underline} />
-          </View>
+          </FormField>
+          {!!errors.name && (
+            <AppText style={styles.errorText}>{errors.name}</AppText>
+          )}
 
-          {/* State Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.stateLabel}</AppText>
-            <Pressable
-              onPress={() => setActiveModal('state')}
-              style={styles.pickerTrigger}
-            >
-              <AppText
-                style={[styles.pickerText, !state && styles.placeholderText]}
-              >
-                {state || STRINGS.statePlaceholder}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.stateLabel}
+            value={state}
+            placeholder={STRINGS.statePlaceholder}
+            onPress={() => setActiveModal('state')}
+          />
+          {!!errors.state && (
+            <AppText style={styles.errorText}>{errors.state}</AppText>
+          )}
 
-          {/* District Field */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.districtLabel}</AppText>
-            <Pressable
-              onPress={() => state && setActiveModal('district')}
-              style={styles.pickerTrigger}
-              disabled={!state}
-            >
-              <AppText
-                style={[styles.pickerText, !district && styles.placeholderText]}
-              >
-                {district ||
-                  (state
-                    ? STRINGS.districtPlaceholder
-                    : STRINGS.districtLocked)}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.districtLabel}
+            value={district}
+            placeholder={
+              state ? STRINGS.districtPlaceholder : STRINGS.districtLocked
+            }
+            onPress={() => setActiveModal('district')}
+            disabled={!state}
+          />
+          {!!errors.district && (
+            <AppText style={styles.errorText}>{errors.district}</AppText>
+          )}
 
-          {/* Language Selection */}
-          <View style={styles.fieldGroup}>
-            <AppText style={styles.label}>{STRINGS.languageLabel}</AppText>
-            <Pressable
-              onPress={() => setActiveModal('language')}
-              style={styles.pickerTrigger}
-            >
-              <AppText style={styles.pickerText}>
-                {selectedLanguageLabel}
-              </AppText>
-              <AppIcon name="chevronDown" size="sm" color={COLORS.text.muted} />
-            </Pressable>
-            <View style={styles.underline} />
-          </View>
+          <SelectField
+            label={STRINGS.languageLabel}
+            value={selectedLanguageLabel}
+            placeholder={STRINGS.defaultLanguageName}
+            onPress={() => setActiveModal('language')}
+          />
         </View>
       </ScrollView>
 
-      {/* Continue Button: fixed near the bottom, as in Figma */}
+      {/* Continue button, fixed near the bottom */}
       <View style={styles.bottomSection}>
         <PillButton
           label={AUTH_STRINGS.continue}
@@ -201,6 +219,43 @@ export function PersonalInfoScreen() {
           style={styles.button}
         />
       </View>
+
+      {/* Validation error modal */}
+      <Modal
+        visible={missingFields.length > 0}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMissingFields([])}
+      >
+        <View style={styles.validationOverlay}>
+          <View style={styles.validationCard}>
+            <AppText style={styles.validationTitle}>
+              {STRINGS.validationAlertTitle}
+            </AppText>
+
+            {missingFields.map((field) => (
+              <View key={field} style={styles.validationRow}>
+                <AppText style={styles.validationBullet}>{'•'}</AppText>
+                <AppText style={styles.validationItem}>{field}</AppText>
+              </View>
+            ))}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={STRINGS.validationAlertButton}
+              onPress={() => setMissingFields([])}
+              style={({ pressed }) => [
+                styles.validationButton,
+                pressed && styles.validationButtonPressed,
+              ]}
+            >
+              <AppText style={styles.validationButtonText}>
+                {STRINGS.validationAlertButton}
+              </AppText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
       {/* Selection Modal Bottom Sheet */}
       <Modal
@@ -217,7 +272,7 @@ export function PersonalInfoScreen() {
                 onPress={handleCloseModal}
                 hitSlop={UI.hitSlop}
                 accessibilityRole="button"
-                accessibilityLabel={`Close ${modalTitle} selector`}
+                accessibilityLabel={STRINGS.closeSelector(modalTitle)}
               >
                 <AppIcon name="close" size="md" color={COLORS.text.primary} />
               </Pressable>
@@ -284,7 +339,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  // Each field: bold label → value → underline, like the team's form screens
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: AUTH_LAYOUT.screenPadding,
@@ -293,44 +347,22 @@ const styles = StyleSheet.create({
   formSection: {
     paddingTop: SPACING.xl,
   },
-  // Full width, like the other forms in the app (Figma's 318px only fits 402)
-  fieldGroup: {
-    width: '100%',
-    marginBottom: SPACING.lg,
-  },
-  // Field titles (Name, State, District, Language) are bold subheadings
-  label: {
-    ...AUTH_TYPOGRAPHY.label,
-    color: COLORS.text.primary,
-    marginBottom: SPACING.md,
-  },
   input: {
     ...AUTH_TYPOGRAPHY.bodySmallMedium,
+    height: '100%',
     color: COLORS.text.primary,
-    paddingVertical: UI.zeroInset,
-    paddingBottom: SPACING.xs,
-  },
-  pickerTrigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingBottom: SPACING.xs,
-  },
-  pickerText: {
-    ...AUTH_TYPOGRAPHY.bodySmallMedium,
-    color: COLORS.text.primary,
-  },
-  placeholderText: {
-    color: AUTH_COLORS.placeholder,
-  },
-  underline: {
-    height: UI.borderWidth,
-    backgroundColor: AUTH_COLORS.inputLine,
+    padding: UI.zeroInset,
+    borderWidth: UI.zeroInset,
+    backgroundColor: 'transparent',
+    ...Platform.select({
+      web: {
+        outlineStyle: 'none',
+      } as object,
+    }),
   },
   bottomSection: {
     alignItems: 'center',
     justifyContent: 'center',
-    // Figma: 44px from the bottom of the screen
     paddingBottom: AUTH_LAYOUT.bottomGap,
   },
   button: {
@@ -347,9 +379,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopLeftRadius: RADIUS.xl,
     borderTopRightRadius: RADIUS.xl,
-    maxHeight: '60%',
+    maxHeight: AUTH_LAYOUT.sheetMaxHeight,
     paddingTop: SPACING.lg,
-    paddingBottom: Platform.OS === 'ios' ? 40 : SPACING.lg,
+    paddingBottom: Platform.OS === 'ios' ? AUTH_LAYOUT.sheetIosBottomInset : SPACING.lg,
     paddingHorizontal: SPACING.xl,
   },
   modalHeader: {
@@ -402,5 +434,68 @@ const styles = StyleSheet.create({
     color: COLORS.text.muted,
     textAlign: 'center',
     paddingVertical: SPACING.xl,
+  },
+  errorText: {
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.error,
+    marginTop: -SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  validationOverlay: {
+    flex: 1,
+    backgroundColor: COLORS.overlay,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: SPACING.xl,
+  },
+  validationCard: {
+    width: '100%',
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.xl,
+    borderWidth: 2,
+    borderColor: COLORS.purple,
+    padding: SPACING.xl,
+  },
+  validationTitle: {
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.lg,
+    color: COLORS.text.primary,
+    marginBottom: SPACING.lg,
+  },
+  validationRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
+  },
+  validationBullet: {
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text.primary,
+    lineHeight: FONT_SIZE.md * 1.5,
+  },
+  validationItem: {
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text.primary,
+    flex: 1,
+    lineHeight: FONT_SIZE.md * 1.5,
+  },
+  validationButton: {
+    marginTop: SPACING.lg,
+    backgroundColor: COLORS.purple,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  validationButtonPressed: {
+    opacity: UI.disabledOpacity,
+  },
+  validationButtonText: {
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text.inverse,
   },
 });

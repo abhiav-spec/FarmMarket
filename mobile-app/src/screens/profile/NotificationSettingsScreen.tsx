@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -8,9 +8,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { FeedbackHeader } from '@/components/common/FeedbackHeader';
+import { notificationsApi } from '@/api/notifications';
 import {
   INITIAL_NOTIFICATION_SETTINGS,
   NOTIFICATION_OPTIONS,
@@ -20,8 +21,18 @@ import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 export function NotificationSettingsScreen() {
   const router = useRouter();
+  const { from } = useLocalSearchParams<{ from?: string }>();
   const [showSuccess, setShowSuccess] = useState(false);
   const [settings, setSettings] = useState(INITIAL_NOTIFICATION_SETTINGS);
+
+  useEffect(() => {
+    notificationsApi
+      .getSettings()
+      .then((data) => setSettings(data as Record<NotificationId, boolean>))
+      .catch((error) =>
+        console.error('Failed to load notification settings:', error)
+      );
+  }, []);
 
   const handleToggle = (id: NotificationId, value: boolean) => {
     setSettings((previous) => ({
@@ -30,12 +41,25 @@ export function NotificationSettingsScreen() {
     }));
   };
 
-  const handleSave = () => {
-    setShowSuccess(true);
+  const handleBack = () => {
+    if (from === 'settings') {
+      router.replace('/(main)/account-settings' as never);
+    } else {
+      router.replace('/(main)/notifications' as never);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      await notificationsApi.updateSettings(settings);
+      setShowSuccess(true);
+    } catch (error) {
+      console.error('Failed to save notification settings:', error);
+    }
   };
   return (
     <SafeAreaView style={styles.screen}>
-      <FeedbackHeader title="Notifications" onBackPress={() => router.back()} />
+      <FeedbackHeader title="Notifications" onBackPress={handleBack} />
 
       <View style={styles.content}>
         <ScrollView
@@ -111,7 +135,7 @@ export function NotificationSettingsScreen() {
               accessibilityRole="button"
               onPress={() => {
                 setShowSuccess(false);
-                router.back();
+                handleBack();
               }}
               style={styles.modalButton}
             >

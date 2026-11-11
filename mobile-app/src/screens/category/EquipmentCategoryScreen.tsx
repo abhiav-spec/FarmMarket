@@ -14,7 +14,7 @@ import {
   EQUIPMENT_BANNER,
   EQUIPMENT_PRODUCTS,
 } from '@/constants/equipment';
-import { COLORS, SPACING } from '@/theme';
+import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { useCart } from '@/context/CartContext';
 import type { ProductItem } from '@/types/product';
 
@@ -55,7 +55,7 @@ export function EquipmentCategoryScreen() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={styles.row}
+        columnWrapperStyle={filteredProducts.length > 0 ? styles.row : undefined}
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.headerArea}>
@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: SPACING.xxxl,
+    flexGrow: 1,
   },
   row: {
     paddingHorizontal: SPACING.lg,
@@ -117,6 +118,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
-    maxWidth: '48%',
+    maxWidth: SEARCH_LAYOUT.cardWidthPercent,
   },
 });
