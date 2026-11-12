@@ -10,7 +10,7 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-
+import { UserProfileProvider } from '@/context/UserProfileContext';
 import { AddressProvider } from '../src/context/AddressContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { CropAdvisorProvider } from '@/context/CropAdvisorContext';
@@ -41,19 +41,18 @@ export default function RootLayout() {
   }
 
   return (
-  <ReviewProvider>
-    <CartProvider
-      initialItems={MOCK_CART_ITEMS}
-      config={MOCK_CART_CONFIG}
-    >
-      <CropAdvisorProvider>
-        <WishlistProvider>
-          <AddressProvider>
-            <Stack screenOptions={{ headerShown: false }} />
-          </AddressProvider>
-        </WishlistProvider>
-      </CropAdvisorProvider>
-    </CartProvider>
-  </ReviewProvider>
-);
+    <UserProfileProvider>
+      <ReviewProvider>
+        <CartProvider initialItems={MOCK_CART_ITEMS} config={MOCK_CART_CONFIG}>
+          <CropAdvisorProvider>
+            <WishlistProvider>
+              <AddressProvider>
+                <Stack screenOptions={{ headerShown: false }} />
+              </AddressProvider>
+            </WishlistProvider>
+          </CropAdvisorProvider>
+        </CartProvider>
+      </ReviewProvider>
+    </UserProfileProvider>
+  );
 }

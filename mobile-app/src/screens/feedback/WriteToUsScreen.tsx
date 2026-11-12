@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  Modal,
   Image,
+  Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -9,20 +9,40 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 import { AppInput } from '@/components/forms/AppInput';
 import { AppButton } from '@/components/ui/AppButton';
-
+import { FeedbackHeader } from '@/components/common/FeedbackHeader';
 import { writeToUsStyles as styles } from './writeToUsStyles';
 
 const RATINGS = [
-  { value: 1, emoji: '😞', label: 'Very bad' },
-  { value: 2, emoji: '🙁', label: 'Bad' },
-  { value: 3, emoji: '😐', label: 'Okay' },
-  { value: 4, emoji: '😊', label: 'Good' },
-  { value: 5, emoji: '😍', label: 'Excellent' },
+  {
+    value: 1,
+    image: require('../../../assets/images/feedback/very-bad.png'),
+    label: 'Very bad',
+  },
+  {
+    value: 2,
+    image: require('../../../assets/images/feedback/bad.png'),
+    label: 'Bad',
+  },
+  {
+    value: 3,
+    image: require('../../../assets/images/feedback/okay.png'),
+    label: 'Okay',
+  },
+  {
+    value: 4,
+    image: require('../../../assets/images/feedback/good.png'),
+    label: 'Good',
+  },
+  {
+    value: 5,
+    image: require('../../../assets/images/feedback/excellent.png'),
+    label: 'Excellent',
+  },
 ] as const;
-
 const SUBJECTS = [
   'Product quality',
   'Order and delivery',
@@ -34,11 +54,13 @@ const SUBJECTS = [
 
 export function WriteToUsScreen() {
   const router = useRouter();
+
   const [rating, setRating] = useState<number | null>(null);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [messageFocused, setMessageFocused] = useState(false);
   const [subjectModalVisible, setSubjectModalVisible] = useState(false);
+
   const [errors, setErrors] = useState({
     rating: '',
     subject: '',
@@ -51,51 +73,62 @@ export function WriteToUsScreen() {
       subject: subject ? '' : 'Please select a subject.',
       message: message.trim() ? '' : 'Please enter your message.',
     };
+
     setErrors(nextErrors);
-    if (!nextErrors.rating && !nextErrors.subject && !nextErrors.message)
-      router.push('/feedback-success');
+
+    if (nextErrors.rating || nextErrors.subject || nextErrors.message) {
+      return;
+    }
+
+    router.push('/feedback-success');
   };
 
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={styles.header}>
-        <Pressable
-          accessibilityLabel="Go back"
-          accessibilityRole="button"
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backArrow}>‹</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>Write to Us</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+      {/* Header */}
+      <FeedbackHeader
+        title="Write to us"
+        onBackPress={() => router.replace('/(main)/profile')}
+      />
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.heading}>We value your feedback</Text>
+        <Text style={styles.heading}>Share your feedback and suggestions</Text>
+
         <Text style={styles.description}>
-          Tell us about your experience with FarmMarket.
+          Share your feedback, suggestions, or report an issue. We&apos;re
+          always looking for ways to improve your experience.
         </Text>
-        <Text style={styles.label}>How was your experience? *</Text>
+
+        {/* Experience rating */}
         <View style={styles.ratingRow}>
           {RATINGS.map((item) => {
             const selected = rating === item.value;
+
             return (
               <Pressable
                 key={item.value}
-                accessibilityLabel={item.label}
                 accessibilityRole="button"
+                accessibilityLabel={item.label}
                 accessibilityState={{ selected }}
                 onPress={() => {
                   setRating(item.value);
-                  setErrors((previous) => ({ ...previous, rating: '' }));
+                  setErrors((previous) => ({
+                    ...previous,
+                    rating: '',
+                  }));
                 }}
                 style={[styles.ratingOption, selected && styles.ratingSelected]}
               >
-                <Text style={styles.ratingEmoji}>{item.emoji}</Text>
+                <Image
+                  source={item.image}
+                  style={styles.ratingEmoji}
+                  resizeMode="contain"
+                />
+
                 <Text
                   style={[
                     styles.ratingLabel,
@@ -108,53 +141,77 @@ export function WriteToUsScreen() {
             );
           })}
         </View>
+
         {errors.rating ? (
           <Text style={styles.errorText}>{errors.rating}</Text>
         ) : null}
+
+        {/* Subject */}
         <Text style={styles.label}>Subject *</Text>
+
         <Pressable
           accessibilityRole="button"
+          accessibilityLabel="Select a topic"
           onPress={() => setSubjectModalVisible(true)}
           style={styles.dropdown}
         >
           <Text
             style={[styles.dropdownText, !subject && styles.placeholderText]}
           >
-            {subject || 'Select a subject'}
+            {subject || 'Select a topic'}
           </Text>
+
           <Image
             accessible={false}
             source={require('../../../assets/icons/dropdown-chevron.png')}
             style={styles.dropdownIcon}
+            resizeMode="contain"
           />
         </Pressable>
+
         {errors.subject ? (
           <Text style={styles.errorText}>{errors.subject}</Text>
         ) : null}
-        <Text style={styles.label}>Your message *</Text>
-        <AppInput
-          containerStyle={styles.messageContainer}
-          error={errors.message}
-          inputStyle={styles.messageInput}
-          inputContainerStyle={[
-            styles.messageInputContainer,
-            messageFocused && styles.messageInputFocused,
-          ]}
-          maxLength={1000}
-          multiline
-          onBlur={() => setMessageFocused(false)}
-          onChangeText={(value) => {
-            setMessage(value);
-            if (value.trim())
-              setErrors((previous) => ({ ...previous, message: '' }));
-          }}
-          onFocus={() => setMessageFocused(true)}
-          placeholder="Tell us what you think..."
-          textAlignVertical="top"
-          value={message}
-        />
-        <Text style={styles.characterCount}>{message.length}/1000</Text>
+
+        {/* Message */}
+        <Text style={styles.label}>Message *</Text>
+
+        <View style={styles.messageInputWrapper}>
+          <AppInput
+            containerStyle={styles.messageContainer}
+            error={errors.message}
+            inputStyle={styles.messageInput}
+            inputContainerStyle={[
+              styles.messageInputContainer,
+              messageFocused && styles.messageInputFocused,
+            ]}
+            maxLength={1000}
+            multiline
+            onBlur={() => setMessageFocused(false)}
+            onChangeText={(value) => {
+              setMessage(value);
+
+              if (value.trim()) {
+                setErrors((previous) => ({
+                  ...previous,
+                  message: '',
+                }));
+              }
+            }}
+            onFocus={() => setMessageFocused(true)}
+            placeholder="Describe your experience or issue in detail so we can assist you better"
+            textAlignVertical="top"
+            value={message}
+          />
+
+          <Text style={styles.characterCount}>{message.length}/1000</Text>
+        </View>
+        <Text style={styles.supportNote}>
+          Your message will be reviewed by our support team.
+        </Text>
       </ScrollView>
+
+      {/* Footer */}
       <View style={styles.footer}>
         <AppButton
           fullWidth
@@ -164,6 +221,8 @@ export function WriteToUsScreen() {
           title="Send Message"
         />
       </View>
+
+      {/* Subject selection modal */}
       <Modal
         animationType="fade"
         onRequestClose={() => setSubjectModalVisible(false)}
@@ -178,13 +237,19 @@ export function WriteToUsScreen() {
             onPress={(event) => event.stopPropagation()}
             style={styles.modalCard}
           >
-            <Text style={styles.modalTitle}>Select a subject</Text>
+            <Text style={styles.modalTitle}>Select a topic</Text>
+
             {SUBJECTS.map((item) => (
               <Pressable
                 key={item}
+                accessibilityRole="button"
+                accessibilityState={{ selected: subject === item }}
                 onPress={() => {
                   setSubject(item);
-                  setErrors((previous) => ({ ...previous, subject: '' }));
+                  setErrors((previous) => ({
+                    ...previous,
+                    subject: '',
+                  }));
                   setSubjectModalVisible(false);
                 }}
                 style={styles.subjectOption}
@@ -197,6 +262,7 @@ export function WriteToUsScreen() {
                 >
                   {item}
                 </Text>
+
                 {subject === item ? (
                   <Text style={styles.checkmark}>✓</Text>
                 ) : null}

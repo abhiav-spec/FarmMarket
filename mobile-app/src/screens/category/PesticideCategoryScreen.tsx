@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { useHomeHeader } from '@/hooks/useHomeHeader';
 import {
   CategoryHeroBanner,
   HomeHeader,
@@ -9,11 +9,7 @@ import {
   ProductCard,
 } from '@/components';
 import { CATEGORY_STRINGS } from '@/constants/categoryStrings';
-import { HOME_HEADER_DATA } from '@/constants/home';
-import {
-  PESTICIDE_BANNER,
-  PESTICIDE_PRODUCTS,
-} from '@/constants/pesticide';
+import { PESTICIDE_BANNER, PESTICIDE_PRODUCTS } from '@/constants/pesticide';
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { useCart } from '@/context/CartContext';
 import type { ProductItem } from '@/types/product';
@@ -33,11 +29,11 @@ function toCartProduct(product: ProductItem) {
 
 export function PesticideCategoryScreen() {
   const router = useRouter();
-  const { addItem, itemCount } = useCart();
+  const { addItem } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
-
+  const header = useHomeHeader();
   const filteredProducts = PESTICIDE_PRODUCTS.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleProductPress = (product: ProductItem) => {
@@ -55,18 +51,20 @@ export function PesticideCategoryScreen() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={filteredProducts.length > 0 ? styles.row : undefined}
+        columnWrapperStyle={
+          filteredProducts.length > 0 ? styles.row : undefined
+        }
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.headerArea}>
             <HomeHeader
-              location={HOME_HEADER_DATA.location}
-              walletBalance={HOME_HEADER_DATA.walletBalance}
-              onLocationPress={() => {}}
-              onNotificationPress={() => {}}
-              onWalletPress={() => {}}
-              onCartPress={() => {}}
-              cartCount={itemCount}
+              location={header.location}
+              walletBalance={header.walletBalance}
+              onLocationPress={header.onLocationPress}
+              onNotificationPress={header.onNotificationPress}
+              onWalletPress={header.onWalletPress}
+              onCartPress={header.onCartPress}
+              cartCount={header.cartCount}
             />
 
             <HomeSearchBar
