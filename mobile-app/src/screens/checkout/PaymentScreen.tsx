@@ -8,6 +8,7 @@ import { ScreenHeader } from '@/components/common/ScreenHeader';
 import { Touchable } from '@/components/ui/Touchable';
 import { PAYMENT_COPY, PAYMENT_OPTIONS } from '@/constants/config';
 import { useCart } from '@/context/CartContext';
+import { addOrderFromCart } from '@/data/defaultOrder';
 import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, RADIUS, SIZES, SPACING, UI } from '@/theme';
 import { formatPaise } from '@/utils/price';
 import { useGoBack } from '@/utils/navigation';
@@ -15,7 +16,9 @@ import { useGoBack } from '@/utils/navigation';
 export function PaymentScreen() {
   const router = useRouter();
   const goBack = useGoBack('/cart');
-  const totalPaise = useCart().priceSummary.orderTotalPaise;
+  const cart = useCart();
+  const { items, clearCart } = cart;
+  const totalPaise = cart.priceSummary.orderTotalPaise;
   const [selectedId, setSelectedId] = useState<string>();
   const selectedOption = PAYMENT_OPTIONS.find((option) => option.id === selectedId);
   const priceAfter = (discountPaise = 0) => Math.max(0, totalPaise - discountPaise);
@@ -57,7 +60,17 @@ export function PaymentScreen() {
         label={PAYMENT_COPY.placeOrder}
         style={styles.footer}
         actionStyle={styles.placeOrder}
-        onContinue={selectedOption && (() => router.push('/checkout/success'))}
+        onContinue={selectedOption && (() => {
+          const firstItem = items[0];
+          if (!firstItem) return;
+          addOrderFromCart({
+            product: items.length > 1 ? `${firstItem.product.name} + ${items.length - 1} more` : firstItem.product.name,
+            weight: firstItem.product.variant,
+            totalPaise: priceAfter(selectedOption.discountPaise),
+            paymentMethod: selectedOption.label,
+          });
+          router.push('/checkout/success');
+        })}
       />
     </View>
   );

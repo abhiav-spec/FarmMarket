@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -17,7 +17,9 @@ import { formatPaise } from '@/utils/price';
 
 export function OrderSuccessScreen() {
   const router = useRouter();
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
+  const [orderedItems] = useState(items);
+  useEffect(() => { clearCart(); }, [clearCart]);
   const { horizontalPadding } = useResponsive();
   return (
     <ScrollView style={styles.screen} contentContainerStyle={[styles.content, { paddingHorizontal: horizontalPadding }]} showsVerticalScrollIndicator={false}>
@@ -27,11 +29,11 @@ export function OrderSuccessScreen() {
       <AppText accessibilityRole="header" style={styles.title}>{PAYMENT_SUCCESS_COPY.title}</AppText>
       <AppText style={styles.description}>{PAYMENT_SUCCESS_COPY.description}</AppText>
       <View style={styles.orders}>
-        {items.map((item) => <OrderedItem key={cartProductKey(item.product)} item={item} address={MOCK_ADDRESS} />)}
+        {orderedItems.map((item) => <OrderedItem key={cartProductKey(item.product)} item={item} address={MOCK_ADDRESS} />)}
       </View>
       <View style={styles.spacer} />
       <View style={styles.actions}>
-        <Touchable title={PAYMENT_SUCCESS_COPY.viewOrders} textStyle={styles.buttonText} hitSlop={0} style={styles.button} />
+        <Touchable onPress={() => router.replace('/orders')} title={PAYMENT_SUCCESS_COPY.viewOrders} textStyle={styles.buttonText} hitSlop={0} style={styles.button} />
         <Touchable onPress={() => router.replace('/home')} title={PAYMENT_SUCCESS_COPY.home} textStyle={styles.buttonText} hitSlop={0} style={styles.button} />
       </View>
     </ScrollView>

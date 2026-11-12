@@ -60,6 +60,15 @@ import { useGoBack } from '@/utils/navigation';
 
 const ALL_PRODUCTS = PRODUCT_CATALOG;
 
+function relatedProducts(currentId: string, limit = 10): Product[] {
+  const seen = new Set<string>();
+  return ALL_PRODUCTS.filter((item) => {
+    if (item.id === currentId || seen.has(item.id)) return false;
+    seen.add(item.id);
+    return true;
+  }).slice(0, limit);
+}
+
 const PACK_PRICE_MULTIPLIERS: Record<string, number> = {
   '100g': 0.4,
   '250g': 1,
@@ -321,11 +330,9 @@ export function ProductDetailsScreen() {
               {PRODUCT_DETAIL_COPY.returnsDescription}
             </AppText>
           </View>
-          <ProductCarousel
+                    <ProductCarousel
             title={PRODUCT_DETAIL_COPY.similarProducts}
-            products={MOCK_RECOMMENDATION_PRODUCTS.filter(
-              (item) => item.id !== product.id,
-            )}
+            products={relatedProducts(product.id, 10)}
             onAddToCart={addItem}
             onProductPress={openProduct}
             style={styles.similarSection}
@@ -349,7 +356,7 @@ export function ProductDetailsScreen() {
           />
           <ProductCarousel
             title={PRODUCT_DETAIL_COPY.recommendedProducts}
-            products={MOCK_RECOMMENDATION_PRODUCTS}
+            products={relatedProducts(product.id, 10)}
             onAddToCart={addItem}
             onProductPress={openProduct}
             style={styles.recommendedSection}

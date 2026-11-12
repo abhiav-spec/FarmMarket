@@ -1,3 +1,6 @@
+
+        
+import { Alert } from 'react-native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
@@ -8,6 +11,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+
 import { useRouter } from 'expo-router';
 import type { Product } from '@/types';
 import { useHomeHeader } from '@/hooks/useHomeHeader';
@@ -96,6 +100,7 @@ export function HomeScreen() {
   const header = useHomeHeader();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
+  const searchResults = MOCK_RECOMMENDATION_PRODUCTS.filter((product) => product.name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   const allProducts = useMemo(
     () => [
@@ -136,8 +141,8 @@ export function HomeScreen() {
         <HomeSearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          onVoicePress={() => {}}
-          onScanPress={() => {}}
+          onVoicePress={() => Alert.alert('Voice search', 'Please type your search in the search bar.')}
+          onScanPress={() => Alert.alert('QR scanner', 'QR scanning will be available when camera access is enabled.')}
           onWishlistPress={() => router.push('/wishlist')}
         />
 
@@ -269,6 +274,15 @@ export function HomeScreen() {
               }
               onViewAllPress={() => router.push('/category/equipments')}
               onAddToCart={(product) => cart.addItem(product)}
+            />
+
+            <RecommendationCarousel
+              title={CART_COPY.recommendations}
+              products={MOCK_RECOMMENDATION_PRODUCTS}
+              onAddToCart={cart.addItem}
+              onProductPress={(product) =>
+                router.push(`/product/${product.id}`)
+              }
             />
           </>
         )}
