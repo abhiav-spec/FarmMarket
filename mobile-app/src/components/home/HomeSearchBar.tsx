@@ -1,8 +1,15 @@
-import React from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import {
+  RecordingPresets,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+  useAudioRecorder,
+} from 'expo-audio';
+import * as ImagePicker from 'expo-image-picker';
 
 import { AppIcon } from '@/components';
-import { COLORS, FONT_FAMILY, SPACING, useResponsive } from '@/theme';
+import { COLORS, FONT_FAMILY, SPACING, UI, useResponsive } from '@/theme';
 
 interface HomeSearchBarProps {
   value: string;
@@ -22,6 +29,71 @@ export function HomeSearchBar({
   onWishlistPress,
 }: HomeSearchBarProps) {
   const { home } = useResponsive();
+  const [isMicActive, setIsMicActive] = useState(false);
+  const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+
+  useEffect(() => {
+    return () => {
+      if (audioRecorder.isRecording) {
+        audioRecorder.stop().catch(() => {});
+      }
+    };
+  }, [audioRecorder]);
+
+  const handleVoicePress = async () => {
+    onVoicePress?.();
+
+    if (isMicActive) {
+      try {
+        if (audioRecorder.isRecording) {
+          await audioRecorder.stop();
+        }
+      } catch {
+        // Ignore stop errors if recorder already stopped
+      }
+      setIsMicActive(false);
+      return;
+    }
+
+    try {
+      const permission = await requestRecordingPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert(
+          'Microphone Permission',
+          'Microphone permission is required to enable the mic.',
+        );
+        return;
+      }
+
+      await setAudioModeAsync({
+        allowsRecording: true,
+        playsInSilentMode: true,
+      });
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
+      setIsMicActive(true);
+    } catch {
+      setIsMicActive(false);
+    }
+  };
+
+  const handleScanPress = async () => {
+    onScanPress?.();
+
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(
+        'Camera Permission',
+        'Camera permission is required to open the camera.',
+      );
+      return;
+    }
+
+    await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+    });
+  };
 
   return (
     <View style={styles.row}>
@@ -56,19 +128,23 @@ export function HomeSearchBar({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Voice search"
-          onPress={onVoicePress}
+          onPress={handleVoicePress}
           style={styles.iconButton}
-          hitSlop={8}
+          hitSlop={UI.hitSlop}
         >
-          <AppIcon name="microphone" size="md" />
+          <AppIcon
+            name="microphone"
+            size="md"
+            color={isMicActive ? COLORS.success : COLORS.text.primary}
+          />
         </Pressable>
 
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Scan product"
-          onPress={onScanPress}
+          onPress={handleScanPress}
           style={styles.iconButton}
-          hitSlop={8}
+          hitSlop={UI.hitSlop}
         >
           <AppIcon name="scan" size="md" />
         </Pressable>
@@ -79,7 +155,7 @@ export function HomeSearchBar({
         accessibilityLabel="Wishlist"
         onPress={onWishlistPress}
         style={styles.wishlistButton}
-        hitSlop={8}
+        hitSlop={UI.hitSlop}
       >
         <AppIcon name="wishlist" size="lg" />
       </Pressable>
