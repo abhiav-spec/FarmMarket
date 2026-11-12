@@ -1,5 +1,12 @@
 import React, { useMemo, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import type { Product } from '@/types';
 import { useHomeHeader } from '@/hooks/useHomeHeader';
@@ -27,6 +34,24 @@ import {
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
+const CATEGORY_BANNERS = [
+  {
+    id: 'smart-tools',
+    image: require('../../../assets/images/categories/smarttoolsbanner.png'),
+  },
+  {
+    id: 'fertilizers',
+    image: require('../../../assets/images/categories/fertilizerbanner.png'),
+  },
+  {
+    id: 'pesticides',
+    image: require('../../../assets/images/categories/pesticidebanner.png'),
+  },
+  {
+    id: 'seeds',
+    image: require('../../../assets/images/categories/seedsbanner.png'),
+  },
+];
 function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
   return {
     id: product.id,
@@ -41,7 +66,8 @@ function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
 }
 export function HomeScreen() {
   const router = useRouter();
-
+  const { width } = useWindowDimensions();
+  const bannerWidth = width - SPACING.md * 2;
   const header = useHomeHeader();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,7 +171,24 @@ export function HomeScreen() {
               }
               onAddToCart={(product) => cart.addItem(product)}
             />
-
+            {/* Category Banner Carousel */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={bannerWidth + SPACING.md}
+              decelerationRate="fast"
+              contentContainerStyle={styles.bannerContainer}
+            >
+              {CATEGORY_BANNERS.map((banner) => (
+                <View key={banner.id} style={{ width: bannerWidth }}>
+                  <Image
+                    source={banner.image}
+                    style={styles.categoryBanner}
+                    resizeMode="contain"
+                  />
+                </View>
+              ))}
+            </ScrollView>
             <ProductSection
               title="Seeds Section"
               products={MOCK_RECOMMENDATION_PRODUCTS}
@@ -211,5 +254,17 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     width: SEARCH_LAYOUT.cardWidthPercent,
+  },
+  bannerContainer: {
+    paddingHorizontal: SPACING.md,
+    gap: SPACING.md,
+    marginTop: SPACING.lg,
+    marginBottom: SPACING.lg,
+  },
+
+  categoryBanner: {
+    width: '100%',
+    height: 155,
+    borderRadius: 12,
   },
 });
