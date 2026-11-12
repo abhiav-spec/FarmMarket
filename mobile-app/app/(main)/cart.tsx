@@ -23,6 +23,7 @@ import {
   RecommendationCarousel,
 } from '@/components/cart';
 import { useCart } from '@/context/CartContext';
+import { useCoupon } from '@/context/CouponContext';
 import { useReviews } from '@/context/ReviewContext';
 import {
   CART_CONFIG,
@@ -65,6 +66,8 @@ import {
 } from '@/data/mockProducts';
 import { useWishlist } from '@/context/WishlistContext';
 import { ProductDetails } from '@/components/product/ProductDetails';
+import { CouponsScreen } from '@/screens/cart/CouponsScreen';
+import { CouponSuccessScreen } from '@/screens/cart/CouponSuccessScreen';
 
 interface CartViewProps {
   items: readonly CartItem[];
@@ -90,6 +93,7 @@ interface CartViewProps {
 export default function CartScreen() {
   const router = useRouter();
   const cart = useCart();
+  const { appliedCoupon } = useCoupon();
   const wishlist = useWishlist();
   const { step, productId, walletTab } = useLocalSearchParams<{
     step?: string;
@@ -97,6 +101,9 @@ export default function CartScreen() {
     walletTab?: string;
   }>();
   const { deleteReview, submittedReviews } = useReviews();
+
+  if (step === 'coupons') return <CouponsScreen />;
+  if (step === 'coupon-success') return <CouponSuccessScreen />;
 
   if (step === 'wallet') {
     return (
@@ -194,6 +201,10 @@ export default function CartScreen() {
       onContinue={() =>
         router.push({ pathname: '/cart', params: { step: 'payment' } })
       }
+      onApplyCoupon={() =>
+        router.push({ pathname: '/cart', params: { step: 'coupons' } })
+      }
+      appliedCoupon={appliedCoupon}
       onProductPress={(product) =>
         router.push({
           pathname: '/cart',

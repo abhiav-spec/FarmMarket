@@ -10,6 +10,8 @@ import { Touchable } from '@/components/ui/Touchable';
 import { CART_COPY } from '@/constants/config';
 import { IMAGES } from '@/constants/images';
 import { useCart } from '@/context/CartContext';
+import { useCoupon } from '@/context/CouponContext';
+import { getCouponDiscountPaise } from '@/utils/coupon';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { CART_LAYOUT, COLORS, SIZES, SPACING } from '@/theme';
@@ -17,6 +19,9 @@ import { CART_LAYOUT, COLORS, SIZES, SPACING } from '@/theme';
 export function CartScreen() {
   const router = useRouter();
   const { items, priceSummary, config, addItem, removeItem, deleteItem } = useCart();
+  const { appliedCoupon } = useCoupon();
+  const couponDiscountPaise = getCouponDiscountPaise(appliedCoupon, priceSummary.productTotalPaise);
+  const orderTotalPaise = Math.max(0, priceSummary.orderTotalPaise - couponDiscountPaise);
 
   const header = (
     <ScreenHeader
@@ -59,11 +64,11 @@ export function CartScreen() {
             onProductPress={() => router.push(`/product/${item.product.id}`)}
           />
         ))}
-        <CouponBanner />
+        <CouponBanner onPress={() => router.push('/cart/coupons')} appliedCoupon={appliedCoupon} />
         <RecommendationCarousel title={CART_COPY.recommendations} products={MOCK_RECOMMENDATION_PRODUCTS} onAddToCart={addItem} onProductPress={(product) => router.push(`/product/${product.id}`)} />
-        <PriceBreakdown summary={priceSummary} />
+        <PriceBreakdown summary={priceSummary} couponDiscountPaise={couponDiscountPaise} />
       </ScrollView>
-      <CartBottomBar totalPaise={priceSummary.orderTotalPaise} onContinue={() => router.push('/checkout/payment')} />
+      <CartBottomBar totalPaise={orderTotalPaise} onContinue={() => router.push('/checkout/payment')} />
     </View>
   );
 }

@@ -5,7 +5,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
 import { Touchable } from '@/components/ui/Touchable';
 import { WalletHeader, WalletTransactionRow } from '@/components/wallet';
-import { WALLET_COPY, WALLET_DATA } from '@/constants/config';
+import { WALLET_COPY } from '@/constants/config';
+import { useWallet } from '@/context/WalletContext';
 import { IMAGES } from '@/constants/images';
 import { COLORS, UI, useResponsive, WALLET_LAYOUT, WALLET_TYPOGRAPHY } from '@/theme';
 import { useGoBack } from '@/utils/navigation';
@@ -22,6 +23,7 @@ export function WalletScreen() {
   const goBack = useGoBack('/home');
   const { horizontalPadding } = useResponsive();
   const { tab } = useLocalSearchParams<{ tab?: string }>();
+  const { balancePaise, transactions } = useWallet();
   const [activeTab, setActiveTab] = useState<WalletTab>(tab === 'how-to-use' ? 'how-to-use' : 'history');
   const padded = { paddingHorizontal: horizontalPadding };
 
@@ -34,7 +36,7 @@ export function WalletScreen() {
             <Image source={IMAGES.walletIllustration} style={styles.illustration} resizeMode="contain" accessible={false} />
             <View style={styles.balanceDetails}>
               <AppText style={styles.balanceTitle}>{WALLET_COPY.title}</AppText>
-              <AppText style={styles.balance}>{WALLET_DATA.balance}</AppText>
+              <AppText style={styles.balance}>{(balancePaise / 100).toLocaleString('en-IN')}</AppText>
             </View>
             <Touchable onPress={() => router.push('/wallet/add-money')} title={WALLET_COPY.addMoney} textStyle={styles.addMoneyText} hitSlop={0} style={[styles.button, styles.addMoney]} />
           </View>
@@ -49,7 +51,7 @@ export function WalletScreen() {
         </View>
         {activeTab === 'history' ? (
           <View style={[styles.transactions, padded]}>
-            {WALLET_DATA.transactions.map((transaction) => <WalletTransactionRow key={transaction.id} transaction={transaction} />)}
+            {transactions.map((transaction) => <WalletTransactionRow key={transaction.id} transaction={transaction} />)}
           </View>
         ) : (
           <View style={[styles.usage, padded]}>

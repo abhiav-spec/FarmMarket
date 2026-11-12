@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useReducer } from 'react';
+import React, { createContext, useContext, useMemo, useReducer, useState } from 'react';
 
 import { CART_CONFIG } from '@/constants/config';
 import { type CartConfig, type CartItem, type CartPriceSummary, type Product } from '@/types';
@@ -47,6 +47,8 @@ interface CartContextValue {
   deleteItem: (product: CartProductRef) => void;
   setQuantity: (product: CartProductRef, quantity: number) => void;
   clearCart: () => void;
+  checkoutItems: CartItem[];
+  captureCheckoutItems: () => void;
   priceSummary: CartPriceSummary;
 }
 
@@ -69,6 +71,7 @@ export function CartProvider({
     initialItems,
     (initial) => initial.map((item) => ({ ...item })),
   );
+  const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
   const actions = useMemo(() => ({
     addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', product }),
     removeItem: (product: CartProductRef) => dispatch({ type: 'REMOVE_ITEM', product }),
@@ -80,10 +83,12 @@ export function CartProvider({
   const value = useMemo<CartContextValue>(() => ({
     ...actions,
     items,
+    checkoutItems,
+    captureCheckoutItems: () => setCheckoutItems(items.map((item) => ({ ...item, product: { ...item.product } }))),
     config,
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
     priceSummary: computePriceSummary(items, config),
-  }), [actions, items, config]);
+  }), [actions, checkoutItems, items, config]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
