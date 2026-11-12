@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { useUserProfile } from '@/context/UserProfileContext';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { OutlinedBox } from '@/components/auth/OutlinedBox';
@@ -35,6 +35,7 @@ const onlyDigits = (value: string) =>
 
 export function MobileNumberScreen() {
   const router = useRouter();
+  const { setPendingPhone } = useUserProfile();
   const keyboardVisible = useKeyboardVisible();
   const [phone, setPhone] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -43,6 +44,8 @@ export function MobileNumberScreen() {
 
   const handleContinue = () => {
     if (!isValid) return;
+
+    setPendingPhone(phone);
     router.push(AUTH_ROUTES.otp);
   };
 
@@ -63,9 +66,7 @@ export function MobileNumberScreen() {
           {/* Mobile number: country code box next to the number box */}
           <View style={styles.inputRow}>
             <OutlinedBox darkBorder style={styles.countryCodeBox}>
-              <AppText style={styles.countryCodeText}>
-                {COUNTRY_CODE}
-              </AppText>
+              <AppText style={styles.countryCodeText}>{COUNTRY_CODE}</AppText>
             </OutlinedBox>
 
             <OutlinedBox darkBorder focused={isFocused} style={styles.phoneBox}>

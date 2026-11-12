@@ -36,9 +36,7 @@ export function MyReviewsScreen() {
     <SafeAreaView style={styles.screen}>
       <FeedbackHeader
         title="My Reviews"
-        onBackPress={() =>
-          router.canGoBack() ? router.back() : router.replace('/(main)/profile')
-        }
+        onBackPress={() => router.replace('/(main)/profile')}
       />
       <ScrollView contentContainerStyle={styles.content}>
         {openActionsId ? (
