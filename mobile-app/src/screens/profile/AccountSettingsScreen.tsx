@@ -13,7 +13,7 @@ export function AccountSettingsScreen() {
     <SafeAreaView style={styles.screen}>
       <FeedbackHeader
         title="Account settings"
-        onBackPress={() => router.back()}
+        onBackPress={() => router.replace('/(main)/profile')}
       />
 
       <View style={styles.layout}>

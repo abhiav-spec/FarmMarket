@@ -50,7 +50,7 @@ export function ReferNowScreen() {
     <SafeAreaView style={styles.screen}>
       <FeedbackHeader
         title="Refer Now"
-        onBackPress={() => router.back()}
+        onBackPress={() => router.replace('/(main)/profile')}
         rightIconSource={require('../../../assets/icons/referral-info.png')}
         onRightPress={() => setHowItWorksVisible(true)}
         rightAccessibilityLabel="Referral help and details"

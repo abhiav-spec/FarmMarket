@@ -78,7 +78,7 @@ export function ProfileScreen() {
           name={profileName}
           phone={profilePhone}
           location={profileLocation}
-          onBackPress={() => {}}
+          onBackPress={() => router.replace('/home')}
           onEditPress={() =>
             router.push({
               pathname: AUTH_ROUTES.personalInfo,
