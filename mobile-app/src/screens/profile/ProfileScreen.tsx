@@ -22,16 +22,15 @@ import {
 import { useWishlist } from '@/context/WishlistContext';
 import { useUserProfile } from '@/context/UserProfileContext';
 import { FONT_FAMILY } from '@/theme';
-
+import { useWallet } from '@/context/WalletContext';
 import { styles } from './styles';
 
 export function ProfileScreen() {
   const router = useRouter();
   const { profile, isProfileLoaded } = useUserProfile();
   const wishlist = useWishlist();
-
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-
+  const { balancePaise } = useWallet();
   const showNotConnectedMessage = (feature: string) => {
     Alert.alert(feature, 'This feature is not connected yet.');
   };
@@ -89,8 +88,9 @@ export function ProfileScreen() {
 
         <ProfileQuickActions
           wishlistCount={wishlist.count}
+          walletBalance={balancePaise / 100}
           onWishlistPress={() => router.push('/wishlist')}
-          onWalletPress={() => showNotConnectedMessage('Wallet')}
+          onWalletPress={() => router.push('/wallet')}
         />
 
         {accountSection ? (

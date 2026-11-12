@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppIcon, AppText } from '@/components';
+import { useWallet } from '@/context/WalletContext';
 import { COLORS, useResponsive } from '@/theme';
 
 interface HomeHeaderProps {
@@ -17,7 +18,6 @@ interface HomeHeaderProps {
 
 export function HomeHeader({
   location,
-  walletBalance = 0,
   onLocationPress,
   onNotificationPress,
   onWalletPress,
@@ -26,6 +26,7 @@ export function HomeHeader({
   onProfilePress,
 }: HomeHeaderProps) {
   const { home } = useResponsive();
+  const { balancePaise } = useWallet();
 
   return (
     <View
@@ -102,7 +103,7 @@ export function HomeHeader({
               lineHeight: home.walletLineHeight,
             }}
           >
-            {walletBalance}
+            {(balancePaise / 100).toLocaleString('en-IN')}
           </AppText>
         </Pressable>
 

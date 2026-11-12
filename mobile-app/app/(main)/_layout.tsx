@@ -107,6 +107,10 @@ export default function MainLayout() {
         name="checkout/success"
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
+      <Tabs.Screen
+        name="checkout/payment-success"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
 
       {/* Product details */}
       <Tabs.Screen
@@ -123,6 +127,8 @@ export default function MainLayout() {
         name="wallet/add-money"
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
+      <Tabs.Screen name="wallet/payment" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+      <Tabs.Screen name="wallet/payment-success" options={{ href: null, tabBarStyle: { display: 'none' } }} />
 
       {/* Ravi's additional routes */}
       <Tabs.Screen

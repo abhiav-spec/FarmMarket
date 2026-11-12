@@ -17,8 +17,8 @@ import { formatPaise } from '@/utils/price';
 
 export function OrderSuccessScreen() {
   const router = useRouter();
-  const { items, clearCart } = useCart();
-  const [orderedItems] = useState(items);
+  const { items, checkoutItems, clearCart } = useCart();
+  const [orderedItems] = useState(checkoutItems.length > 0 ? checkoutItems : items);
   useEffect(() => { clearCart(); }, [clearCart]);
   const { horizontalPadding } = useResponsive();
   return (

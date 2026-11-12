@@ -42,27 +42,9 @@ export const WALLET_COPY = {
   howToUse: 'How to use',
 } as const;
 
-export const WALLET_DATA: {
-  balance: string;
-  transactions: readonly WalletTransaction[];
-} = {
-  balance: '500',
-  transactions: [
-    {
-      id: 'refund-03-may',
-      title: 'Refund credited',
-      date: '03 MAY',
-      amount: '+244',
-      credited: true,
-    },
-    {
-      id: 'order-02-may',
-      title: 'Order debited',
-      date: '02 MAY',
-      amount: '-100',
-      credited: false,
-    },
-  ],
+export const WALLET_DATA: { balance: string; transactions: readonly WalletTransaction[] } = {
+  balance: '0',
+  transactions: [],
 };
 
 export const CART_COPY = {
@@ -78,10 +60,12 @@ export const CART_COPY = {
   couponApplied: (code: string) => `Coupon: ${code}`,
   couponAccessibility: (code: string) => `Coupon ${code} applied`,
   changeCoupon: 'Tap to change or remove',
-  recommendations: 'You might like this',
+  recommendations: 'You may also like',
   viewMore: 'View More',
   priceDetails: 'Price Details',
-  productPrice: 'Product Price',
+  originalProductPrice: 'Original product price',
+  productPrice: 'Product subtotal',
+  couponDiscount: 'Coupon discount',
   shipping: 'Shipping Charges',
   freeShipping: 'Free',
   orderTotal: 'Order Total',

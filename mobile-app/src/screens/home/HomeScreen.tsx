@@ -100,7 +100,6 @@ export function HomeScreen() {
   const header = useHomeHeader();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
-  const searchResults = MOCK_RECOMMENDATION_PRODUCTS.filter((product) => product.name.toLowerCase().includes(searchQuery.trim().toLowerCase()));
 
   const allProducts = useMemo(
     () => [
