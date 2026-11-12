@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -38,18 +39,22 @@ const CATEGORY_BANNERS = [
   {
     id: 'smart-tools',
     image: require('../../../assets/images/categories/smarttoolsbanner.png'),
+    route: '/category/equipments',
   },
   {
     id: 'fertilizers',
     image: require('../../../assets/images/categories/fertilizerbanner.png'),
+    route: '/category/fertilizers',
   },
   {
     id: 'pesticides',
     image: require('../../../assets/images/categories/pesticidebanner.png'),
+    route: '/category/pesticides',
   },
   {
     id: 'seeds',
     image: require('../../../assets/images/categories/seedsbanner.png'),
+    route: '/category/seeds',
   },
 ];
 function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
@@ -68,6 +73,26 @@ export function HomeScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const bannerWidth = width - SPACING.md * 2;
+  const bannerScrollRef = useRef<ScrollView>(null);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBannerIndex((previousIndex) => {
+        const nextIndex =
+          previousIndex >= CATEGORY_BANNERS.length - 1 ? 0 : previousIndex + 1;
+
+        bannerScrollRef.current?.scrollTo({
+          x: nextIndex * (bannerWidth + SPACING.md),
+          animated: nextIndex !== 0,
+        });
+
+        return nextIndex;
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [bannerWidth]);
   const header = useHomeHeader();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
@@ -171,22 +196,39 @@ export function HomeScreen() {
               }
               onAddToCart={(product) => cart.addItem(product)}
             />
-            {/* Category Banner Carousel */}
+            {/* Auto-scrolling Category Banner Carousel */}
             <ScrollView
+              ref={bannerScrollRef}
               horizontal
               showsHorizontalScrollIndicator={false}
               snapToInterval={bannerWidth + SPACING.md}
               decelerationRate="fast"
               contentContainerStyle={styles.bannerContainer}
+              onMomentumScrollEnd={(event) => {
+                const index = Math.round(
+                  event.nativeEvent.contentOffset.x /
+                    (bannerWidth + SPACING.md),
+                );
+
+                setCurrentBannerIndex(
+                  Math.min(index, CATEGORY_BANNERS.length - 1),
+                );
+              }}
             >
               {CATEGORY_BANNERS.map((banner) => (
-                <View key={banner.id} style={{ width: bannerWidth }}>
+                <Pressable
+                  key={banner.id}
+                  style={{ width: bannerWidth }}
+                  onPress={() => router.push(banner.route)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Explore ${banner.id}`}
+                >
                   <Image
                     source={banner.image}
                     style={styles.categoryBanner}
                     resizeMode="contain"
                   />
-                </View>
+                </Pressable>
               ))}
             </ScrollView>
             <ProductSection
