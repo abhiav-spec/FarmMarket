@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -45,16 +45,33 @@ function UnderlineField({ label, value, onChangeText, placeholder, multiline }: 
 }
 
 export function FillAddressScreen() {
-  const { draftAddress, setDraftAddress, addAddress } = useAddress();
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState(draftAddress);
-  const [landmark, setLandmark] = useState('');
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { addresses, draftAddress, setDraftAddress, addAddress, updateAddress } = useAddress();
+  const editing = id ? addresses.find((a) => a.id === id) : undefined;
+  const [name, setName] = useState(editing?.name ?? '');
+  const [address, setAddress] = useState(editing?.address ?? draftAddress);
+  const [landmark, setLandmark] = useState(editing?.landmark ?? '');
+
+  // When the page is opened directly (e.g. after a refresh) the saved list loads late, so fill the form then.
+  useEffect(() => {
+    if (editing) {
+      setName(editing.name);
+      setAddress(editing.address);
+      setLandmark(editing.landmark);
+    }
+  }, [editing?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canSave = name.trim().length > 0 && address.trim().length > 0;
 
   const save = () => {
     if (!canSave) return;
-    addAddress({ name: name.trim(), address: address.trim(), landmark: landmark.trim() });
+    const data = { name: name.trim(), address: address.trim(), landmark: landmark.trim() };
+    if (editing) {
+      updateAddress(editing.id, data);
+      router.back();
+      return;
+    }
+    addAddress(data);
     setDraftAddress('');
     router.replace('/location');
   };

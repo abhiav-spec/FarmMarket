@@ -11,7 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 
-import { AddressProvider } from '../src/context/AddressContext';
+import { AddressProvider } from '@/context/AddressContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { CropAdvisorProvider } from '@/context/CropAdvisorContext';
 import { CartProvider } from '@/context/CartContext';

@@ -10,7 +10,8 @@ export type ProfileMenuItemConfig = {
     | '/help-centre'
     | '/write-to-us'
     | '/account-settings'
-    | '/crop-advisor-history';
+    | '/crop-advisor-history'
+    | '/saved-addresses';
 };
 
 export type ProfileMenuSectionConfig = {
@@ -29,6 +30,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'Save Address',
         subtitle: 'Manage your delivery address',
         icon: 'address',
+        route: '/saved-addresses',
       },
       {
         id: 'advisory',

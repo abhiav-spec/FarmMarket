@@ -196,6 +196,10 @@ export default function MainLayout() {
         name="fill-address"
         options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
+      <Tabs.Screen
+        name="saved-addresses"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
     </Tabs>
   );
 }

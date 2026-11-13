@@ -19,7 +19,9 @@ interface AddressContextValue {
   draftAddress: string;
   setDraftAddress: (value: string) => void;
   addAddress: (data: NewAddress) => SavedAddress;
-  removeAddress: (id: string) => void;
+  /** Returns false (and deletes nothing) when it is the last remaining address. */
+  removeAddress: (id: string) => boolean;
+  updateAddress: (id: string, data: NewAddress) => void;
   selectAddress: (id: string) => void;
 }
 
@@ -85,10 +87,21 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
 
   const removeAddress = useCallback(
     (id: string) => {
+      if (state.addresses.length <= 1) return false;
       const addresses = state.addresses.filter((a) => a.id !== id);
       const selectedId = state.selectedId === id ? (addresses[0]?.id ?? null) : state.selectedId;
       commit({ addresses, selectedId });
+      return true;
     },
+    [commit, state],
+  );
+
+  const updateAddress = useCallback(
+    (id: string, data: NewAddress) =>
+      commit({
+        addresses: state.addresses.map((a) => (a.id === id ? { ...a, ...data } : a)),
+        selectedId: state.selectedId,
+      }),
     [commit, state],
   );
 
@@ -106,9 +119,10 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
       setDraftAddress,
       addAddress,
       removeAddress,
+      updateAddress,
       selectAddress,
     }),
-    [state, ready, draftAddress, addAddress, removeAddress, selectAddress],
+    [state, ready, draftAddress, addAddress, removeAddress, updateAddress, selectAddress],
   );
 
   return <AddressContext.Provider value={value}>{children}</AddressContext.Provider>;
