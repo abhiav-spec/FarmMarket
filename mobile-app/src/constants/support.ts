@@ -32,7 +32,6 @@ export const SUPPORT_CHAT_CONSTANTS = {
     back: 'Go back',
     callSupport: 'Call support',
     moreOptions: 'More options',
-    attachFile: 'Attach file',
     sendMessage: 'Send message',
     onlineDot: 'Support online status',
     ticketIcon: 'Ticket icon',

@@ -45,16 +45,14 @@ export function SupportChatInput({
           returnKeyType="send"
         />
 
-        {/* Attachment Button - Enabled visually, no logic */}
+        {/* Photos Preview Button - Enabled visually, no logic */}
         <Pressable
           hitSlop={SPACING.xs}
-          accessibilityRole="button"
-          accessibilityLabel={SUPPORT_CHAT_CONSTANTS.accessibility.attachFile}
           onPress={onAttachPress}
           style={styles.attachButton}
         >
           <Ionicons
-            name="attach-outline"
+            name="images-outline"
             size={SUPPORT_CHAT_LAYOUT.iconLarge}
             color={COLORS.purple}
           />
