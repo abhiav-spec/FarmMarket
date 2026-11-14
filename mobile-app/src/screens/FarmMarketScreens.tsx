@@ -5,6 +5,7 @@ export {
   HelpUploadScreen,
   ReturnSuccessScreen,
 } from './support/SupportScreens';
+export { SupportScreen } from './support/SupportScreen';
 export {
   CancelOrderScreen,
   ConfirmCancellationScreen,

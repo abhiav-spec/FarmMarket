@@ -7,6 +7,7 @@ export type ProfileMenuItemConfig = {
   subtitle: string;
   icon: ProfileMenuIcon;
   route?:
+    | '/support'
     | '/help-centre'
     | '/write-to-us'
     | '/my-reviews'
@@ -44,7 +45,7 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         title: 'Help & Support',
         subtitle: "We're here to help you",
         icon: 'support',
-        route: '/help-centre',
+        route: '/support',
       },
       {
         id: 'write-to-us',

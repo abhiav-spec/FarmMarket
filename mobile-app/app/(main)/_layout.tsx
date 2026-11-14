@@ -138,6 +138,10 @@ export default function MainLayout() {
 
       {/* Existing secondary routes */}
       <Tabs.Screen name="order-detail" options={{ href: null }} />
+      <Tabs.Screen
+        name="support"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
       <Tabs.Screen name="help-centre" options={{ href: null }} />
       <Tabs.Screen name="help-upload" options={{ href: null }} />
       <Tabs.Screen name="return-success" options={{ href: null }} />

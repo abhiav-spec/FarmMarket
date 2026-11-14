@@ -31,7 +31,7 @@ export function Header({
         {!help && <Text pointerEvents="none" style={[styles.title, styles.centerTitle]}>{title}</Text>}
         {help && (
           <Pressable
-            onPress={() => router.push({ pathname: '/(main)/help-centre', params: helpOrderId ? { orderId: helpOrderId } : {} })}
+            onPress={() => router.push({ pathname: '/(main)/support', params: helpOrderId ? { orderId: helpOrderId } : {} })}
             hitSlop={spacing.sm}
             accessibilityLabel="Open Help Centre"
           >

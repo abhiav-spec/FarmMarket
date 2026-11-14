@@ -14,7 +14,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import type { Product } from '@/types';
 import { useHomeHeader } from '@/hooks/useHomeHeader';
-import { shortLocationLabel, useAddress } from '@/context/AddressContext';
 
 import {
   CategorySection,
@@ -30,7 +29,6 @@ import {
   EQUIPMENT_PRODUCTS,
   FERTILIZER_PRODUCTS,
   HOME_CATEGORIES,
-  HOME_HEADER_DATA,
   HOME_TOP_COMPANIES,
   PESTICIDE_PRODUCTS,
   SEEDS_PRODUCTS,
@@ -38,8 +36,6 @@ import {
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
-import { RecommendationCarousel } from '@/components/cart';
-import { CART_COPY } from '@/constants/config';
 const CATEGORY_BANNERS = [
   {
     id: 'smart-tools',
@@ -79,7 +75,7 @@ export function HomeScreen() {
   const { width } = useWindowDimensions();
   const bannerWidth = width - SPACING.md * 2;
   const bannerScrollRef = useRef<ScrollView>(null);
-  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [, setCurrentBannerIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
