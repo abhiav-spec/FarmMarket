@@ -38,7 +38,6 @@ import {
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
-import { RecommendationCarousel } from '@/components/cart';
 import { CART_COPY } from '@/constants/config';
 const CATEGORY_BANNERS = [
   {
