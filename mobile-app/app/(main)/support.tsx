@@ -1,4 +1,4 @@
-import { SupportScreen } from '@/screens/FarmMarketScreens';
+import { SupportScreen } from '@/screens/support/SupportScreen';
 
 export default SupportScreen;
 

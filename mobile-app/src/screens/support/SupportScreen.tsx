@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
+  Alert,
+  ImageSourcePropType,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -10,11 +12,14 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 import { FeedbackHeader } from '@/components/common/FeedbackHeader';
 import {
   SupportChatBubble,
   SupportChatInput,
+  SupportPhotoPickerModal,
+  SupportPhotoPreviewModal,
   SupportTicketBanner,
 } from '@/components/support';
 import type { ChatMessage } from '@/constants/support';
@@ -57,6 +62,10 @@ export function SupportScreen() {
 
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
+  const [isPhotoPickerVisible, setIsPhotoPickerVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState<ImageSourcePropType | null>(
+    null,
+  );
 
   const handleBackPress = useCallback(() => {
     router.replace('/(main)/profile');
@@ -106,9 +115,150 @@ export function SupportScreen() {
     }, 1000);
   }, [messageText]);
 
+  const handleSelectCamera = useCallback(async () => {
+    setIsPhotoPickerVisible(false);
+
+    try {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert(
+          SUPPORT_CHAT_CONSTANTS.permissionTitle,
+          SUPPORT_CHAT_CONSTANTS.cameraPermissionRequired,
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: false,
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets?.length) {
+        const currentTime = new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        const photoMessage: ChatMessage = {
+          id: `photo-${Date.now()}`,
+          sender: 'user',
+          text:
+            messageText.trim() || SUPPORT_CHAT_CONSTANTS.photoUploadedMessage,
+          timestamp: currentTime,
+          images: [{ uri: result.assets[0].uri }],
+        };
+
+        setMessages((prev) => [...prev, photoMessage]);
+        setMessageText('');
+
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+
+        // Simulate support photo verification reply
+        setTimeout(() => {
+          const replyTime = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const supportReply: ChatMessage = {
+            id: `support-${Date.now()}`,
+            sender: 'support',
+            senderName: SUPPORT_CHAT_CONSTANTS.supportTeamName,
+            text: SUPPORT_CHAT_CONSTANTS.photoAutoReplyMessage,
+            timestamp: replyTime,
+          };
+
+          setMessages((prev) => [...prev, supportReply]);
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Camera capture error:', error);
+    }
+  }, [messageText]);
+
+  const handleSelectGallery = useCallback(async () => {
+    setIsPhotoPickerVisible(false);
+
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert(
+          SUPPORT_CHAT_CONSTANTS.permissionTitle,
+          SUPPORT_CHAT_CONSTANTS.galleryPermissionRequired,
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: false,
+        quality: 0.8,
+        allowsMultipleSelection: true,
+      });
+
+      if (!result.canceled && result.assets?.length) {
+        const currentTime = new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        const selectedImages = result.assets.map((asset) => ({
+          uri: asset.uri,
+        }));
+
+        const photoMessage: ChatMessage = {
+          id: `gallery-${Date.now()}`,
+          sender: 'user',
+          text:
+            messageText.trim() || SUPPORT_CHAT_CONSTANTS.photoUploadedMessage,
+          timestamp: currentTime,
+          images: selectedImages,
+        };
+
+        setMessages((prev) => [...prev, photoMessage]);
+        setMessageText('');
+
+        setTimeout(() => {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+
+        // Simulate support photo verification reply
+        setTimeout(() => {
+          const replyTime = new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const supportReply: ChatMessage = {
+            id: `support-${Date.now()}`,
+            sender: 'support',
+            senderName: SUPPORT_CHAT_CONSTANTS.supportTeamName,
+            text: SUPPORT_CHAT_CONSTANTS.photoAutoReplyMessage,
+            timestamp: replyTime,
+          };
+
+          setMessages((prev) => [...prev, supportReply]);
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Gallery selection error:', error);
+    }
+  }, [messageText]);
+
+  const handleImagePress = useCallback((imageSource: ImageSourcePropType) => {
+    setPreviewImage(imageSource);
+  }, []);
+
   return (
     <SafeAreaView style={styles.screen}>
-      {/* Standard Reusable Topbar Header - Same as ReviewScreen & other screens */}
+      {/* Standard Reusable Topbar Header */}
       <FeedbackHeader
         title={SUPPORT_CHAT_CONSTANTS.headerTitle}
         onBackPress={handleBackPress}
@@ -141,19 +291,39 @@ export function SupportScreen() {
           {/* Chat Messages */}
           <View style={styles.messagesContainer}>
             {messages.map((msg) => (
-              <SupportChatBubble key={msg.id} message={msg} />
+              <SupportChatBubble
+                key={msg.id}
+                message={msg}
+                onImagePress={handleImagePress}
+              />
             ))}
           </View>
         </ScrollView>
 
-        {/* Bottom Input Bar - Send enabled only when typed, attach enabled visually with no logic */}
+        {/* Bottom Input Bar */}
         <SupportChatInput
           messageText={messageText}
           onChangeText={setMessageText}
           onSend={handleSendMessage}
+          onAttachPress={() => setIsPhotoPickerVisible(true)}
           bottomInset={insets.bottom}
         />
       </KeyboardAvoidingView>
+
+      {/* Camera / Gallery Picker Bottom Sheet */}
+      <SupportPhotoPickerModal
+        visible={isPhotoPickerVisible}
+        onClose={() => setIsPhotoPickerVisible(false)}
+        onSelectCamera={handleSelectCamera}
+        onSelectGallery={handleSelectGallery}
+      />
+
+      {/* Full Screen Photo Preview Modal */}
+      <SupportPhotoPreviewModal
+        visible={!!previewImage}
+        imageSource={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </SafeAreaView>
   );
 }

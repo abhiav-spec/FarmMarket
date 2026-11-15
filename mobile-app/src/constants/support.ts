@@ -28,6 +28,20 @@ export const SUPPORT_CHAT_CONSTANTS = {
   autoReplyMessage:
     'Thank you for sharing the details. Our team is verifying this with the seller and will update your ticket shortly.',
   supportPhoneNumber: 'tel:1800123456',
+  photoPickerTitle: 'Upload Photo',
+  photoPickerSubtitle: 'Choose an option to upload product photo',
+  takePhotoLabel: 'Take Photo',
+  takePhotoSubtitle: 'Use camera to capture photo',
+  chooseGalleryLabel: 'Choose from Gallery',
+  chooseGallerySubtitle: 'Select from device photos',
+  cancelLabel: 'Cancel',
+  photoUploadedMessage: 'Photo uploaded for verification',
+  photoAutoReplyMessage:
+    'Thank you for sharing the photo. Our team is verifying this with the seller and will update your ticket shortly.',
+  cameraPermissionRequired: 'Please allow camera access to take a photo.',
+  galleryPermissionRequired:
+    'Please allow access to your photo library to select photos.',
+  permissionTitle: 'Permission Required',
   accessibility: {
     back: 'Go back',
     callSupport: 'Call support',
@@ -53,4 +67,7 @@ export const SUPPORT_CHAT_LAYOUT = {
   iconLarge: 22,
   borderWidth: 1,
   sendIconOffset: 1,
+  photoBadgeSize: 44,
+  dragHandleWidth: 36,
+  dragHandleHeight: 4,
 } as const;

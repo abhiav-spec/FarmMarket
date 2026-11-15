@@ -1,5 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import type { ChatMessage } from '@/constants/support';
@@ -18,9 +25,13 @@ import {
 
 interface SupportChatBubbleProps {
   message: ChatMessage;
+  onImagePress?: (image: ImageSourcePropType) => void;
 }
 
-export function SupportChatBubble({ message }: SupportChatBubbleProps) {
+export function SupportChatBubble({
+  message,
+  onImagePress,
+}: SupportChatBubbleProps) {
   const isSupport = message.sender === 'support';
 
   return (
@@ -66,19 +77,27 @@ export function SupportChatBubble({ message }: SupportChatBubbleProps) {
 
         {/* Bubble Body Content */}
         <View style={styles.bubbleBody}>
-          <Text style={styles.bubbleText}>{message.text}</Text>
+          {Boolean(message.text) && (
+            <Text style={styles.bubbleText}>{message.text}</Text>
+          )}
 
           {/* Attached Product Images */}
           {message.images && message.images.length > 0 && (
             <View style={styles.imagesGrid}>
               {message.images.map((imgSrc, imgIndex) => (
-                <View key={`img-${imgIndex}`} style={styles.attachedImageBox}>
+                <Pressable
+                  key={`img-${imgIndex}`}
+                  onPress={() => onImagePress?.(imgSrc)}
+                  style={styles.attachedImageBox}
+                >
                   <Image
-                    source={imgSrc}
+                    source={
+                      typeof imgSrc === 'string' ? { uri: imgSrc } : imgSrc
+                    }
                     style={styles.attachedImage}
-                    resizeMode="contain"
+                    resizeMode="cover"
                   />
-                </View>
+                </Pressable>
               ))}
             </View>
           )}
@@ -157,6 +176,7 @@ const styles = StyleSheet.create({
   },
   imagesGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: SPACING.xs,
     marginTop: SPACING.xxs,
   },
@@ -175,5 +195,6 @@ const styles = StyleSheet.create({
   attachedImage: {
     width: '100%',
     height: '100%',
+    borderRadius: RADIUS.sm - 2,
   },
 });
