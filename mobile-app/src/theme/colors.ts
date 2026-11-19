@@ -3,6 +3,8 @@ export const COLORS = {
   surface: '#FFFFFF',
   surfaceLight: '#FAFAFA',
   shadow: '#000000',
+  white: '#FFFFFF',
+  black: '#000000',
 
   primary: '#8B5E3C',
   secondary: '#A67C52',
@@ -45,7 +47,9 @@ export const COLORS = {
     dark: '#333333',
     secondary: '#666666',
     muted: '#999999',
+    placeholder: '#999999',
     inverse: '#FFFFFF',
+    white: '#FFFFFF',
     purple: '#6A00FF',
     success: '#009411',
     stepperGreen: '#009411',

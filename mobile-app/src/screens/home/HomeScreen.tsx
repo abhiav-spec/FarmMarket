@@ -15,7 +15,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { Product } from '@/types';
 import { useHomeHeader } from '@/hooks/useHomeHeader';
-import { shortLocationLabel, useAddress } from '@/context/AddressContext';
 
 import {
   CategorySection,
@@ -31,7 +30,6 @@ import {
   EQUIPMENT_PRODUCTS,
   FERTILIZER_PRODUCTS,
   HOME_CATEGORIES,
-  HOME_HEADER_DATA,
   HOME_TOP_COMPANIES,
   PESTICIDE_PRODUCTS,
   SEEDS_PRODUCTS,

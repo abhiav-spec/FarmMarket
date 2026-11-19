@@ -55,7 +55,7 @@ export function AccountSettingsScreen() {
           </View>
         </ScrollView>
 
-        <SupportCard onPress={() => router.push('/help-centre')} />
+        <SupportCard onPress={() => router.push('/support')} />
       </View>
     </SafeAreaView>
   );

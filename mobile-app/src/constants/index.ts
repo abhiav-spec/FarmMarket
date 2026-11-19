@@ -5,3 +5,4 @@ export * from './home';
 export * from './icons';
 export * from './pesticide';
 export * from './seeds';
+export * from './support';
