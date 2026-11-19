@@ -1,0 +1,11 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "types": ["react"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

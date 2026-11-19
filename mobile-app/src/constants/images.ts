@@ -1,0 +1,25 @@
+export const IMAGES = {
+  saaf: require('../../assets/images/products/saaf.jpg'),
+  nativo: require('../../assets/images/products/nativo.png'),
+  gromor: require('../../assets/images/products/gromor.png'),
+  couponIcon: require('../../assets/images/icons/coupon.png'),
+  headerHeart: require('../../assets/images/icons/heart.png'),
+  headerSearch: require('../../assets/images/icons/search.png'),
+  trashIcon: require('../../assets/images/icons/trash.png'),
+  ratingStar: require('../../assets/images/icons/star.png'),
+  productMapPin: require('../../assets/images/icons/map-pin.png'),
+  productHeaderCart: require('../../assets/images/icons/cart.png'),
+  reviewMenu: require('../../assets/images/icons/menu.png'),
+  longExpiry: require('../../assets/images/badges/long-expiry.png'),
+  cashDelivery: require('../../assets/images/badges/cash-delivery.png'),
+  qrVerified: require('../../assets/images/badges/qr-verified.png'),
+  paymentSuccessCheck: require('../../assets/images/payment/success-check.png'),
+  walletTransactionCircle: require('../../assets/images/wallet/transaction-circle.png'),
+  walletDebitArrow: require('../../assets/images/wallet/debit-arrow.png'),
+  walletCreditArrow: require('../../assets/images/wallet/credit-arrow.png'),
+  walletIllustration: require('../../assets/images/wallet/illustration.png'),
+  walletAmountCurrency: require('../../assets/images/wallet/currency.png'),
+  walletUsageIllustration: require('../../assets/images/wallet/usage-illustration.png'),
+} as const;
+
+export const PRODUCT_DETAIL_GALLERY = [IMAGES.saaf, IMAGES.nativo] as const;
