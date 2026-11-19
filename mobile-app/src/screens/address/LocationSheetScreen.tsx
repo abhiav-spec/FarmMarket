@@ -152,7 +152,7 @@ export function LocationSheetScreen() {
                   accessibilityLabel={`Delete ${item.name}`}
                   hitSlop={10}
                   onPress={() => handleDelete(item.id)}
-                  onPress={() => removeAddress(item.id)}
+
                   style={styles.deleteButton}
                 >
                   <Ionicons
@@ -166,7 +166,10 @@ export function LocationSheetScreen() {
           )}
         </ScrollView>
       </View>
-      <LastAddressModal visible={showLastAlert} onClose={() => setShowLastAlert(false)} />
+      <LastAddressModal
+        visible={showLastAlert}
+        onClose={() => setShowLastAlert(false)}
+      />
     </View>
   );
 }
