@@ -19,11 +19,7 @@ export function CropAdvisorHeader({ title }: { title: string }) {
         accessibilityRole="button"
         accessibilityLabel="Go back"
         hitSlop={10}
-        onPress={() =>
-          router.canGoBack()
-            ? router.back()
-            : router.replace('/(main)/crop-advisor')
-        }
+        onPress={() => router.replace('/(main)/profile')}
         style={styles.back}
       >
         <Ionicons name="chevron-back" size={32} color={COLORS.text.black} />

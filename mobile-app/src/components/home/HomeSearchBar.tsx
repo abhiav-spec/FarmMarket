@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { type RefObject, useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import {
   RecordingPresets,
@@ -18,6 +18,7 @@ interface HomeSearchBarProps {
   onVoicePress?: () => void;
   onScanPress?: () => void;
   onWishlistPress?: () => void;
+  inputRef?: RefObject<TextInput | null>;
 }
 
 export function HomeSearchBar({
@@ -27,6 +28,7 @@ export function HomeSearchBar({
   onVoicePress,
   onScanPress,
   onWishlistPress,
+  inputRef,
 }: HomeSearchBarProps) {
   const { home } = useResponsive();
   const [isMicActive, setIsMicActive] = useState(false);
@@ -110,6 +112,7 @@ export function HomeSearchBar({
         <AppIcon name="search" size="lg" color={COLORS.text.secondary} />
 
         <TextInput
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}

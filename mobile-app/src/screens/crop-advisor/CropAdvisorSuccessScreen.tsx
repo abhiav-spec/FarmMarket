@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontFamily: FONT_FAMILY.medium,
+    fontFamily: FONT_FAMILY.semiBold,
     fontSize: FONT_SIZE.sm,
     lineHeight: LINE_HEIGHT.md,
   },

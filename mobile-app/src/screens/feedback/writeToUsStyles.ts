@@ -3,199 +3,293 @@ import { StyleSheet } from 'react-native';
 import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 export const writeToUsStyles = StyleSheet.create({
-  backArrow: { color: COLORS.text.primary, fontSize: 36, lineHeight: 40 },
-  backButton: { height: 40, justifyContent: 'center', width: 40 },
-  characterCount: {
-    color: COLORS.text.muted,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    marginTop: SPACING.xs,
-    textAlign: 'right',
-  },
-  checkmark: { color: COLORS.purple, fontSize: FONT_SIZE.lg },
-  description: {
-    color: COLORS.text.secondary,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
-    marginBottom: SPACING.xl,
-    marginTop: SPACING.sm,
-  },
-  dropdown: {
-    alignItems: 'center',
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    minHeight: 52,
-    paddingHorizontal: SPACING.md,
-  },
-  dropdownIcon: { height: 20, resizeMode: 'contain', width: 20 },
-  dropdownText: {
-    color: COLORS.text.primary,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.md,
-  },
-  errorText: {
-    color: COLORS.error,
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: FONT_SIZE.sm,
-    marginTop: SPACING.xs,
-  },
-  footer: {
+  screen: {
+    flex: 1,
     backgroundColor: COLORS.background,
-    borderTopColor: COLORS.border,
-    borderTopWidth: 1,
+  },
+
+  // Main content
+  scrollContent: {
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
     paddingBottom: SPACING.lg,
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.md,
   },
-  header: {
-    alignItems: 'center',
-    backgroundColor: COLORS.purpleSurface,
-    flexDirection: 'row',
-    height: 58,
-    justifyContent: 'space-between',
-    paddingHorizontal: SPACING.lg,
-  },
-  headerSpacer: { width: 40 },
-  headerTitle: {
-    color: COLORS.text.primary,
+
+  heading: {
+    color: COLORS.purple,
     fontFamily: FONT_FAMILY.bold,
     fontSize: FONT_SIZE.lg,
-  },
-  heading: {
-    color: COLORS.text.primary,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.xl,
+    textAlign: 'center',
+    alignSelf: 'center',
+    maxWidth: 360,
     marginTop: SPACING.md,
   },
-  label: {
+
+  description: {
     color: COLORS.text.primary,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.md,
-    marginBottom: SPACING.md,
-    marginTop: SPACING.lg,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
+    lineHeight: 20,
+    textAlign: 'center',
+    marginTop: SPACING.md,
+    marginBottom: SPACING.xl,
   },
-  messageContainer: { width: '100%' },
-  messageInputContainer: {
-    alignItems: 'stretch',
-    backgroundColor: COLORS.background,
-    borderColor: COLORS.purpleButtonBorder,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    minHeight: 150,
+
+  // Rating cards
+  ratingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: SPACING.xs,
   },
-  messageInputFocused: {
-    borderColor: COLORS.purple,
-    borderWidth: 2,
-  },
-  messageInput: {
-    backgroundColor: COLORS.background,
-    borderColor: 'transparent',
-    borderWidth: 0,
-    minHeight: 150,
-    paddingTop: SPACING.md,
-    textAlignVertical: 'top',
-  },
-  modalCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-  },
-  modalOverlay: {
-    backgroundColor: COLORS.overlay,
+
+  ratingOption: {
     flex: 1,
+    aspectRatio: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    padding: SPACING.lg,
+    backgroundColor: COLORS.purpleSurface,
+    borderColor: 'transparent',
+    borderWidth: 1,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.xs,
   },
-  modalTitle: {
-    color: COLORS.text.primary,
-    fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.lg,
-    marginBottom: SPACING.md,
+  ratingSelected: {
+    backgroundColor: COLORS.purpleSurface,
+    borderColor: COLORS.purple,
   },
-  placeholderText: { color: COLORS.text.muted },
-  purpleButton: { backgroundColor: COLORS.purple },
-  ratingEmoji: { fontSize: 25, marginBottom: SPACING.xs },
+
+  ratingEmoji: {
+    width: 36,
+    height: 36,
+    marginBottom: SPACING.xs,
+  },
+
   ratingLabel: {
     color: COLORS.text.secondary,
     fontFamily: FONT_FAMILY.regular,
     fontSize: 10,
     textAlign: 'center',
   },
-  ratingLabelSelected: { color: COLORS.purple, fontFamily: FONT_FAMILY.bold },
-  ratingOption: {
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 86,
-    paddingVertical: SPACING.sm,
+
+  ratingLabelSelected: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.bold,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    gap: SPACING.xs,
-    justifyContent: 'space-between',
+
+  // Labels and dropdown
+  label: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.md,
+    marginTop: SPACING.xl,
+    marginBottom: SPACING.md,
   },
-  ratingSelected: {
+
+  dropdown: {
+    minHeight: 54,
     backgroundColor: COLORS.purpleSurface,
-    borderColor: COLORS.purple,
-  },
-  screen: { backgroundColor: COLORS.background, flex: 1 },
-  scrollContent: { padding: SPACING.lg, paddingBottom: SPACING.xl },
-  selectedSubjectText: { color: COLORS.purple, fontFamily: FONT_FAMILY.bold },
-  subjectOption: {
-    alignItems: 'center',
-    borderBottomColor: COLORS.border,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: COLORS.purpleBorder1,
+    borderWidth: 1,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.lg,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    minHeight: 48,
   },
+
+  dropdownText: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.md,
+  },
+
+  placeholderText: {
+    color: COLORS.text.muted,
+  },
+
+  dropdownIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  },
+
+  // Message input
+  messageContainer: {
+    width: '100%',
+  },
+
+  messageInputWrapper: {
+    position: 'relative',
+  },
+
+  messageInputContainer: {
+    minHeight: 150,
+    alignItems: 'stretch',
+    backgroundColor: COLORS.surface,
+    borderColor: COLORS.purpleBorder1,
+    borderWidth: 1,
+    borderRadius: RADIUS.md,
+  },
+
+  messageInputFocused: {
+    borderColor: COLORS.purple,
+    borderWidth: 1,
+  },
+
+  messageInput: {
+    minHeight: 150,
+    paddingTop: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.xl,
+    textAlignVertical: 'top',
+  },
+
+  characterCount: {
+    position: 'absolute',
+    right: SPACING.md,
+    bottom: SPACING.md,
+    color: COLORS.text.muted,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
+  },
+
+  supportNote: {
+    color: COLORS.text.secondary,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
+    textAlign: 'center',
+    marginTop: SPACING.xxl,
+    marginBottom: SPACING.md,
+  },
+
+  // Validation
+  errorText: {
+    color: COLORS.error,
+    fontFamily: FONT_FAMILY.regular,
+    fontSize: FONT_SIZE.sm,
+    marginTop: SPACING.xs,
+  },
+
+  // Footer
+  footer: {
+    backgroundColor: COLORS.background,
+    borderTopColor: COLORS.border,
+    borderTopWidth: 1,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.md,
+    paddingBottom: SPACING.lg,
+  },
+
+  purpleButton: {
+    backgroundColor: COLORS.purple,
+    borderRadius: RADIUS.md,
+    height: 56,
+  },
+
+  // Subject modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: COLORS.overlay,
+    justifyContent: 'center',
+    padding: SPACING.lg,
+  },
+
+  modalCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.lg,
+  },
+
+  modalTitle: {
+    color: COLORS.text.primary,
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.lg,
+    marginBottom: SPACING.md,
+  },
+
+  subjectOption: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.border,
+  },
+
   subjectText: {
     color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.md,
   },
-  successContent: {
-    alignItems: 'center',
+
+  selectedSubjectText: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.bold,
+  },
+
+  checkmark: {
+    color: COLORS.purple,
+    fontSize: FONT_SIZE.lg,
+  },
+
+  // Success screen
+  successScreen: {
     flex: 1,
+    backgroundColor: COLORS.background,
+  },
+
+  successContent: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
   },
+
+  successIllustration: {
+    width: '100%',
+    maxWidth: 360,
+    height: 250,
+    marginBottom: SPACING.xl,
+  },
+
+  successTitle: {
+    color: COLORS.purple,
+    fontFamily: FONT_FAMILY.bold,
+    fontSize: FONT_SIZE.xxl,
+    textAlign: 'center',
+    marginBottom: SPACING.xs,
+  },
+
   successDescription: {
-    color: COLORS.text.secondary,
+    color: COLORS.text.primary,
     fontFamily: FONT_FAMILY.regular,
     fontSize: FONT_SIZE.md,
-    lineHeight: 24,
+    lineHeight: 22,
     textAlign: 'center',
   },
+
   successFooter: {
-    borderTopColor: COLORS.border,
-    borderTopWidth: 1,
     paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.lg,
-  },
-  successIllustration: {
-    height: 280,
-    marginBottom: SPACING.xl,
-    maxWidth: 320,
-    width: '100%',
-  },
-  successScreen: {
+    paddingTop: SPACING.xs,
+    paddingBottom: SPACING.xxxl,
     backgroundColor: COLORS.background,
-    flex: 1,
-    justifyContent: 'space-between',
   },
-  successTitle: {
-    color: COLORS.text.primary,
+
+  returnHomeButton: {
+    height: 48,
+    width: '100%',
+    backgroundColor: COLORS.purpleSurface,
+    borderWidth: 1,
+    borderColor: COLORS.purple,
+    borderRadius: RADIUS.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  returnHomeButtonText: {
+    color: COLORS.purple,
     fontFamily: FONT_FAMILY.bold,
-    fontSize: FONT_SIZE.xl,
-    marginBottom: SPACING.md,
+    fontSize: FONT_SIZE.md,
     textAlign: 'center',
   },
 });

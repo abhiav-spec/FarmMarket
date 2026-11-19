@@ -100,7 +100,7 @@ export function ProductRecommendationCard({
 
 const styles = StyleSheet.create({
   container: {
-    width: SIZES.recommendationCardWidth,
+    width: 165,
     height: SIZES.recommendationCardHeight,
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
   useWindowDimensions,
+  type LayoutChangeEvent,
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -20,6 +21,7 @@ import {
   RADIUS,
   SIZES,
   SPACING,
+  useResponsive,
 } from '@/theme';
 
 const ASSETS = {
@@ -34,6 +36,23 @@ const COPY = {
     'Facing a crop problem? Upload photos or videos and get expert guidance to keep your crops healthy and productive.',
   continue: 'Continue',
 } as const;
+
+/**
+ * The two illustrations sit in the bottom-left and bottom-right corners and never overlap:
+ * their widths always add up to the available width, and both shrink together when the
+ * space between the text and the button is short.
+ */
+const ART = {
+  advisor: { aspect: 412 / 293, share: 0.54, bottomPad: 34 / 412 }, // height / width, transparent bottom padding
+  farmer: { aspect: 284 / 250, share: 0.46, bottomPad: 0 },
+  sideMargin: 8,
+  maxTotalWidth: 720,
+  minScale: 0.4,
+} as const;
+
+const BUTTON_CLEARANCE = 73 + 4; // button bottom (25) + button height (48) + small gap
+const COPY_TOP_RATIO = 101 / 771; // Figma title offset relative to the body height
+const GAP_BELOW_COPY = 12;
 
 interface ScreenHeaderProps {
   onBack: () => void;
@@ -61,6 +80,30 @@ interface CropAdvisorIntroScreenProps {
 
 export function CropAdvisorIntroScreen({ onContinue }: CropAdvisorIntroScreenProps) {
   const { width } = useWindowDimensions();
+  const { moderateScale } = useResponsive();
+  const [bodyHeight, setBodyHeight] = useState(0);
+  const [copyHeight, setCopyHeight] = useState(0);
+
+  const onBodyLayout = (e: LayoutChangeEvent) => setBodyHeight(e.nativeEvent.layout.height);
+  const onCopyLayout = (e: LayoutChangeEvent) => setCopyHeight(e.nativeEvent.layout.height);
+
+  const copyTop = bodyHeight ? Math.max(24, Math.min(101, bodyHeight * COPY_TOP_RATIO)) : 101;
+  const copyBottom = copyTop + copyHeight;
+  const availableArtHeight = Math.max(0, bodyHeight - copyBottom - GAP_BELOW_COPY - BUTTON_CLEARANCE);
+  const totalWidth = Math.min(width, ART.maxTotalWidth) - ART.sideMargin * 2;
+  let advisorWidth = totalWidth * ART.advisor.share;
+  let farmerWidth = totalWidth * ART.farmer.share;
+  const tallest = Math.max(advisorWidth * ART.advisor.aspect, farmerWidth * ART.farmer.aspect);
+  if (bodyHeight && tallest > availableArtHeight) {
+    const k = Math.max(ART.minScale, availableArtHeight / tallest);
+    advisorWidth *= k;
+    farmerWidth *= k;
+  }
+  const advisorHeight = advisorWidth * ART.advisor.aspect;
+  const farmerHeight = farmerWidth * ART.farmer.aspect;
+  const artSide = (width - Math.min(width, ART.maxTotalWidth)) / 2 + ART.sideMargin;
+  const titleSize = Math.min(FONT_SIZE.xxl, moderateScale(FONT_SIZE.xxl));
+  const bodySize = Math.min(FONT_SIZE.sm, moderateScale(FONT_SIZE.sm));
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -74,18 +117,18 @@ export function CropAdvisorIntroScreen({ onContinue }: CropAdvisorIntroScreenPro
 
       <ScreenHeader onBack={handleBack} />
 
-      <View style={styles.introBody}>
+      <View style={styles.introBody} onLayout={onBodyLayout}>
         <ImageBackground
           source={ASSETS.decorations}
           resizeMode="stretch"
           style={[styles.decorations, { width }]}
         />
 
-        <View style={styles.introCopy}>
+        <View style={[styles.introCopy, { top: copyTop }]} onLayout={onCopyLayout}>
           <AppText
             variant="title"
             align="center"
-            style={styles.introTitle}
+            style={[styles.introTitle, { fontSize: titleSize }]}
           >
             {COPY.title}
           </AppText>
@@ -93,7 +136,10 @@ export function CropAdvisorIntroScreen({ onContinue }: CropAdvisorIntroScreenPro
           <AppText
             variant="body"
             align="center"
-            style={styles.introDescription}
+            style={[
+              styles.introDescription,
+              { paddingHorizontal: Math.min(53, width * 0.13), fontSize: bodySize },
+            ]}
           >
             {COPY.description}
           </AppText>
@@ -102,13 +148,27 @@ export function CropAdvisorIntroScreen({ onContinue }: CropAdvisorIntroScreenPro
         <Image
           source={ASSETS.advisor}
           resizeMode="contain"
-          style={styles.advisorImage}
+          style={{
+            position: 'absolute',
+            left: artSide,
+            bottom: BUTTON_CLEARANCE - ART.advisor.bottomPad * advisorHeight,
+            width: advisorWidth,
+            height: advisorHeight,
+            zIndex: 2,
+          }}
         />
 
         <Image
           source={ASSETS.farmer}
           resizeMode="contain"
-          style={styles.farmerImage}
+          style={{
+            position: 'absolute',
+            right: artSide,
+            bottom: BUTTON_CLEARANCE,
+            width: farmerWidth,
+            height: farmerHeight,
+            zIndex: 2,
+          }}
         />
 
         <AppButton
@@ -165,7 +225,6 @@ const styles = StyleSheet.create({
 
   introCopy: {
     position: 'absolute',
-    top: 101,
     left: SPACING.lg,
     right: SPACING.lg,
     zIndex: 2,
@@ -184,23 +243,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  advisorImage: {
-    position: 'absolute',
-    left: 1,
-    bottom: 45,
-    width: 340,
-    height: 430,
-    zIndex: 2,
-  },
-
-  farmerImage: {
-    position: 'absolute',
-    right: 9,
-    bottom: 72,
-    width: 300,
-    height: 300,
-    zIndex: 3,
-  },
 
   purpleButton: {
     height: SIZES.buttonHeight,

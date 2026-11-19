@@ -51,6 +51,26 @@ export const WALLET_LAYOUT = {
   transactionDateGap: 6,
   amountGap: 4,
   bottomPadding: 24,
+  width: 402,
+  horizontalPadding: 16,
+  usageImageWidth: 370,
+  usageImageHeight: 269,
+  usageImageLeft: 15,
+  usageTitleLeft: 108,
+  usageTitleWidth: 191,
+  usageDescriptionLeft: 40,
+  usageDescriptionWidth: 326,
+  illustrationLeft: 16,
+  balanceTextLeft: 118,
+  balanceTextTop: 20,
+  addMoneyRight: 14,
+  addMoneyTop: 32,
+  addMoneyWidth: 144,
+  historyTabWidth: 190,
+  historyTextWidth: 56,
+  historyTextOffset: 10,
+  howToUseTextWidth: 84,
+  howToUseTextOffset: 6,
 } as const;
 
 export const PAYMENT_SUCCESS_LAYOUT = {
@@ -78,6 +98,11 @@ export const PAYMENT_SUCCESS_LAYOUT = {
   bottomPadding: 74,
   buttonPaddingVertical: 16,
   buttonPaddingHorizontal: 10,
+  screenWidth: 438,
+  screenHeight: 954,
+  minimumContentHeight: 646,
+  horizontalPadding: 29,
+  productNameWidth: 133,
 } as const;
 
 export const SIZES = {

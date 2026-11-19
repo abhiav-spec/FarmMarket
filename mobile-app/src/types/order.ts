@@ -6,7 +6,7 @@ export interface OrderEvent {
 
 export interface FarmOrder {
   id: string;
-  status: 'Delivered' | 'Packed';
+  status: 'Delivered' | 'Order Placed' | 'Packed' | 'Cancelled' | 'Return Requested';
   date: string;
   product: string;
   weight: string;

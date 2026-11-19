@@ -9,18 +9,19 @@ import {
   TextInputKeyPressEventData,
   View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-
+import { useRouter } from 'expo-router';
+import { useUserProfile } from '@/context/UserProfileContext';
 import { AppText } from '@/components/common/AppText';
 import { AuthHeader } from '@/components/auth/AuthHeader';
 import { OutlinedBox } from '@/components/auth/OutlinedBox';
 import { PillButton } from '@/components/auth/PillButton';
 import {
+  AUTH_ROUTES,
   AUTH_STRINGS,
   COUNTRY_CODE,
+  MASKED_PHONE,
   OTP_LENGTH,
   OTP_RESEND_SECONDS,
-  PHONE_LENGTH,
 } from '@/constants/auth';
 import { useKeyboardVisible } from '@/hooks/useKeyboardVisible';
 import {
@@ -37,18 +38,13 @@ const STRINGS = AUTH_STRINGS.otp;
 const BOX_INDEXES = Array.from({ length: OTP_LENGTH }, (_, i) => i);
 const emptyDigits = () => Array<string>(OTP_LENGTH).fill('');
 
-// Shows the first half of the number, e.g. 98765 XXXXX
-const maskPhone = (phone: string) => {
-  const half = PHONE_LENGTH / 2;
-  const hidden = 'X'.repeat(half);
-  return phone.length === PHONE_LENGTH
-    ? `${phone.slice(0, half)} ${hidden}`
-    : `${hidden} ${hidden}`;
-};
-
 export function OtpScreen() {
   const router = useRouter();
-  const { phone = '' } = useLocalSearchParams<{ phone?: string }>();
+  const { pendingPhone, saveProfile } = useUserProfile();
+
+  const maskedPhone = pendingPhone
+    ? `${'X'.repeat(Math.max(0, pendingPhone.length - 4))}${pendingPhone.slice(-4)}`
+    : MASKED_PHONE;
   const { width, moderateScale } = useResponsive();
   const keyboardVisible = useKeyboardVisible();
 
@@ -125,10 +121,16 @@ export function OtpScreen() {
     }
   };
 
-  const handleContinue = () => {
-    if (isComplete) {
-      router.push('/(auth)/personal-info');
+  const handleContinue = async () => {
+    if (!isComplete) return;
+
+    if (pendingPhone) {
+      await saveProfile({
+        phone: `${COUNTRY_CODE} ${pendingPhone}`,
+      });
     }
+
+    router.push(AUTH_ROUTES.personalInfo);
   };
 
   return (
@@ -136,7 +138,7 @@ export function OtpScreen() {
       <KeyboardAvoidingView style={styles.keyboardView} behavior="padding">
         <AuthHeader
           title={STRINGS.header}
-          fallbackRoute="/(auth)/mobile-number"
+          fallbackRoute={AUTH_ROUTES.mobileNumber}
         />
 
         <View style={styles.instructionContainer}>
@@ -144,7 +146,7 @@ export function OtpScreen() {
             {STRINGS.sentPrefix}
             <AppText
               style={styles.phoneSpan}
-            >{`${COUNTRY_CODE} ${maskPhone(phone)}`}</AppText>
+            >{`${COUNTRY_CODE} ${maskedPhone}`}</AppText>
             {STRINGS.sentSuffix}
           </AppText>
         </View>
@@ -180,7 +182,7 @@ export function OtpScreen() {
 
         <View style={styles.spacer} />
 
-        {/* Resend text + button sit just above the keyboard, as in Figma */}
+        {/* Resend text + button sit just above the keyboard */}
         <View
           style={[
             styles.footer,
@@ -225,8 +227,6 @@ export function OtpScreen() {
   );
 }
 
-// Order as in Figma: header → instruction → OTP boxes → (space) →
-// resend text → button, just above the keyboard
 const styles = StyleSheet.create({
   screen: {
     flex: 1,

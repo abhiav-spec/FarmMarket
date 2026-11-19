@@ -5,7 +5,7 @@ import { COLORS, FONT_FAMILY, FONT_SIZE, RADIUS, SPACING } from '@/theme';
 
 type ProfileQuickActionsProps = {
   wishlistCount?: number;
-  walletBalance?: number;
+  walletBalance: number;
   onWishlistPress: () => void;
   onWalletPress: () => void;
 };
@@ -61,9 +61,7 @@ export function ProfileQuickActions({
           <Text style={styles.title}>Wallet</Text>
 
           <Text style={styles.value}>
-            {walletBalance === undefined
-              ? 'View wallet'
-              : `₹${walletBalance.toLocaleString('en-IN')}`}
+            {`₹${walletBalance.toLocaleString('en-IN')}`}
           </Text>
         </View>
       </Pressable>

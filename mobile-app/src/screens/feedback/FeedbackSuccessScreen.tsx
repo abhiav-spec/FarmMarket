@@ -1,9 +1,8 @@
 import React from 'react';
-import { Image, SafeAreaView, View } from 'react-native';
+import { Image, Pressable, SafeAreaView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { AppButton } from '@/components/ui/AppButton';
-import { AppText } from '@/components/common/AppText';
+import { FeedbackHeader } from '@/components/common/FeedbackHeader';
 
 import { writeToUsStyles as styles } from './writeToUsStyles';
 
@@ -12,6 +11,11 @@ export function FeedbackSuccessScreen() {
 
   return (
     <SafeAreaView style={styles.successScreen}>
+      <FeedbackHeader
+        title="Write to us"
+        onBackPress={() => router.replace('/(main)/home')}
+      />
+
       <View style={styles.successContent}>
         <Image
           accessibilityLabel="Feedback sent successfully"
@@ -19,19 +23,22 @@ export function FeedbackSuccessScreen() {
           source={require('../../../assets/images/feedback-success.png')}
           style={styles.successIllustration}
         />
-        <AppText style={styles.successTitle}>Thank you!</AppText>
-        <AppText style={styles.successDescription}>
-          We appreciate you taking the time to share your feedback with us. Your
-          thoughts help us improve your FarmMarket experience.
-        </AppText>
+
+        <Text style={styles.successTitle}>Thank you!</Text>
+
+        <Text style={styles.successDescription}>
+          Your message has been sent successfully.
+        </Text>
       </View>
+
       <View style={styles.successFooter}>
-        <AppButton
-          fullWidth
+        <Pressable
+          accessibilityRole="button"
           onPress={() => router.replace('/(main)/home')}
-          size="large"
-          title="Return to home"
-        />
+          style={styles.returnHomeButton}
+        >
+          <Text style={styles.returnHomeButtonText}>Return to home</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );

@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { AppText } from '@/components/common/AppText';
 import { WelcomeImage } from '@/components/auth/WelcomeImage';
 import {
+  AUTH_ROUTES,
   AUTH_STRINGS,
   ONBOARDING_SLIDES,
   OnboardingSlide,
@@ -33,31 +34,11 @@ import {
 const STRINGS = AUTH_STRINGS.onboarding;
 const LAST_INDEX = ONBOARDING_SLIDES.length - 1;
 
-// Space above the image + the image + the gap below it, as in Figma
-const IMAGE_AREA =
-  AUTH_LAYOUT.imageTop + AUTH_LAYOUT.imageHeight + AUTH_LAYOUT.imageTextGap;
-
 export function OnboardingScreen() {
   const router = useRouter();
-  const { width, height } = useResponsive();
+  const { width, auth } = useResponsive();
   const listRef = useRef<FlatList<OnboardingSlide>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // The image area takes whatever height the text and dots leave, on short
-  // AND tall phones, so the slide keeps Figma's proportions instead of
-  // sitting at the top with empty space underneath.
-  const spaceScale = (height - AUTH_LAYOUT.onboardingTextArea) / IMAGE_AREA;
-  // The picture itself also has to fit the screen width
-  const imageScale = Math.min(
-    spaceScale,
-    (width - 2 * AUTH_LAYOUT.screenPadding) / AUTH_LAYOUT.imageWidth,
-  );
-  // Height the image could not use (narrow phones), shared above and below
-  // it so the picture stays centred in its area
-  const spareHalf =
-    (AUTH_LAYOUT.imageHeight * (spaceScale - imageScale)) / 2;
-  const imageTopSpace = AUTH_LAYOUT.imageTop * spaceScale + spareHalf;
-  const imageBottomSpace = AUTH_LAYOUT.imageTextGap * spaceScale + spareHalf;
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -95,7 +76,7 @@ export function OnboardingScreen() {
     if (currentIndex < LAST_INDEX) {
       goToSlide(currentIndex + 1);
     } else {
-      router.replace('/(main)/home');
+      router.replace(AUTH_ROUTES.home);
     }
   };
 
@@ -105,7 +86,7 @@ export function OnboardingScreen() {
       <View
         style={[
           styles.slide,
-          { width, paddingTop: imageTopSpace },
+          { width, paddingTop: auth.imageTopSpace },
         ]}
       >
         {/* Illustration, positioned and cropped per slide as in Figma */}
@@ -115,25 +96,35 @@ export function OnboardingScreen() {
           containerStyle={[
             styles.imageWindow,
             {
-              width: AUTH_LAYOUT.imageWidth * imageScale,
-              height: AUTH_LAYOUT.imageHeight * imageScale,
+              width: auth.imageWidth,
+              height: auth.imageHeight,
               overflow: item.clipImage ? 'hidden' : 'visible',
             },
           ]}
           style={[
             styles.image,
             {
-              width: frame.width * imageScale,
-              height: frame.height * imageScale,
-              left: frame.left * imageScale,
-              top: frame.top * imageScale,
+              width: frame.width * auth.imageScale,
+              height: frame.height * auth.imageScale,
+              left: frame.left * auth.imageScale,
+              top: frame.top * auth.imageScale,
             },
           ]}
         />
 
-        <View style={{ marginTop: imageBottomSpace }}>
-          <AppText style={styles.title}>{item.title}</AppText>
-          <AppText style={styles.description}>{item.description}</AppText>
+        <View style={{ marginTop: auth.imageBottomSpace }}>
+          <AppText style={[styles.title, auth.onboardingTitle]}>
+            {item.title}
+          </AppText>
+          <AppText
+            style={[
+              styles.description,
+              auth.onboardingDescription,
+              { maxWidth: auth.descriptionWidth },
+            ]}
+          >
+            {item.description}
+          </AppText>
         </View>
       </View>
     );
@@ -158,10 +149,11 @@ export function OnboardingScreen() {
           offset: width * index,
           index,
         })}
+        extraData={auth}
         style={styles.list}
       />
 
-      {/* Bottom Navigation Row: Indicator Dots & Action CTA */}
+      {/* Dots and next arrow */}
       <View style={styles.bottomRow}>
         <View style={styles.dotsContainer}>
           {ONBOARDING_SLIDES.map((slide, index) => {
@@ -176,6 +168,10 @@ export function OnboardingScreen() {
                 style={[
                   styles.dot,
                   isActive ? styles.activeDot : styles.inactiveDot,
+                  {
+                    height: auth.dotSize,
+                    width: isActive ? auth.activeDotWidth : auth.dotSize,
+                  },
                 ]}
               />
             );
@@ -190,6 +186,7 @@ export function OnboardingScreen() {
           onPress={handleNext}
           style={({ pressed }) => [
             styles.arrowButton,
+            { width: auth.arrowButtonWidth, height: auth.arrowButtonHeight },
             pressed && styles.arrowButtonPressed,
           ]}
         >
@@ -204,8 +201,6 @@ export function OnboardingScreen() {
   );
 }
 
-// Order as in Figma: image → title → description → (space) →
-// dots and arrow row near the bottom
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -232,7 +227,6 @@ const styles = StyleSheet.create({
   },
   description: {
     ...AUTH_TYPOGRAPHY.bodySmall,
-    maxWidth: AUTH_LAYOUT.descriptionWidth,
     color: COLORS.text.primary,
   },
   bottomRow: {
@@ -249,20 +243,15 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
   },
   dot: {
-    height: AUTH_LAYOUT.dotSize,
     borderRadius: RADIUS.pill,
   },
   activeDot: {
-    width: AUTH_LAYOUT.activeDotWidth,
     backgroundColor: COLORS.text.primary,
   },
   inactiveDot: {
-    width: AUTH_LAYOUT.dotSize,
     backgroundColor: AUTH_COLORS.dotInactive,
   },
   arrowButton: {
-    width: AUTH_LAYOUT.arrowButtonWidth,
-    height: AUTH_LAYOUT.arrowButtonHeight,
     borderRadius: RADIUS.pill,
     backgroundColor: AUTH_COLORS.buttonFill,
     alignItems: 'center',
