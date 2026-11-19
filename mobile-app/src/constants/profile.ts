@@ -9,9 +9,11 @@ export type ProfileMenuItemConfig = {
   route?:
     | '/help-centre'
     | '/write-to-us'
+    | '/my-reviews'
     | '/account-settings'
     | '/crop-advisor-history'
     | '/saved-addresses';
+    | '/reviews';
 };
 
 export type ProfileMenuSectionConfig = {
@@ -47,11 +49,18 @@ export const PROFILE_MENU_SECTIONS: ProfileMenuSectionConfig[] = [
         route: '/help-centre',
       },
       {
-        id: 'review',
-        title: 'Review',
-        subtitle: 'Share your product experience',
+        id: 'write-to-us',
+        title: 'Write to us',
+        subtitle: 'Share your feedback and suggestions',
         icon: 'review',
-        route: '/reviews',
+        route: '/write-to-us',
+      },
+      {
+        id: 'reviews',
+        title: 'My Reviews',
+        subtitle: 'View and manage your product reviews',
+        icon: 'review',
+        route: '/my-reviews',
       },
     ],
   },

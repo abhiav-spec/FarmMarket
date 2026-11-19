@@ -9,9 +9,13 @@ import { ProfileMenuItem } from './ProfileMenuItem';
 
 type ProfileMenuSectionProps = {
   section: ProfileMenuSectionConfig;
+  onLogoutPress?: () => void;
 };
 
-export function ProfileMenuSection({ section }: ProfileMenuSectionProps) {
+export function ProfileMenuSection({
+  section,
+  onLogoutPress,
+}: ProfileMenuSectionProps) {
   const router = useRouter();
 
   return (
@@ -27,6 +31,11 @@ export function ProfileMenuSection({ section }: ProfileMenuSectionProps) {
           subtitle={item.subtitle}
           icon={item.icon}
           onPress={() => {
+            if (item.id === 'logout') {
+              onLogoutPress?.();
+              return;
+            }
+
             if (item.route) {
               router.push(item.route);
             }

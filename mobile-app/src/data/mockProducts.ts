@@ -11,6 +11,7 @@ export const MOCK_CART_PRODUCTS: Product[] = [
     pricePaise: 46665,
     mrpPaise: 54900,
     discountPercent: 14,
+    rating: 4.5,
     category: 'Fungicide',
   },
 ];
@@ -24,6 +25,7 @@ export const MOCK_RECOMMENDATION_PRODUCTS: Product[] = [
     pricePaise: 46665,
     mrpPaise: 54900,
     discountPercent: 14,
+    rating: 4.5,
     category: 'Fungicide',
   },
   {
@@ -34,6 +36,7 @@ export const MOCK_RECOMMENDATION_PRODUCTS: Product[] = [
     pricePaise: 110000,
     mrpPaise: 112000,
     discountPercent: 14,
+    rating: 3,
     category: 'Fungicide',
   },
   {
@@ -44,6 +47,7 @@ export const MOCK_RECOMMENDATION_PRODUCTS: Product[] = [
     pricePaise: 110000,
     mrpPaise: 112000,
     discountPercent: 14,
+    rating: 4,
     category: 'Fertiliser',
   },
 ];

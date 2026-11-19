@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppIcon, AppText } from '@/components';
+import { useWallet } from '@/context/WalletContext';
 import { COLORS, useResponsive } from '@/theme';
 
 interface HomeHeaderProps {
@@ -11,19 +12,21 @@ interface HomeHeaderProps {
   onNotificationPress?: () => void;
   onWalletPress?: () => void;
   onCartPress?: () => void;
+  cartCount?: number;
   onProfilePress?: () => void;
 }
 
 export function HomeHeader({
   location,
-  walletBalance = 0,
   onLocationPress,
   onNotificationPress,
   onWalletPress,
   onCartPress,
+  cartCount = 0,
   onProfilePress,
 }: HomeHeaderProps) {
   const { home } = useResponsive();
+  const { balancePaise } = useWallet();
 
   return (
     <View
@@ -100,7 +103,7 @@ export function HomeHeader({
               lineHeight: home.walletLineHeight,
             }}
           >
-            {walletBalance}
+            {(balancePaise / 100).toLocaleString('en-IN')}
           </AppText>
         </Pressable>
 
@@ -116,7 +119,10 @@ export function HomeHeader({
             },
           ]}
         >
-          <AppIcon name="cart" size="lg" />
+          <View style={styles.cartIconWrap}>
+            <AppIcon name="cart" size="lg" />
+            <AppText style={styles.cartCount}>{cartCount}</AppText>
+          </View>
         </Pressable>
       </View>
     </View>
@@ -153,6 +159,21 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cartIconWrap: { position: 'relative' },
+  cartCount: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 3,
+    borderRadius: 8,
+    backgroundColor: COLORS.purple,
+    color: COLORS.text.inverse,
+    fontSize: 9,
+    lineHeight: 16,
+    textAlign: 'center',
   },
 
   walletButton: {

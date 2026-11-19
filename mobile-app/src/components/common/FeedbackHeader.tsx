@@ -40,6 +40,7 @@ export function FeedbackHeader({
           source={require('../../../assets/icons/back-arrow.png')}
           style={styles.backArrow}
           resizeMode="contain"
+          accessible={false}
           accessibilityLabel="Back arrow"
         />
       </Pressable>
@@ -48,11 +49,11 @@ export function FeedbackHeader({
         {title}
       </Text>
 
-      {rightIconSource && onRightPress ? (
+      {rightIconSource != null && onRightPress ? (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={rightAccessibilityLabel}
-          hitSlop={UI.hitSlop}
+          hitSlop={8}
           onPress={onRightPress}
           style={styles.rightAction}
         >
@@ -60,7 +61,7 @@ export function FeedbackHeader({
             source={rightIconSource}
             style={styles.rightIcon}
             resizeMode="contain"
-            accessibilityLabel={rightAccessibilityLabel}
+            accessible={false}
           />
         </Pressable>
       ) : (
@@ -84,8 +85,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: RADIUS.header,
   },
   actionButton: {
-    width: FEEDBACK_HEADER_LAYOUT.backButtonWidth,
-    height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    width: 40,
+    height: 44,
     alignItems: 'flex-start',
     justifyContent: 'center',
     zIndex: 1,
@@ -107,14 +108,15 @@ const styles = StyleSheet.create({
     width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
   },
   rightAction: {
-    width: FEEDBACK_HEADER_LAYOUT.rightSpacerWidth,
-    height: FEEDBACK_HEADER_LAYOUT.backButtonHeight,
+    width: 40,
+    height: 44,
     alignItems: 'flex-end',
     justifyContent: 'center',
     zIndex: 1,
   },
+
   rightIcon: {
-    width: ICON_SIZES.lg,
-    height: ICON_SIZES.lg,
+    width: 24,
+    height: 24,
   },
 });

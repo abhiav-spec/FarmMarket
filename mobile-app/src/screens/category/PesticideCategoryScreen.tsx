@@ -1,33 +1,47 @@
 import React, { useState } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
-
+import { useRouter } from 'expo-router';
+import { useHomeHeader } from '@/hooks/useHomeHeader';
 import {
   CategoryHeroBanner,
   HomeHeader,
   HomeSearchBar,
   ProductCard,
 } from '@/components';
-import { APP_CONFIG, CATEGORY_STRINGS } from '@/constants/categoryStrings';
-import {
-  PESTICIDE_BANNER,
-  PESTICIDE_PRODUCTS,
-} from '@/constants/pesticide';
-import { COLORS, SPACING } from '@/theme';
+import { CATEGORY_STRINGS } from '@/constants/categoryStrings';
+import { PESTICIDE_BANNER, PESTICIDE_PRODUCTS } from '@/constants/pesticide';
+import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
+import { useCart } from '@/context/CartContext';
 import type { ProductItem } from '@/types/product';
 
-export function PesticideCategoryScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
+function toCartProduct(product: ProductItem) {
+  return {
+    id: product.id,
+    name: product.name,
+    imageUrl: product.image as number,
+    variant: product.specs,
+    pricePaise: product.pricePaise,
+    mrpPaise: product.originalPricePaise,
+    discountPercent: product.discountPercentage,
+    category: product.category,
+  };
+}
 
+export function PesticideCategoryScreen() {
+  const router = useRouter();
+  const { addItem } = useCart();
+  const [searchQuery, setSearchQuery] = useState('');
+  const header = useHomeHeader();
   const filteredProducts = PESTICIDE_PRODUCTS.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleProductPress = (product: ProductItem) => {
-    // Navigate / handle product press
+    router.push(`/product/${product.id}`);
   };
 
   const handleAddToCart = (product: ProductItem) => {
-    // Add to cart handler
+    addItem(toCartProduct(product));
   };
 
   return (
@@ -37,14 +51,20 @@ export function PesticideCategoryScreen() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        columnWrapperStyle={styles.row}
+        columnWrapperStyle={
+          filteredProducts.length > 0 ? styles.row : undefined
+        }
         contentContainerStyle={styles.content}
         ListHeaderComponent={
           <View style={styles.headerArea}>
             <HomeHeader
-              location={APP_CONFIG.defaultLocation}
-              onNotificationPress={() => {}}
-              onProfilePress={() => {}}
+              location={header.location}
+              walletBalance={header.walletBalance}
+              onLocationPress={header.onLocationPress}
+              onNotificationPress={header.onNotificationPress}
+              onWalletPress={header.onWalletPress}
+              onCartPress={header.onCartPress}
+              cartCount={header.cartCount}
             />
 
             <HomeSearchBar
@@ -53,6 +73,7 @@ export function PesticideCategoryScreen() {
               placeholder={CATEGORY_STRINGS.searchPlaceholder}
               onVoicePress={() => {}}
               onScanPress={() => {}}
+              onWishlistPress={() => router.push('/wishlist')}
             />
 
             <CategoryHeroBanner
@@ -86,6 +107,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: SPACING.xxxl,
+    flexGrow: 1,
   },
   row: {
     paddingHorizontal: SPACING.lg,
@@ -94,5 +116,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
+    maxWidth: SEARCH_LAYOUT.cardWidthPercent,
   },
 });

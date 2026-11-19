@@ -50,6 +50,7 @@ export default function MainLayout() {
         tabBarStyle: TAB_BAR_STYLE,
       }}
     >
+      {/* Main bottom tabs */}
       <Tabs.Screen
         name="home"
         options={{
@@ -89,101 +90,74 @@ export default function MainLayout() {
           ),
         }}
       />
-
+      {/* Cart - hidden from bottom navigation */}
       <Tabs.Screen
         name="cart"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="order-detail"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="help-centre"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="help-upload"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="return-success"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="cancel-order"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="confirm-cancellation"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="cancellation-success"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="reviews"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="review-success"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="refer-now"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
         }}
       />
+      {/* Checkout */}
       <Tabs.Screen
-        name="account-settings"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
+        name="checkout/payment"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="checkout/success"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="checkout/payment-success"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
 
+      {/* Product details */}
       <Tabs.Screen
-        name="notifications-settings"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
+        name="product/[id]"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
 
+      {/* Wallet */}
       <Tabs.Screen
-        name="privacy-policy"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
+        name="wallet/index"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen
+        name="wallet/add-money"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
+      />
+      <Tabs.Screen name="wallet/payment" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+      <Tabs.Screen name="wallet/payment-success" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+
+      {/* Ravi's additional routes */}
+      <Tabs.Screen
+        name="notifications"
+        options={{ href: null, tabBarStyle: { display: 'none' } }}
       />
 
-      <Tabs.Screen
-        name="terms-and-conditions"
-        options={{
-          href: null,
-          tabBarStyle: { display: 'none' },
-        }}
-      />
-      <Tabs.Screen
-        name="advisor"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="wishlist"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="crop-advisor-history"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
-      <Tabs.Screen
-        name="consultation-details"
-        options={{ href: null, tabBarStyle: { display: 'none' } }}
-      />
+      {/* Existing secondary routes */}
+      <Tabs.Screen name="order-detail" options={{ href: null }} />
+      <Tabs.Screen name="help-centre" options={{ href: null }} />
+      <Tabs.Screen name="help-upload" options={{ href: null }} />
+      <Tabs.Screen name="return-success" options={{ href: null }} />
+      <Tabs.Screen name="cancel-order" options={{ href: null }} />
+      <Tabs.Screen name="confirm-cancellation" options={{ href: null }} />
+      <Tabs.Screen name="cancellation-success" options={{ href: null }} />
+      <Tabs.Screen name="reviews" options={{ href: null }} />
+      <Tabs.Screen name="my-reviews" options={{ href: null }} />
+      <Tabs.Screen name="write-to-us" options={{ href: null }} />
+      <Tabs.Screen name="feedback-success" options={{ href: null }} />
+      <Tabs.Screen name="review-success" options={{ href: null }} />
+      <Tabs.Screen name="refer-now" options={{ href: null }} />
+      <Tabs.Screen name="account-settings" options={{ href: null }} />
+      <Tabs.Screen name="notifications-settings" options={{ href: null }} />
+      <Tabs.Screen name="privacy-policy" options={{ href: null }} />
+      <Tabs.Screen name="terms-and-conditions" options={{ href: null }} />
+      <Tabs.Screen name="advisor" options={{ href: null }} />
+      <Tabs.Screen name="wishlist" options={{ href: null }} />
+      <Tabs.Screen name="crop-advisor-history" options={{ href: null }} />
+      <Tabs.Screen name="consultation-details" options={{ href: null }} />
       <Tabs.Screen
         name="location"
         options={{ href: null, tabBarStyle: { display: 'none' } }}

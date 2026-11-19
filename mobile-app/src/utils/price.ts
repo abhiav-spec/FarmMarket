@@ -24,6 +24,10 @@ export function computePriceSummary(
     (sum, item) => sum + item.product.pricePaise * item.quantity,
     0,
   );
+  const originalProductTotalPaise = items.reduce(
+    (sum, item) => sum + item.product.mrpPaise * item.quantity,
+    0,
+  );
   const isShippingFree =
     productTotalPaise >= config.FREE_SHIPPING_THRESHOLD_PAISE;
   const shippingPaise = items.length === 0 || isShippingFree
@@ -31,6 +35,8 @@ export function computePriceSummary(
     : config.DEFAULT_SHIPPING_PAISE;
 
   return {
+    originalProductTotalPaise,
+    productDiscountPaise: originalProductTotalPaise - productTotalPaise,
     productTotalPaise,
     shippingPaise,
     shippingOriginalPaise: config.DEFAULT_SHIPPING_PAISE,

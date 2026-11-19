@@ -54,10 +54,6 @@ export const styles = StyleSheet.create({
     paddingTop: SPACING.md,
     textAlignVertical: 'top',
   },
-  messageTextInputFocused: {
-    borderColor: COLORS.purple,
-    boxShadow: '0 0 0 1px #6A00FF',
-  },
   characterCount: {
     bottom: SPACING.md,
     color: COLORS.text.muted,

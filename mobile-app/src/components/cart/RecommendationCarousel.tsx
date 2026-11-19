@@ -1,15 +1,33 @@
 import React from 'react';
-import { FlatList, Pressable, StyleSheet, View } from 'react-native';
-
-import { CART_COPY, type CartCopy } from '@/constants/config';
+import { FlatList, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/common/AppText';
-import { ProductRecommendationCard } from '@/components/product/ProductRecommendationCard';
-import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS, UI } from '@/theme';
+import { ProductCard } from '@/components/category/ProductCard';
+import { Touchable } from '@/components/ui/Touchable';
+import { CART_COPY } from '@/constants/config';
+import { CART_LAYOUT, CART_TYPOGRAPHY, COLORS } from '@/theme';
 import { type Product } from '@/types';
+import { type ProductItem } from '@/types/product';
+
+function toProductItem(product: Product): ProductItem {
+  const image = typeof product.imageUrl === 'string' ? { uri: product.imageUrl } : product.imageUrl;
+  const discountPercentage = product.discountPercent ?? Math.round(
+    ((product.mrpPaise - product.pricePaise) / product.mrpPaise) * 100,
+  );
+
+  return {
+    id: product.id,
+    name: product.name,
+    specs: product.variant,
+    pricePaise: product.pricePaise,
+    originalPricePaise: product.mrpPaise,
+    discountPercentage,
+    image,
+    category: product.category,
+  };
+}
 
 interface RecommendationCarouselProps {
-  copy?: CartCopy;
   title: string;
   products: readonly Product[];
   onViewMore?: () => void;
@@ -17,27 +35,16 @@ interface RecommendationCarouselProps {
   onProductPress?: (product: Product) => void;
 }
 
-export function RecommendationCarousel({
-  title,
-  products,
-  onViewMore,
-  onAddToCart,
-  copy = CART_COPY,
-  onProductPress,
-}: RecommendationCarouselProps) {
+export function RecommendationCarousel({ title, products, onViewMore, onAddToCart, onProductPress }: RecommendationCarouselProps) {
   if (products.length === 0) return null;
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <AppText variant="subheading" style={styles.titleText}>{title}</AppText>
-        <Pressable onPress={onViewMore} disabled={!onViewMore} accessibilityRole="button" accessibilityState={{ disabled: !onViewMore }} accessibilityLabel={copy.viewMore} hitSlop={UI.hitSlop}>
-          <AppText variant="caption" color={COLORS.text.purple} style={styles.viewMoreText}>
-            {copy.viewMore}
-          </AppText>
-        </Pressable>
+        <AppText style={styles.titleText}>{title}</AppText>
+        {onViewMore ? (
+          <Touchable onPress={onViewMore} title={CART_COPY.viewMore} textStyle={styles.viewMoreText} />
+        ) : null}
       </View>
-
       <FlatList
         data={products}
         horizontal
@@ -45,12 +52,13 @@ export function RecommendationCarousel({
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <ProductRecommendationCard
-            product={item}
-            copy={copy}
-            onAddToCart={onAddToCart}
-            onProductPress={onProductPress}
-          />
+          <View style={styles.cardWrapper}>
+            <ProductCard
+              product={toProductItem(item)}
+              onPress={() => onProductPress?.(item)}
+              onAddToCart={() => onAddToCart(item)}
+            />
+          </View>
         )}
       />
     </View>
@@ -59,7 +67,6 @@ export function RecommendationCarousel({
 
 const styles = StyleSheet.create({
   container: {
-    height: CART_LAYOUT.recommendationHeight,
     marginTop: CART_LAYOUT.recommendationTopGap,
     backgroundColor: COLORS.purpleSurface,
     paddingTop: CART_LAYOUT.recommendationPaddingTop,
@@ -72,9 +79,12 @@ const styles = StyleSheet.create({
     marginBottom: CART_LAYOUT.recommendationHeaderGap,
   },
   titleText: { ...CART_TYPOGRAPHY.sectionTitle, color: COLORS.text.black },
-  viewMoreText: { ...CART_TYPOGRAPHY.viewMore },
+  viewMoreText: { ...CART_TYPOGRAPHY.viewMore, color: COLORS.text.purple },
   listContent: {
-    paddingHorizontal: CART_LAYOUT.sectionPadding,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
     gap: CART_LAYOUT.recommendationGap,
+    paddingHorizontal: CART_LAYOUT.sectionPadding,
   },
+  cardWrapper: { width: 165 },
 });

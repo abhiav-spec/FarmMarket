@@ -23,6 +23,7 @@ import {
   RecommendationCarousel,
 } from '@/components/cart';
 import { useCart } from '@/context/CartContext';
+import { useCoupon } from '@/context/CouponContext';
 import { useReviews } from '@/context/ReviewContext';
 import {
   CART_CONFIG,
@@ -59,9 +60,14 @@ import {
 } from '@/theme';
 import { formatPaise } from '@/utils/price';
 import { MOCK_ADDRESS } from '@/data/mockAddress';
-import { MOCK_CART_PRODUCTS, MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
+import {
+  MOCK_CART_PRODUCTS,
+  MOCK_RECOMMENDATION_PRODUCTS,
+} from '@/data/mockProducts';
 import { useWishlist } from '@/context/WishlistContext';
 import { ProductDetails } from '@/components/product/ProductDetails';
+import { CouponsScreen } from '@/screens/cart/CouponsScreen';
+import { CouponSuccessScreen } from '@/screens/cart/CouponSuccessScreen';
 
 interface CartViewProps {
   items: readonly CartItem[];
@@ -87,9 +93,17 @@ interface CartViewProps {
 export default function CartScreen() {
   const router = useRouter();
   const cart = useCart();
+  const { appliedCoupon } = useCoupon();
   const wishlist = useWishlist();
-  const { step, productId, walletTab } = useLocalSearchParams<{ step?: string; productId?: string; walletTab?: string }>();
+  const { step, productId, walletTab } = useLocalSearchParams<{
+    step?: string;
+    productId?: string;
+    walletTab?: string;
+  }>();
   const { deleteReview, submittedReviews } = useReviews();
+
+  if (step === 'coupons') return <CouponsScreen />;
+  if (step === 'coupon-success') return <CouponSuccessScreen />;
 
   if (step === 'wallet') {
     return (
@@ -125,7 +139,6 @@ export default function CartScreen() {
   }
 
   if (step === 'product') {
-
     const product =
       [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
         (item) => item.id === productId,
@@ -163,7 +176,6 @@ export default function CartScreen() {
         }
       />
     );
-
   }
 
   if (step === 'payment') {
@@ -189,6 +201,17 @@ export default function CartScreen() {
       onContinue={() =>
         router.push({ pathname: '/cart', params: { step: 'payment' } })
       }
+      onApplyCoupon={() =>
+        router.push({ pathname: '/cart', params: { step: 'coupons' } })
+      }
+      onSearch={() =>
+        router.navigate({
+          pathname: '/home',
+          params: { focusSearch: '1' },
+        })
+      }
+      onWishlist={() => router.push('/wishlist')}
+      appliedCoupon={appliedCoupon}
       onProductPress={(product) =>
         router.push({
           pathname: '/cart',
@@ -774,7 +797,7 @@ interface PaymentSuccessViewProps {
 
 export function PaymentSuccessView({
   order = PAYMENT_SUCCESS_ORDER,
-  productImage = IMAGES.confirmedProductImage,
+  productImage = IMAGES.saaf,
   onViewOrders,
   onHome,
   onOrderOptions,
@@ -1075,14 +1098,8 @@ export function PaymentView({
       </ScrollView>
       <CartBottomBar
         totalPaise={payablePaise}
-        actionWidth={SIZES.placeOrderButtonWidth}
-        actionTopMargin={CART_LAYOUT.paymentActionTopMargin}
-        rightPadding={CART_LAYOUT.sectionPadding}
-        copy={{
-          ...CART_COPY,
-          continue: PAYMENT_COPY.placeOrder,
-          checkout: PAYMENT_COPY.placeOrder,
-        }}
+        title={PAYMENT_COPY.placeOrder}
+        label={PAYMENT_COPY.placeOrder}
         disabled={!selectedOption}
         onContinue={
           selectedOption && onPlaceOrder
@@ -1265,11 +1282,7 @@ export function CartView({
         showsVerticalScrollIndicator={false}
       >
         {address && (
-          <AddressBar
-            address={address}
-            onChangePress={onAddressChange}
-            copy={copy}
-          />
+          <AddressBar address={address} onChangePress={onAddressChange} />
         )}
 
         {items.map((item) => (
@@ -1278,35 +1291,31 @@ export function CartView({
             item={item}
             minQuantity={config.MIN_QUANTITY_PER_ITEM}
             maxQuantity={config.MAX_QUANTITY_PER_ITEM}
-            copy={copy}
+
             onIncrement={() => addItem(item.product)}
             onDecrement={() => removeItem(item.product.id)}
             onDelete={() => deleteItem(item.product.id)}
           />
         ))}
 
-        <CouponBanner
-          onPress={onApplyCoupon}
-          appliedCoupon={appliedCoupon}
-          copy={copy}
-        />
+        <CouponBanner onPress={onApplyCoupon} appliedCoupon={appliedCoupon} />
 
         <RecommendationCarousel
           title={copy.recommendations}
           products={recommendations}
           onViewMore={onViewMoreRecommendations}
-          copy={copy}
+
           onAddToCart={addItem}
           onProductPress={onProductPress}
         />
 
-        <PriceBreakdown summary={priceSummary} copy={copy} />
+        <PriceBreakdown summary={priceSummary} />
       </ScrollView>
 
       <CartBottomBar
         totalPaise={priceSummary.orderTotalPaise}
         onContinue={onContinue}
-        copy={copy}
+
         disabled={items.length === 0}
       />
     </View>

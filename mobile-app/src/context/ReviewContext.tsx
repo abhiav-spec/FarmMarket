@@ -11,6 +11,7 @@ const REVIEW_STORAGE_KEY = 'farm-market-submitted-reviews';
 
 export type SubmittedReview = {
   id: string;
+  productId: string;
   author: string;
   stars: number;
   date: string;
@@ -18,7 +19,10 @@ export type SubmittedReview = {
   photoUris: readonly string[];
 };
 
-type NewReview = Pick<SubmittedReview, 'stars' | 'text' | 'photoUris'>;
+type NewReview = Pick<
+  SubmittedReview,
+  'productId' | 'stars' | 'text' | 'photoUris'
+>;
 
 type ReviewContextValue = {
   submittedReviews: readonly SubmittedReview[];
@@ -62,7 +66,12 @@ function getStoredReviews(): SubmittedReview[] {
 
     const parsedReviews: unknown = JSON.parse(storedReviews);
     return Array.isArray(parsedReviews)
-      ? (parsedReviews as SubmittedReview[])
+      ? (parsedReviews as SubmittedReview[]).map((review) => ({
+          ...review,
+          // Reviews saved before reviews were linked to a product belong to
+          // the original product in this mock catalogue.
+          productId: review.productId ?? 'prod-001',
+        }))
       : [];
   } catch {
     return [];

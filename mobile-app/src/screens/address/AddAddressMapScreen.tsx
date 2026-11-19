@@ -49,15 +49,24 @@ export function AddAddressMapScreen() {
         </View>
 
         <View style={styles.bottom}>
-          <Pressable accessibilityRole="button" onPress={() => setNotice(true)} style={styles.locationChip}>
-            <Ionicons name="locate-outline" size={20} color={COLORS.text.black} />
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setNotice(true)}
+            style={styles.locationChip}
+          >
+            <Ionicons
+              name="locate-outline"
+              size={20}
+              color={COLORS.text.black}
+            />
             <AppText variant="bodyMedium" style={styles.locationChipText}>
               Use current location
             </AppText>
           </Pressable>
           {notice ? (
             <AppText variant="body" style={styles.notice}>
-              Current location will work once the map is connected. Please type your address above.
+              Current location will work once the map is connected. Please type
+              your address above.
             </AppText>
           ) : null}
 
@@ -66,13 +75,22 @@ export function AddAddressMapScreen() {
               DELIVERING YOUR ORDER TO
             </AppText>
             <View style={styles.addressRow}>
-              <Ionicons name="location-outline" size={22} color={COLORS.text.black} />
+              <Ionicons
+                name="location-outline"
+                size={22}
+                color={COLORS.text.black}
+              />
               <AppText
                 variant="body"
                 numberOfLines={2}
-                style={[styles.addressText, !canContinue && styles.addressPlaceholder]}
+                style={[
+                  styles.addressText,
+                  !canContinue && styles.addressPlaceholder,
+                ]}
               >
-                {canContinue ? draftAddress.trim() : 'Search for an address above'}
+                {canContinue
+                  ? draftAddress.trim()
+                  : 'Search for an address above'}
               </AppText>
             </View>
 
@@ -97,7 +115,12 @@ export function AddAddressMapScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   map: { flex: 1, backgroundColor: COLORS.categoryBackground },
-  mapHint: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', gap: 6 },
+  mapHint: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
   mapHintText: { color: COLORS.purpleBorder, fontSize: FONT_SIZE.sm },
   search: {
     position: 'absolute',
@@ -123,7 +146,14 @@ const styles = StyleSheet.create({
     color: COLORS.text.primary,
     ...({ outlineStyle: 'none', outlineWidth: 0 } as object),
   },
-  bottom: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center', paddingBottom: 24 },
+  bottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    paddingBottom: 24,
+  },
   locationChip: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -57,5 +57,5 @@ export const HOME_TOP_COMPANIES: HomeCategory[] = [
 ];
 export const HOME_HEADER_DATA = {
   location: 'Kolar, Karnataka',
-  walletBalance: 500,
+  walletBalance: 0,
 } as const;

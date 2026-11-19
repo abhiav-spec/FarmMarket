@@ -13,6 +13,8 @@ export interface CartItem {
 }
 
 export interface CartPriceSummary {
+  originalProductTotalPaise: number;
+  productDiscountPaise: number;
   productTotalPaise: number;
   shippingPaise: number;
   shippingOriginalPaise: number;

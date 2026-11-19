@@ -13,14 +13,22 @@ import { Header } from '../../components/orders/Header';
 import { ProductBag } from '../../components/orders/ProductBag';
 import { OrderTimeline } from '../../components/orders/OrderTimeline';
 import { InfoCard, KeyValue } from '../../components/orders/InfoCard';
+import {
+  MOCK_CART_PRODUCTS,
+  MOCK_RECOMMENDATION_PRODUCTS,
+} from '../../data/mockProducts';
 
 const caretRightImage = require('../../components/images/caret-right (1) 8.png');
 
 export function OrderDetailScreen() {
   const order = useOrder();
   const isDelivered = order.status === 'Delivered';
+  const canCancel = order.status === 'Order Placed' || order.status === 'Packed';
   const phoneDigits = order.deliveryAddress.phone.replace(/\D/g, '');
   const phoneLabel = order.deliveryAddress.phone.replace(phoneDigits, '');
+  const product = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS].find(
+    (item) => item.name === order.product,
+  );
   return (
     <ScrollView
       style={styles.page}
@@ -53,8 +61,8 @@ export function OrderDetailScreen() {
               <Pressable
                 onPress={() =>
                   router.push({
-                    pathname: '/cart',
-                    params: { step: 'product' },
+                    pathname: '/product/[id]',
+                    params: { id: product?.id ?? 'prod-001' },
                   })
                 }
                 hitSlop={spacing.sm}
@@ -98,7 +106,7 @@ export function OrderDetailScreen() {
         <KeyValue label="Payment Method" value={order.paymentMethod} />
         <KeyValue label="Total Amount" value={order.price} strong />
       </InfoCard>
-      {!isDelivered && (
+      {canCancel && (
         <Pressable
           style={styles.cancelButton}
           onPress={() =>

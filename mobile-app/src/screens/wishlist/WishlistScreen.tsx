@@ -1,21 +1,24 @@
-import React, { useMemo } from 'react';
-import { router } from 'expo-router';
+import React, { useMemo, useState } from 'react';
+import { useRouter } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppIcon, AppText } from '@/components';
+import { QuantityStepper } from '@/components/ui/QuantityStepper';
+import { Touchable } from '@/components/ui/Touchable';
 import { CATEGORY_STRINGS } from '@/constants/categoryStrings';
-import { MOCK_CART_PRODUCTS, MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
-import { CropAdvisorHeader } from '@/screens/crop-advisor/CropAdvisorHeader';
+import { ScreenHeader } from '@/components/common/ScreenHeader';
+import { CART_COPY } from '@/constants/config';
+import { PRODUCT_CATALOG } from '@/data/productCatalog';
 import { COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 import type { Product } from '@/types';
 import { formatPaise } from '@/utils/price';
 
 const SIDE_PADDING = 16;
 const GAP = 12;
-const CATALOG: Product[] = [...MOCK_CART_PRODUCTS, ...MOCK_RECOMMENDATION_PRODUCTS];
+const CATALOG: Product[] = PRODUCT_CATALOG;
 
 function dayLabel(iso: string): string {
   const d = new Date(iso);
@@ -27,8 +30,10 @@ function dayLabel(iso: string): string {
 }
 
 export function WishlistScreen() {
+  const router = useRouter();
   const { entries, ready, remove } = useWishlist();
   const cart = useCart();
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const { width } = useWindowDimensions();
   const cardWidth = (Math.min(width, 402) - SIDE_PADDING * 2 - GAP) / 2;
 
@@ -45,17 +50,20 @@ export function WishlistScreen() {
     return result;
   }, [entries]);
 
-  const openProduct = (product: Product) =>
-    router.push({ pathname: '/cart', params: { step: 'product', productId: product.id } });
+  const openProduct = (product: Product) => router.push(`/product/${product.id}`);
 
   return (
     <View style={styles.root}>
-      <CropAdvisorHeader title="Wishlist" />
+      <ScreenHeader title={CART_COPY.wishlist} onBack={() => router.back()} />
       <ScrollView contentContainerStyle={styles.content}>
         {groups.length === 0 ? (
-          <AppText variant="body" style={styles.empty}>
-            {ready ? 'Your wishlist is empty.' : 'Loading...'}
-          </AppText>
+          <View style={styles.emptyState}>
+            <Ionicons name="heart-outline" size={48} color={COLORS.text.muted} />
+            <AppText variant="subheading" style={styles.emptyTitle}>
+              {ready ? 'Your wishlist is empty' : 'Loading...'}
+            </AppText>
+            {ready ? <AppText variant="caption" style={styles.emptyDescription}>Save products here to find them quickly.</AppText> : null}
+          </View>
         ) : (
           groups.map((group) => (
             <View key={group.label} style={styles.group}>
@@ -64,6 +72,7 @@ export function WishlistScreen() {
               </AppText>
               <View style={styles.grid}>
                 {group.items.map((product) => {
+                  const quantity = quantities[product.id] ?? cart.config.MIN_QUANTITY_PER_ITEM;
                   const source =
                     typeof product.imageUrl === 'string' ? { uri: product.imageUrl } : product.imageUrl;
                   return (
@@ -98,25 +107,39 @@ export function WishlistScreen() {
                         </View>
                       </Pressable>
 
-                      <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel={`Remove ${product.name} from wishlist`}
-                        hitSlop={10}
+                      <View style={styles.quantityRow}>
+                        <AppText variant="caption" style={styles.quantityLabel}>Quantity</AppText>
+                        <QuantityStepper
+                          quantity={quantity}
+                          min={cart.config.MIN_QUANTITY_PER_ITEM}
+                          max={cart.config.MAX_QUANTITY_PER_ITEM}
+                          onDecrement={() => setQuantities((current) => ({ ...current, [product.id]: quantity - 1 }))}
+                          onIncrement={() => setQuantities((current) => ({ ...current, [product.id]: quantity + 1 }))}
+                        />
+                      </View>
+
+                      <Touchable
+                        label={`${CART_COPY.removeFromWishlist} ${product.name}`}
                         onPress={() => remove(product.id)}
-                        style={styles.heart}
+                        hitSlop={0}
+                        style={styles.removeButton}
                       >
-                        <Ionicons name="heart" size={22} color={COLORS.purple} />
-                      </Pressable>
+                        <Ionicons name="trash-outline" size={18} color={COLORS.purple} />
+                      </Touchable>
 
                       <Pressable
                         accessibilityRole="button"
-                        accessibilityLabel={`${CATEGORY_STRINGS.addToCart} ${product.name}`}
-                        onPress={() => cart.addItem(product)}
+                        accessibilityLabel={`${CART_COPY.moveToCart} ${product.name}`}
+                        onPress={() => {
+                          cart.addItem(product);
+                          cart.setQuantity(product, quantity);
+                          remove(product.id);
+                        }}
                         style={styles.addButton}
                       >
                         <AppIcon name="cart" size="sm" color={COLORS.purple} />
                         <AppText variant="caption" style={styles.addText}>
-                          {CATEGORY_STRINGS.addToCart}
+                          {CART_COPY.moveToCart}
                         </AppText>
                       </Pressable>
                     </View>
@@ -134,7 +157,9 @@ export function WishlistScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { padding: SIDE_PADDING, paddingTop: 24, gap: 20 },
-  empty: { textAlign: 'center', marginTop: 40, color: COLORS.text.muted },
+  emptyState: { alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
+  emptyTitle: { marginTop: 16, color: COLORS.text.secondary },
+  emptyDescription: { marginTop: 8, color: COLORS.text.muted },
   group: { gap: 12 },
   groupLabel: { fontFamily: FONT_FAMILY.medium, fontSize: FONT_SIZE.md, color: COLORS.text.muted },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP },
@@ -144,16 +169,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.purpleBorder,
     padding: 8,
+    paddingTop: 38,
   },
-  imageBox: { height: 120, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
+  imageBox: { height: 100, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
   image: { width: '85%', height: '100%' },
-  heart: { position: 'absolute', top: 10, right: 10 },
+  removeButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+    backgroundColor: COLORS.purpleLight,
+  },
   name: { fontFamily: FONT_FAMILY.medium, color: COLORS.text.black },
   variant: { fontSize: 11, color: COLORS.text.secondary, marginTop: 2 },
   priceRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginTop: 6 },
   price: { fontFamily: FONT_FAMILY.bold, color: COLORS.purple },
   mrp: { fontSize: 10, color: COLORS.text.muted, textDecorationLine: 'line-through' },
   discount: { fontSize: 10, color: COLORS.purple, fontFamily: FONT_FAMILY.semiBold },
+  quantityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  quantityLabel: { color: COLORS.text.secondary },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',

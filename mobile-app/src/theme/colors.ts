@@ -10,11 +10,14 @@ export const COLORS = {
   support: '#4A00B1',
   supportcall: '#E7D7FF',
   purple: '#6A00FF',
+  purpleLight: '#FAF5FF',
+  purpleBorder: '#C084FC',
   purpleSurface: '#FAF6FF',
   priceSurface: '#FAF6FE',
   purpleButtonBorder: '#CBB0FF',
-  purpleBorder: '#A491BF',
-  purpleLight: '#F5EEFF',
+  // Figma pill button fill: #DBC1FE at 40%
+  purpleButtonFill: 'rgba(219, 193, 254, 0.4)',
+
   cropAdvisor: '#6A00FF',
   cropAdvisorBackground: '#F5EEFF',
   cropAdvisorBorder: '#CBB0FF',
