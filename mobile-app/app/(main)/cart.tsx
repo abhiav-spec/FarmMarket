@@ -198,9 +198,7 @@ export default function CartScreen() {
       address={MOCK_ADDRESS}
       recommendations={MOCK_RECOMMENDATION_PRODUCTS}
       onBack={router.canGoBack() ? () => router.back() : undefined}
-      onContinue={() =>
-        router.push({ pathname: '/cart', params: { step: 'payment' } })
-      }
+      onContinue={() => router.push('/checkout/payment')}
       onApplyCoupon={() =>
         router.push({ pathname: '/cart', params: { step: 'coupons' } })
       }

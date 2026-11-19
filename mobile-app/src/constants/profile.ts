@@ -13,7 +13,7 @@ export type ProfileMenuItemConfig = {
     | '/my-reviews'
     | '/account-settings'
     | '/crop-advisor-history'
-    | '/saved-addresses';
+    | '/saved-addresses'
     | '/reviews';
 };
 
