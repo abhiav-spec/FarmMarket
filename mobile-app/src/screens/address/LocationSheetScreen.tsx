@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AppText } from '@/components';
 import { SavedAddress, useAddress } from '@/context/AddressContext';
+import { LastAddressModal } from './LastAddressModal';
 import { COLORS, FONT_FAMILY, FONT_SIZE } from '@/theme';
 
 const goHome = () => router.replace('/(main)/home');
@@ -19,6 +20,12 @@ export function LocationSheetScreen() {
     removeAddress,
     selectAddress,
   } = useAddress();
+
+  const [showLastAlert, setShowLastAlert] = useState(false);
+
+  const handleDelete = (id: string) => {
+    if (!removeAddress(id)) setShowLastAlert(true);
+  };
 
   const addNew = () => {
     setDraftAddress('');
@@ -144,6 +151,7 @@ export function LocationSheetScreen() {
                   accessibilityRole="button"
                   accessibilityLabel={`Delete ${item.name}`}
                   hitSlop={10}
+                  onPress={() => handleDelete(item.id)}
                   onPress={() => removeAddress(item.id)}
                   style={styles.deleteButton}
                 >
@@ -158,6 +166,7 @@ export function LocationSheetScreen() {
           )}
         </ScrollView>
       </View>
+      <LastAddressModal visible={showLastAlert} onClose={() => setShowLastAlert(false)} />
     </View>
   );
 }

@@ -6,12 +6,13 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import type { Product } from '@/types';
 import { useHomeHeader } from '@/hooks/useHomeHeader';
 
@@ -36,6 +37,7 @@ import {
 import { COLORS, SEARCH_LAYOUT, SPACING } from '@/theme';
 import { MOCK_RECOMMENDATION_PRODUCTS } from '@/data/mockProducts';
 import { useCart } from '@/context/CartContext';
+import { CART_COPY } from '@/constants/config';
 const CATEGORY_BANNERS = [
   {
     id: 'smart-tools',
@@ -72,10 +74,12 @@ function toCartProduct(product: (typeof SEEDS_PRODUCTS)[number]): Product {
 }
 export function HomeScreen() {
   const router = useRouter();
+  const { focusSearch } = useLocalSearchParams<{ focusSearch?: string }>();
   const { width } = useWindowDimensions();
   const bannerWidth = width - SPACING.md * 2;
   const bannerScrollRef = useRef<ScrollView>(null);
-  const [, setCurrentBannerIndex] = useState(0);
+  const searchInputRef = useRef<TextInput>(null);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -97,6 +101,12 @@ export function HomeScreen() {
   const header = useHomeHeader();
   const cart = useCart();
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (focusSearch === '1') {
+      requestAnimationFrame(() => searchInputRef.current?.focus());
+    }
+  }, [focusSearch]);
 
   const allProducts = useMemo(
     () => [
@@ -135,6 +145,7 @@ export function HomeScreen() {
         />
 
         <HomeSearchBar
+          inputRef={searchInputRef}
           value={searchQuery}
           onChangeText={setSearchQuery}
           onVoicePress={() =>
