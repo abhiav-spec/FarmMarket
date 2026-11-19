@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type RefObject } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { AppIcon } from '@/components';
@@ -11,6 +11,7 @@ interface HomeSearchBarProps {
   onVoicePress?: () => void;
   onScanPress?: () => void;
   onWishlistPress?: () => void;
+  inputRef?: RefObject<TextInput | null>;
 }
 
 export function HomeSearchBar({
@@ -20,6 +21,7 @@ export function HomeSearchBar({
   onVoicePress,
   onScanPress,
   onWishlistPress,
+  inputRef,
 }: HomeSearchBarProps) {
   const { home } = useResponsive();
 
@@ -38,6 +40,7 @@ export function HomeSearchBar({
         <AppIcon name="search" size="lg" color={COLORS.text.secondary} />
 
         <TextInput
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}

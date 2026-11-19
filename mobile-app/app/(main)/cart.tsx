@@ -204,6 +204,13 @@ export default function CartScreen() {
       onApplyCoupon={() =>
         router.push({ pathname: '/cart', params: { step: 'coupons' } })
       }
+      onSearch={() =>
+        router.navigate({
+          pathname: '/home',
+          params: { focusSearch: '1' },
+        })
+      }
+      onWishlist={() => router.push('/wishlist')}
       appliedCoupon={appliedCoupon}
       onProductPress={(product) =>
         router.push({
